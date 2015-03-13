@@ -1,8 +1,103 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+* {
+	padding: 0;
+	margin: 0;
+	color: #808080;
 }
 
-a {
-  color: #00B7FF;
+body, html {
+  font: 16px Arial, sans-serif;
+  width: 100%;
+  height: 100%;
+  min-width: 840px;
+}
+
+header, nav {
+	height: 40px;
+	width: 100%;
+	line-height: 40px;
+	text-align: center;
+}
+
+header {
+	background: #1a1a1a;
+	text-shadow: 0 -1px rgba(0,0,0,0.3);
+}
+
+nav {
+	background: #e6e6e6;
+}
+
+nav #left {
+	float: left;
+	margin-left: 20px;
+}
+
+nav #right {
+	float: right;
+	margin-right: 20px;
+}
+
+nav .nav_button, nav .fake_nav_button {
+	display: block;
+	text-decoration: none;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 20px;
+	border-left: 1px solid rgba(255, 255, 255, .4);
+	border-right: 1px solid rgba(0, 0, 0, .1);
+	width: auto;
+}
+
+nav .title {
+	margin-right: 10px;
+	float: left;
+}
+
+nav .nav_button, nav .fake_nav_button  {
+	float: left;
+}
+
+nav .nav_button:hover, nav .fake_nav_button:hover {
+	color: #fff;
+	background: #b8dee9;
+	text-shadow: 0 -1px rgba(0, 0, 0, .2);
+}
+
+nav #left .nav_button:first-child, nav #right .fake_nav_button:first-child {
+	margin-left: 10px;
+}
+
+nav .fake_nav_button {
+	position: relative;	
+}
+
+nav .fake_nav_button .hover_container {
+	display: none;
+	background: #e6e6e6;
+	box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+	min-width: 100%;
+	padding: 10px;
+	position: absolute;
+	right: 0;
+	top: 40px;
+}
+
+nav #right .fake_nav_button:hover .hover_container, nav #right .fake_nav_button .hover_container:hover {
+	display: block;
+}
+
+.button {
+	display: block;
+	height: 40px;
+	width: 180px;
+	background: #8cc9db;
+	color: #fff;
+	text-align: center;
+	text-shadow: 0 -1px rgba(0, 0, 0, .2);
+	text-decoration: none;
+	border-radius: 3px;
+}
+
+.button:hover {
+	background: #6eb7cd;
 }
