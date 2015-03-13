@@ -282,9 +282,11 @@ hr {
 	margin-bottom: -2px;
 	position: relative;
 }
+
 .infoicon:hover .popupinfo, .infoicon .popupinfo:hover {
 	display: block;
 }
+
 .infoicon .popupinfo {
 	position: absolute;
 	bottom: 28px;
@@ -302,6 +304,10 @@ hr {
 	color: #fff !important;
 	text-shadow: 0 -1px rgba(0, 0, 0, 0.4);
 	z-index: 150;
+}
+
+.infoicon .popupinfo h2 {
+	font-size: 18px;
 }
 
 .infoicon .popupinfo:after {
@@ -364,6 +370,7 @@ hr {
 
 .tweet_table td {
 	padding: 20px;
+	vertical-align: top;
 }
 
 .clearfix:after {
