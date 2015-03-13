@@ -1,32 +1,185 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <header>
-    	<%= title %>
-    </header>
-    <nav>
-    	<div id="left">
-    		<div class="title">Find Tweets by:</div>
-    		<a href="javascript:void(0)" class="nav_button" id="content_nav_button">Content</a><a href="javascript:void(0)" class="nav_button" id="person_nav_button">Person</a><a href="javascript:void(0)" class="nav_button" id="location_nav_button">Location</a>
-    	</div>
-    	<div id="right">
-    		<div class="title">Log in to API:</div>
-    		<div class="fake_nav_button">
-	    		Twitter
-	    		<div class="hover_container">
-		    		<a href="javascript:void(0)" class="button">Login to Twitter</a>
-	    		</div>
-    		</div><div class="fake_nav_button">
-	    		FourSquare
-	    		<div class="hover_container">
-		    		<a href="javascript:void(0)" class="button">Login to FourSquare</a>
-	    		</div>
-    		</div>
-    	</div>
-    </nav>
-  </body>
+	<head>
+		<title><%= title %></title>
+		<link rel='stylesheet' href='/stylesheets/style.css' />
+	</head>
+	<body>
+		<header>
+			<%= title %>
+		</header>
+		<nav>
+			<div id="left">
+			<div class="title">Find Tweets by:</div>
+			<a href="javascript:void(0)" class="nav_button" id="content_nav_button">Content</a><a href="javascript:void(0)" class="nav_button" id="person_nav_button">Person</a><a href="javascript:void(0)" class="nav_button" id="location_nav_button">Location</a>
+			</div>
+			<div id="right">
+				<div class="title">Log in to API:</div>
+				<div class="fake_nav_button">
+				Twitter
+				<div class="hover_container">
+					<a href="javascript:void(0)" class="button">Login to Twitter</a>
+					</div>
+					</div><div class="fake_nav_button">
+					FourSquare
+					<div class="hover_container">
+						<a href="javascript:void(0)" class="button">Login to FourSquare</a>
+					</div>
+				</div>
+			</div>
+		</nav>
+		<div id="tab_container">
+			<div id="content_tab">
+				<div class="search_wrapper">
+					<h1>Twitter search by content</h1>
+					<table>
+						<tr>
+							<td>
+								Search:
+								<div class="infoicon">
+									<div class="popupinfo">
+										<h2>Search</h2>
+										Explanation about this item.
+									</div>
+								</div>
+							</td>
+							<td>
+								<input type="text" name="search" placeholder="e.g. iPhone" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Longetide (Optional):
+								<div class="infoicon">
+									<div class="popupinfo">
+										<h2>Longetide (Optional)</h2>
+										Explanation about this item.
+									</div>
+								</div>
+							</td>
+							<td>
+								<input type="text" name="long" placeholder="e.g. 51.50722" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Latitude (Optional):
+								<div class="infoicon">
+									<div class="popupinfo">
+										<h2>Latitude (Optional)</h2>
+										Explanation about this item.
+									</div>
+								</div>
+							</td>
+							<td>
+								<input type="text" name="lat" placeholder="e.g. -0.12750" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Live results:
+								<div class="infoicon">
+									<div class="popupinfo">
+										<h2>Live results</h2>
+										Explanation about this item.
+									</div>
+								</div>
+							</td>
+							<td>
+								<div class="onoffswitch">
+								    <input type="checkbox" name="liveresults" class="onoffswitch-checkbox" id="myonoffswitch">
+								    <label class="onoffswitch-label" for="myonoffswitch">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+							</td>
+							<td>
+								<input type="submit" name="submit" value="Search" />
+							</td>
+						</tr>
+					</table>
+				</div>
+				<hr>
+				<div class="return_tweet_wrapper">
+					<h1>Tweets</h1>
+					<span>Hit submit above to discover tweets</span>
+				
+					<table class="tweet_table">
+						<tr>
+							<td width="300px">
+								<div class="profile_top clearfix">
+									<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
+									<div class="name_wrapper">
+										<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
+										<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
+									</div>
+								</div>
+								
+								
+								<span class="dark">Location</span> Whaley Bridge<br>
+								<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
+								<span class="dark">Joined</span> May 2011<br><br>
+								
+								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span>
+								
+								
+							</td>
+							<td>
+								<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
+								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div><br><br>
+								<center><a href="javascript:void(0)">See replies to tweet</a></center>
+							</td>
+						</tr>
+					</table>
+					<hr>
+					<table class="tweet_table">
+						<tr>
+							<td width="300px">
+								<div class="profile_top clearfix">
+									<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
+									<div class="name_wrapper">
+										<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
+										<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
+									</div>
+								</div>
+								
+								
+								<span class="dark">Location</span> Whaley Bridge<br>
+								<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
+								<span class="dark">Joined</span> May 2011<br><br>
+								
+								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span>
+								
+								
+							</td>
+							<td>
+								<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
+								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div><br><br>
+							</td>
+						</tr>
+						<tr>
+							<td>
+							</td>
+							<td>
+								<center><a href="javascript:void(0)">See replies to tweet</a></center>
+							</td>
+						</tr>
+					</table>
+					<hr>
+				</div>
+				
+			</div>
+			<div id="person_nav_button">
+				<h1>Twitter search by person</h1>
+			</div>
+			<div id="location_nav_button">
+				<h1>Twitter search by location</h1>
+			</div>
+		</div>
+	</body>
 </html>
