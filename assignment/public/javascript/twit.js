@@ -6,7 +6,7 @@ $('a#twit-login').click(function(){
                 window.opener.location.reload();
             }
   window.open('http://127.0.0.1:3000/auth/twitter/', 'window name', 'window settings');
-  window.opener.location.reload();
+
       window.close();
   return false;
 

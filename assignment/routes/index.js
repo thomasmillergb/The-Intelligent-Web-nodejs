@@ -6,9 +6,13 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Social Tracker - Team N+1' });
 });
 router.get('/auth/twitter/callback', function(req, res, next) {
-  res.render('endoftwit', { title: 'Social Tracker' });
+
+	//console.log(req.session.oauth);
+
+  res.render('endoftwit', { title: 'Social Tracker', oauth:req.session.oauth});
 });
 router.get('/endoftwit', function(req, res, next) {
-  res.render('endoftwit', { title: 'Social Tracker' });
+  res.render('endoftwit', { title: 'Social Tracker', oauth:req.session.oauth });
+
 });
 module.exports = router;

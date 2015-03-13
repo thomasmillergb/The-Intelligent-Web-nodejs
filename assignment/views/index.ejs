@@ -7,7 +7,7 @@
 		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 		<script>
 			
-			
+			//might want to store in a js file at some point :)
 			function activeTab(id) {
 				$("#tab_container > div").css("display", "none");
 				$('#' + id).css("display", "block");
@@ -126,6 +126,11 @@
 			
 			
 			google.maps.event.addDomListener(window, 'load', initialize);
+
+			function getOauth(token, token_secret) {
+				var twitter_token = token;
+				var twitter_token_secret = token_secret;
+			}
 		</script>
 	</head>
 	<body>
