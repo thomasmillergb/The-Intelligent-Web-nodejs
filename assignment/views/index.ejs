@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<<<<<<< HEAD
 	<head>
 		<title><%= title %></title>
 		<link rel='stylesheet' href='/stylesheets/style.css' />
@@ -182,4 +183,38 @@
 			</div>
 		</div>
 	</body>
+=======
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  </head>
+  <body>
+  <header>
+        <%= title %>
+    </header>
+    <nav>
+        <div id="left">
+            <div class="title">Find Tweets by:</div>
+            <a href="javascript:void(0)" class="nav_button" id="content_nav_button">Content</a><a href="javascript:void(0)" class="nav_button" id="person_nav_button">Person</a><a href="javascript:void(0)" class="nav_button" id="location_nav_button">Location</a>
+        </div>
+        <div id="right">
+            <div class="title">Log in to API:</div>
+            <div class="fake_nav_button">
+                Twitter
+                <div class="hover_container">
+                    <a href="javascript:void(0)" id="twit-login" class="button">Login to Twitter</a>
+                </div>
+            </div><div class="fake_nav_button">
+                FourSquare
+                <div class="hover_container">
+                    <a href="javascript:void(0)" class="button">Login to FourSquare</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <script src='/javascript/twit.js'></script>
+  </body>
+  
+>>>>>>> 1365b34a5d811c54066287cb6254950dae23670d
 </html>
