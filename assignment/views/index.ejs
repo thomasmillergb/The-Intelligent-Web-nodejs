@@ -5,9 +5,17 @@
 		<link rel='stylesheet' href='/stylesheets/style.css' />
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script>
+			
+			
 			function activeTab(id) {
 				$("#tab_container > div").css("display", "none");
 				$('#' + id).css("display", "block");
+			}
+			
+			function twitterOAuth() {
+			    // open popup window and pass field id
+			    window.open('/auth/twitter','popuppage',
+			      'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
 			}
 		</script>
 	</head>
@@ -25,12 +33,12 @@
 				<div class="fake_nav_button">
 				Twitter
 				<div class="hover_container">
-					<a href="javascript:void(0)" id="twit-login" class="button">Login to Twitter</a>
+					<a href="javascript:twitterOAuth()" class="button">Twitter</a>
 					</div>
 					</div><div class="fake_nav_button">
 					FourSquare
 					<div class="hover_container">
-						<a href="javascript:void(0)" class="button">Login to FourSquare</a>
+						<a href="javascript:void(0)" class="button">FourSquare</a>
 					</div>
 				</div>
 			</div>
