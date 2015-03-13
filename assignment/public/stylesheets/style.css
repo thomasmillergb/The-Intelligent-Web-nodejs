@@ -184,6 +184,10 @@ input[type="text"]:focus {
     border-color: #b3b3b3;
 } 
 
+#maps_input {
+	width: 50%;
+	margin: 10px;
+}
 
 .onoffswitch {
     position: relative;
@@ -339,6 +343,10 @@ hr {
 	margin: 0 auto;
 }
 
+table table {
+	padding: 0 20px 0 0;
+}
+
 .tweet_table a {
 	color: #61bfef;
 	text-decoration: none;
@@ -398,4 +406,8 @@ hr {
 .return_tweet_wrapper hr {
 	width: 80%;
 	margin: 0 auto;
+}
+
+.right {
+	float: right;
 }

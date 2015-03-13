@@ -4,6 +4,7 @@
 		<title><%= title %></title>
 		<link rel='stylesheet' href='/stylesheets/style.css' />
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 		<script>
 			
 			
@@ -13,10 +14,118 @@
 			}
 			
 			function twitterOAuth() {
-			    // open popup window and pass field id
-			    window.open('/auth/twitter','popuppage',
-			      'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
+				// open popup window and pass field id
+				window.open('/auth/twitter', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
 			}
+			
+			function initialize() {
+			
+				var mapOptions = {
+					center: { lat: 53.381796, lng: -1.480719},
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+					zoom: 14
+				};
+			
+				var markers = [];
+				var map = new google.maps.Map(document.getElementById('search-map-canvas'), mapOptions);
+			
+				// Create the search box and link it to the UI element.
+				var input = document.getElementById('maps_input');
+				map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+			
+				var searchBox = new google.maps.places.SearchBox(input);
+			
+				google.maps.event.addListener(searchBox, 'places_changed', function() {
+					var places = searchBox.getPlaces();
+			
+					if (places.length == 0) {
+						return;
+					}
+					for (var i = 0, marker; marker = markers[i]; i++) {
+						marker.setMap(null);
+					}
+			
+					// For each place, get the icon, place name, and location.
+					markers = [];
+					var bounds = new google.maps.LatLngBounds();
+					for (var i = 0, place; place = places[i]; i++) {
+						var image = {
+							url: place.icon,
+							size: new google.maps.Size(71, 71),
+							origin: new google.maps.Point(0, 0),
+							anchor: new google.maps.Point(17, 34),
+							scaledSize: new google.maps.Size(25, 25)
+						};
+			
+						var marker = new google.maps.Marker({
+							map: map,
+							icon: image,
+							title: place.name,
+							position: place.geometry.location
+						});
+			
+						markers.push(marker);
+			
+						bounds.extend(place.geometry.location);
+						setLatLong();
+					}
+			
+					map.fitBounds(bounds);
+					
+				});
+			
+				// Bias the SearchBox results towards places that are within the bounds of the
+				// current map's viewport.
+				google.maps.event.addListener(map, 'bounds_changed', function() {
+					var bounds = map.getBounds();
+					searchBox.setBounds(bounds);
+					setLatLong();
+				});
+				
+				google.maps.event.addListener(map, 'dragend', function() { 
+					setLatLong();
+				});
+				
+				function setLatLong() {
+					templocation = map.getCenter();
+					document.getElementById("lat").value =  templocation.k;
+					document.getElementById("long").value =  templocation.D;
+					Draw_Circle(parseFloat($("#radius").val()), parseFloat($("#lat").val()), parseFloat($("#long").val()));
+				}
+				
+				var draw_circle = null;
+
+				function Draw_Circle(m, latitude, longitude)     
+				{        
+					console.log(latitude);
+					console.log(longitude);
+					       
+					if (draw_circle != null)       
+					{         
+						draw_circle.setMap(null);       
+					}       
+					
+					draw_circle = new google.maps.Circle({         
+						center: new google.maps.LatLng(latitude, longitude),         
+						radius: m,         
+						strokeColor: "#FF0000",         
+						strokeOpacity: 0.8,         
+						strokeWeight: 2,         
+						fillColor: "#FF0000",         
+						fillOpacity: 0.35,         
+						map: map       
+						});
+					
+				}
+				
+				setLatLong();
+				
+				Draw_Circle(1,1,1); 
+			}
+			
+			
+			
+			google.maps.event.addDomListener(window, 'load', initialize);
 		</script>
 	</head>
 	<body>
@@ -64,34 +173,6 @@
 						</tr>
 						<tr>
 							<td>
-								Longetide (Optional):
-								<div class="infoicon">
-									<div class="popupinfo">
-										<h2>Longetide (Optional)</h2>
-										Explanation about this item.
-									</div>
-								</div>
-							</td>
-							<td>
-								<input type="text" name="long" placeholder="e.g. 51.50722" />
-							</td>
-						</tr>
-						<tr>
-							<td>
-								Latitude (Optional):
-								<div class="infoicon">
-									<div class="popupinfo">
-										<h2>Latitude (Optional)</h2>
-										Explanation about this item.
-									</div>
-								</div>
-							</td>
-							<td>
-								<input type="text" name="lat" placeholder="e.g. -0.12750" />
-							</td>
-						</tr>
-						<tr>
-							<td>
 								Live results:
 								<div class="infoicon">
 									<div class="popupinfo">
@@ -112,9 +193,90 @@
 						</tr>
 						<tr>
 							<td>
+								<table>
+									<tr>
+										<td>
+											Use location:
+											<div class="infoicon">
+												<div class="popupinfo">
+													<h2>Live results</h2>
+													Explanation about this item.
+												</div>
+											</div>
+										</td>
+										<td>
+											<div class="onoffswitch">
+											    <input type="checkbox" name="uselocation" class="onoffswitch-checkbox" id="myonoffswitch">
+											    <label class="onoffswitch-label" for="myonoffswitch">
+											        <span class="onoffswitch-inner"></span>
+											        <span class="onoffswitch-switch"></span>
+											    </label>
+											</div>
+										</td>
+									</tr>
+									
+									<tr>
+										<td>
+											Location Radius (Metres, Optional):
+											<div class="infoicon">
+												<div class="popupinfo">
+													<h2>Radius (Optional)</h2>
+													Explanation about this item.
+												</div>
+											</div>
+										</td>
+										<td>
+											<input type="text" id="radius" name="radius" placeholder="e.g. 1" value="1000" />
+										</td>
+									</tr>
+								</table>
 							</td>
 							<td>
-								<input type="submit" name="submit" value="Search" />
+								<table>
+									<tr>
+										<td>
+											Latitude (Optional):
+											<div class="infoicon">
+												<div class="popupinfo">
+													<h2>Latitude (Optional)</h2>
+													Explanation about this item.
+												</div>
+											</div>
+										</td>
+										<td>
+											<input type="text" id="lat" name="lat" placeholder="e.g. 51.50722" value="53.381796" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											Longetide (Optional):
+											<div class="infoicon">
+												<div class="popupinfo">
+													<h2>Longetide (Optional)</h2>
+													Explanation about this item.
+												</div>
+											</div>
+										</td>
+										<td>
+											<input type="text" id="long" name="long" placeholder="e.g. -0.12750" value="-1.480719" />
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<!--<iframe width="100%" height="150" frameborder="0" style="border:0" id="search-map-canvas"
+src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>-->
+								<input id="maps_input" type="text" name="location" placeholder="e.g. St. George's Church" />
+								<div style="border:0;width: 100%;height: 250px;" id="search-map-canvas"></div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+							</td>
+							<td class="clearfix">
+								<input class="right" type="submit" name="submit" value="Search" />
 							</td>
 						</tr>
 					</table>
