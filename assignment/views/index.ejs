@@ -29,6 +29,10 @@
 			function getFourAuth(token){
 				var four_token = token;
 			}
+			
+			
+			var map;
+			
 			function initialize() {
 			
 				var mapOptions = {
@@ -38,7 +42,7 @@
 				};
 			
 				var markers = [];
-				var map = new google.maps.Map(document.getElementById('search-map-canvas'), mapOptions);
+				map = new google.maps.Map(document.getElementById('search-map-canvas'), mapOptions);
 			
 				// Create the search box and link it to the UI element.
 				var input = document.getElementById('maps_input');
@@ -99,42 +103,50 @@
 				
 				function setLatLong() {
 					templocation = map.getCenter();
-					document.getElementById("lat").value =  templocation.k;
-					document.getElementById("long").value =  templocation.D;
-					Draw_Circle(parseFloat($("#radius").val()), parseFloat($("#lat").val()), parseFloat($("#long").val()));
+					document.getElementById("lat").value = parseFloat(templocation.k.toFixed(6));
+					document.getElementById("long").value = parseFloat(templocation.D.toFixed(6));
+					Draw_Circle();
 				}
-				
-				var draw_circle = null;
-
-				function Draw_Circle(m, latitude, longitude)     
-				{        
-					console.log(latitude);
-					console.log(longitude);
-					       
-					if (draw_circle != null)       
-					{         
-						draw_circle.setMap(null);       
-					}       
-					
-					draw_circle = new google.maps.Circle({         
-						center: new google.maps.LatLng(latitude, longitude),         
-						radius: m,         
-						strokeColor: "#FF0000",         
-						strokeOpacity: 0.8,         
-						strokeWeight: 2,         
-						fillColor: "#FF0000",         
-						fillOpacity: 0.35,         
-						map: map       
-						});
-					
-				}
-				
+								
 				setLatLong();
-				
-				Draw_Circle(1,1,1); 
 			}
 			
+			var draw_circle = null;
+			var lastm;
+			var lastlat;
+			var lastlong;
+
+			function Draw_Circle()     
+			{        
+				m = parseFloat($("#radius").val());
+				latitude = parseFloat($("#lat").val());
+				longitude = parseFloat($("#long").val());
+				
+				if (m == lastm && latitude == lastlat && longitude == lastlong)
+					return;
+				       
+				if (draw_circle != null)       
+				{         
+					draw_circle.setMap(null);       
+				}       
+				
+				draw_circle = new google.maps.Circle({         
+					center: new google.maps.LatLng(latitude, longitude),         
+					radius: m,         
+					strokeColor: "#FF0000",         
+					strokeOpacity: 0.8,         
+					strokeWeight: 2,         
+					fillColor: "#FF0000",         
+					fillOpacity: 0.35,         
+					map: map       
+					});
+				
+			}
 			
+			$(function(){
+				$("#radius, #lat, #long").on("keyup", function(){Draw_Circle();map.setCenter(new google.maps.LatLng(parseFloat($("#lat").val()), parseFloat($("#long").val())));});
+			});
+
 			
 			google.maps.event.addDomListener(window, 'load', initialize);
 
