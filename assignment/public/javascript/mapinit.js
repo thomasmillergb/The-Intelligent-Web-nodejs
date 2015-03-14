@@ -3,7 +3,7 @@ $(function(){
 	if (window.location.hash != "")
 		activeTab(window.location.hash.substring(1));
 
-	$("form").each(function(){
+	$("form.map_init").each(function(){
 		
 		var currentform = $(this);
 		

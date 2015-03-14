@@ -6,9 +6,9 @@
     
   </head>
   <body>
-<h1>End of the twit line</h1>
+<h1>Twitter API tokens obtained. Closing window.</h1>
 <script>
-	window.opener.getTwitAuth("<%=oauth.token%>", "<%=oauth.token_secret%>");
+	window.opener.setTwitterAuth("<%=oauth.token%>", "<%=oauth.token_secret%>");
 	window.close();
 </script>
 </body>

@@ -8,13 +8,10 @@
 		<script src="/javascript/mapinit.js"></script>
 		<script>
 			
+			var haveTwitterAPITokens = false;
+			var haveFourAPITokens = false;
 
-			var twitter_token;
-			var twitter_token_secret;
-			var four_token;
-			
-			//might want to store in a js file at some point :)
-
+			// Changes the active tab
 			function activeTab(id) {
 				$("#tab_container > div").css("display", "none");
 				$('#' + id).css("display", "block");
@@ -22,14 +19,21 @@
 				window.location.hash = '#' + id;
 			}
 			
+			// Opens child window in order to obtain API keys for Twitter
 			function twitterOAuth() {
 				// open popup window and pass field id
 				window.open('/auth/twitter', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
 			}
+			
+			// Opens child window in order to obtain API keys for FourSquare
 			function fourOAuth() {
 				// open popup window and pass field id
 				window.open('/auth/foursqaure', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
 			}
+			
+			
+			
+			// Not a clue what this does or what it is for
 			function getTwitAuth(token, token_secret){
 
 				var twitter_token = token;
@@ -55,27 +59,109 @@
 
 			}
 			
-			function getFourAuth(token){
-				four_token = token;
-			}
 			
+			// Gets a user and their tweets
 			function getUserAndTweets(username) {
+				
+				// TODO: Get tweets from AJAX and and them into the form before it opens
+				
 				toggleUserShow();
 			}
 			
+			// Toggles whether the client is focused on the user panel
 			function toggleUserShow() {
 				$("#tab_container, #user_container").toggleClass("hide");
 				$("html, body").animate({ scrollTop: 0 }, 300);
 			}
 			
+			// Callback function for Twitter child window
+			function setTwitterAuth(token, token_secret) {
+				localStorage.setItem('twitter_token', token);
+				localStorage.setItem('twitter_token_secret', token_secret);
+				
+				haveTwitterAPITokens = true;
+				
+				setRestrictions();
+			}
+			
+			// Callback function for FourSquare child window
+			function SetFourAuth(token){
+				localStorage.setItem('four_token', token);
+				
+				haveFourAPITokens = true;
+				
+				setRestrictions();
+			}
+			
+			// Unset the Twitter API tokens
+			function forgetTwitterAuth() {
+				localStorage.removeItem('twitter_token');
+				localStorage.removeItem('twitter_token_secret');
+				
+				haveTwitterAPITokens = false;
+				
+				setRestrictions();
+			}
+			
+			// Unset the FourSquare API tokens
+			function forgetFourAuth() {
+				localStorage.removeItem('four_token');
+				
+				haveFourAPITokens = false;
+				
+				setRestrictions();
+			}
+			
+			// Checks to see if we have api tokens on page load
+			$(function(){
+				
+				if (localStorage.getItem("twitter_token") !== null && localStorage.getItem("twitter_token_secret") !== null)
+					haveTwitterAPITokens = true;
+				else
+					haveTwitterAPITokens = false;
+				
+				if (localStorage.getItem("four_token") !== null)
+					haveFourAPITokens = true;
+				else
+					haveFourAPITokens = false;
+				
+				setRestrictions();
+				
+			});
+			
+			
+			// Applies restrictions to forms so that they can not be used if the user has not obtained API tokens
+			function setRestrictions() {
+				if (haveTwitterAPITokens)
+				{
+					$("body").removeClass("no_twitter");
+					$("body").addClass("twitter");
+					$("#twitter_api_button").addClass("check");
+				}
+				else
+				{
+					$("body").addClass("no_twitter");
+					$("body").removeClass("twitter");
+					$("#twitter_api_button").removeClass("check");
+				}
+					
+				if (haveFourAPITokens)
+				{
+					$("body").removeClass("no_four");
+					$("body").addClass("four");
+					$("#foursquare_api_button").addClass("check");
+				}
+				else
+				{
+					$("body").addClass("no_four");
+					$("body").removeClass("four");
+					$("#foursquare_api_button").removeClass("check");
+				}
 
-			function getOauth(token, token_secret) {
-				var twitter_token = token;
-				var twitter_token_secret = token_secret;
 			}
 		</script>
 	</head>
-	<body>
+	<body class="no_twitter no_four">
 		<header>
 			<%= title %>
 		</header>
@@ -89,15 +175,18 @@
 			</div>
 			<div id="right">
 				<div class="title">Log in to API:</div>
-				<div class="fake_nav_button">
-				Twitter
-				<div class="hover_container">
-					<a href="javascript:twitterOAuth()" class="button">Twitter</a>
+				<div id="twitter_api_button" class="fake_nav_button">
+					Twitter
+					<div class="hover_container ">
+						<a href="javascript:twitterOAuth()" class="button no_twitter_show">Login</a>
+						<a href="javascript:forgetTwitterAuth()" class="button have_twitter_show">Logout</a>
 					</div>
-					</div><div class="fake_nav_button">
+				</div>
+				<div id="foursquare_api_button" class="fake_nav_button">
 					FourSquare
-					<div class="hover_container">
-						<a href="javascript:fourOAuth()" class="button">FourSquare</a>
+					<div class="hover_container ">
+						<a href="javascript:fourOAuth()" class="button no_four_show">Login</a>
+						<a href="javascript:forgetFourAuth()" class="button have_four_show">Logout</a>
 					</div>
 				</div>
 			</div>
@@ -107,8 +196,8 @@
 				<div class="center_wrapper">
 					<h1>Discussion search</h1>
 					Tracking public discussions on specific topics (e.g. via hashtags or keywords): input keywords and/or hashtags. Outputs a list of messages containing the required keyword/hashtags. Its possible to limit the query to a specific geographic region.
-					<form>
-						<table>
+					<form class="map_init">
+						<table class="req_twitter_api">
 							<tr>
 								<td>
 									Search:
@@ -326,8 +415,8 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 				<div class="center_wrapper">
 					<h1>Specific user discussion search</h1>
 					What specific users discuss about: the ids/screen_names of up to 10 users are provided in input and the most frequent Y keywords used in the last Z days must be displayed (with associated total count, as well as count for each users). Input: user ids, Y, Z – with Z >1
-					<form>
-						<table>
+					<form class="map_init">
+						<table class="req_twitter_api">
 							<tr>
 								<td>
 									Screen Names/IDs:
@@ -549,7 +638,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 					<h1>User venues search</h1>
 					What points of interest (venues) a specific user has visited in the last X days (input: user id, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published)
 					<form>
-						<table>
+						<table class="req_twitter_api">
 							<tr>
 								<td>
 									Screen Name/ID:
@@ -652,8 +741,8 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 				<div class="center_wrapper">
 					<h1>Venue search</h1>
 					Who is visiting venues in a specific geographic area (or visiting a named venue) or have done so in the last X days (input: name of location or coordinates, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published).
-					<form>
-						<table>
+					<form class="map_init">
+						<table class="req_twitter_api">
 							<tr>
 								<td>
 									Number of Days:

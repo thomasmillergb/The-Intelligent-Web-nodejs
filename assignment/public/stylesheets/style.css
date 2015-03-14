@@ -57,6 +57,19 @@ nav .nav_button, nav .fake_nav_button {
 	width: auto;
 }
 
+.fake_nav_button.check:after {
+	position: absolute;
+	bottom: 0px;
+	right: 4px;
+	margin-bottom: -5px;
+	content: " ";
+	display: block;
+	background: url(../images/check.png) no-repeat;
+	z-index: 11;
+	width: 16px;
+	height: 16px;
+}
+
 nav .title {
 	margin-right: 10px;
 	float: left;
@@ -446,4 +459,53 @@ table table {
 	padding: 10px;
 	border: 1px solid #ddd;
 	color: #363d43;
+}
+
+.req_twitter_api, .req_four_api {
+	position: relative;
+}
+
+.no_twitter .req_twitter_api:after, .no_four .req_four_api:after {
+	z-index: 9;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	display: block;
+	content: " ";
+	color: #111;
+	background: rgba(255,255,255,.8);
+	top: 0;
+	left: 0;
+	padding: 100px;
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 20px;
+}
+
+.no_twitter .req_twitter_api:after {
+	content: "Please login to the Twitter API to use this functionality.";
+}
+
+.no_four .req_four_api:after {
+	content: "Please login to the FourSquare API to use this functionality.";
+}
+
+.no_four_show, .have_four_show, .no_twitter_show, .have_twitter_show {
+	display: none !important;
+}
+
+.twitter .have_twitter_show {
+	display: block !important;
+}
+
+.no_twitter .no_twitter_show {
+	display: block !important;
+}
+
+.four .have_four_show {
+	display: block !important;
+}
+
+.no_four .no_four_show {
+	display: block !important;
 }
