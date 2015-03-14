@@ -10,7 +10,10 @@
 			//might want to store in a js file at some point :)
 			function activeTab(id) {
 				$("#tab_container > div").css("display", "none");
+				$('.search-map-canvas').css("height", "0px");
 				$('#' + id).css("display", "block");
+				$('#' + id).find('.search-map-canvas').css("height", "250px");
+				
 			}
 			
 			function twitterOAuth() {
@@ -105,6 +108,11 @@
 						  setLatLong();
 						});
 						
+						$(".nav_button").on("mouseup", function(){
+							console.log("asd");
+							google.maps.event.trigger(map, 'resize');
+						});
+						
 						google.maps.event.addListener(map, 'dragend', function() { 
 						  setLatLong();
 						});
@@ -176,8 +184,11 @@
 		</header>
 		<nav>
 			<div id="left">
-			<div class="title">Find Tweets by:</div>
-			<a href="javascript:activeTab('content_tab')" class="nav_button">Content</a><a href="javascript:activeTab('people_tab')" class="nav_button">People</a><a href="javascript:activeTab('location_tab')" class="nav_button">Location</a>
+			<div class="title">Search:</div>
+			<a href="javascript:void(0)" onmousedown="activeTab('discussion_tab')" class="nav_button">Discussion</a>
+			<a href="javascript:void(0)" onmousedown="activeTab('user_dicussion_tab')" class="nav_button">Specific users discussion</a>
+			<a href="javascript:void(0)" onmousedown="activeTab('user_venue_tab')" class="nav_button">User venues</a>
+			<a href="javascript:void(0)" onmousedown="activeTab('venues_tab')" class="nav_button">Venues</a>
 			</div>
 			<div id="right">
 				<div class="title">Log in to API:</div>
@@ -195,9 +206,10 @@
 			</div>
 		</nav>
 		<div id="tab_container">
-			<div id="content_tab">
-				<div class="search_wrapper">
-					<h1>Twitter search by content</h1>
+			<div id="discussion_tab">
+				<div class="center_wrapper">
+					<h1>Discussion search</h1>
+					Tracking public discussions on specific topics (e.g. via hashtags or keywords): input keywords and/or hashtags. Outputs a list of messages containing the required keyword/hashtags. Its possible to limit the query to a specific geographic region.
 					<form>
 						<table>
 							<tr>
@@ -324,9 +336,9 @@
 							</tr>
 						</table>
 					</form>
-				</div>
-				<hr>
-				<div class="return_tweet_wrapper">
+					
+					<hr>
+					
 					<h1>Tweets</h1>
 					<span>Hit submit above to discover tweets</span>
 				
@@ -361,7 +373,9 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 							</td>
 						</tr>
 					</table>
+					
 					<hr>
+					
 					<table class="tweet_table">
 						<tr>
 							<td width="300px">
@@ -394,11 +408,11 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 						</tr>
 					</table>
 				</div>
-				
 			</div>
-			<div id="people_tab">
-				<div class="search_wrapper">
-					<h1>Twitter search by people</h1>
+			<div id="user_dicussion_tab">
+				<div class="center_wrapper">
+					<h1>Specific user discussion search</h1>
+					What specific users discuss about: the ids/screen_names of up to 10 users are provided in input and the most frequent Y keywords used in the last Z days must be displayed (with associated total count, as well as count for each users). Input: user ids, Y, Z – with Z >1
 					<form>
 						<table>
 							<tr>
@@ -553,9 +567,11 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 							</tr>
 						</table>
 					</form>
-				</div>
-				<hr>
-					<div class="tweet_results_wrapper">
+				
+					<hr>
+					<h1>Tweets</h1>
+					<span>Hit submit above to discover tweets</span>
+
 						<table>
 							<tr>
 								<td>
@@ -608,9 +624,8 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 								</td>
 							</tr>
 						</table>
-					</div>
-				<hr>
-				<div class="return_tweet_wrapper">
+					<hr>
+
 					<h1>Tweets</h1>
 					<span>Hit submit above to discover tweets</span>
 				
@@ -647,11 +662,21 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 					</table>
 				</div>
 			</div>
-			<div id="location_tab">
-				<div class="search_wrapper">
-					<h1>Twitter search by location</h1>
+			<div id="user_venue_tab">
+				<div class="center_wrapper">
+					<h1>User venues search</h1>
+					What points of interest (venues) a specific user has visited in the last X days (input: user id, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published)
 				</div>
 			</div>
+			<div id="venues_tab">
+				<div class="center_wrapper">
+					<h1>Venues search</h1>
+					Who is visiting venues in a specific geographic area (or visiting a named venue) or have done so in the last X days (input: name of location or coordinates, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published).
+				</div>
+			</div>
+		</div>
+		<div id="copyright">
+			Copyright Group N+1 2015.
 		</div>
 	</body>
 </html>
