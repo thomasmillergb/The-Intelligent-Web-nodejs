@@ -115,7 +115,7 @@ nav #right .fake_nav_button:hover .hover_container, nav #right .fake_nav_button 
 	background: linear-gradient(to bottom, #61bfef 0%,#47a6d7 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61bfef', endColorstr='#47a6d7',GradientType=0 );
 	border: none;
-	border-radius: 3px;
+	border-radius: 5px;
 	-webkit-transition: all 0.2s ease-out;
 	transition: all 0.2s ease-out;
 	text-decoration: none;
@@ -177,7 +177,7 @@ input[type="text"] {
     background: #fff;
     background: -webkit-gradient(linear, left top, left 25, from(#fff), color-stop(4%, #fafafa), to(#fff));
     background: -moz-linear-gradient(top, #fff, #fafafa 1px, #fff 25px);
-    border-radius: 3px;
+    border-radius: 5px;
 }
 
 input[type="text"]:focus {
@@ -345,6 +345,7 @@ hr {
 
 table table {
 	padding: 0 20px 0 0;
+	margin: 0;
 }
 
 .tweet_table a {
@@ -419,4 +420,11 @@ table table {
 	text-align: center;
 	font-size: 14px;
 	text-shadow: 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+#search-map-canvas {
+	border:0;
+	width: 100%;
+	height: 250px;
+	margin: 10px 0;
 }
