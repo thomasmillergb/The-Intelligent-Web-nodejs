@@ -12,7 +12,7 @@
 				$("#tab_container > div").css("display", "none");
 				$('#' + id).css("display", "block");
 				$("html, body").animate({ scrollTop: 0 }, 300);
-				
+				window.location.hash = '#' + id;
 			}
 			
 			function twitterOAuth() {
@@ -35,6 +35,9 @@
 			}
 			
 			$(function(){
+				
+				if (window.location.hash != "")
+					activeTab(window.location.hash.substring(1));
 			
 				$("form").each(function(){
 					
