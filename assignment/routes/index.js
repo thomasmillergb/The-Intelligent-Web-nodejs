@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
 	//console.log(req);
 	console.log(req.body);
-  res.render('index', { title: 'Social Tracker - Team N+1', req.body});
+  res.render('index', { title: 'Social Tracker - Team N+1', twit :req.body});
 
 });
 
