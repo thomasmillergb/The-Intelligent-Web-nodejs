@@ -8,6 +8,10 @@
 		<script src="/javascript/mapinit.js"></script>
 		<script>
 			
+			var twitter_token;
+			var twitter_token_secret;
+			var four_token;
+			
 			//might want to store in a js file at some point :)
 			function activeTab(id) {
 				$("#tab_container > div").css("display", "none");
@@ -25,17 +29,22 @@
 				window.open('/auth/foursqaure', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
 			}
 			function getTwitAuth(token, token_secret){
-				var twitter_token = token;
-				var twitter_token_secret = token_secret;
+				twitter_token = token;
+				twitter_token_secret = token_secret;
 			}
 			
-			function getFourAuth(tokenf){
-				var four_token = tokenf;
-				
-				
+			function getFourAuth(token){
+				four_token = token;
 			}
 			
+			function getUserAndTweets(username) {
+				toggleUserShow();
+			}
 			
+			function toggleUserShow() {
+				$("#tab_container, #user_container").toggleClass("hide");
+				$("html, body").animate({ scrollTop: 0 }, 300);
+			}
 			
 
 			function getOauth(token, token_secret) {
@@ -190,7 +199,9 @@
 									<!--<iframe width="100%" height="150" frameborder="0" style="border:0" id="search-map-canvas"
 	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>-->
 									<input class="maps_input" type="text" name="location" placeholder="e.g. St. George's Church" />
-									<div class="search-map-canvas"></div>
+									<div class="map_wrapper">
+										<div class="search-map-canvas"></div>
+									</div>
 								</td>
 							</tr>
 							<tr>
@@ -225,7 +236,7 @@
 								<span class="dark">Joined</span> May 2011<br><br>
 								
 								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>
-								<a href="#">View profile and Tweets</a>
+								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View profile and Tweets</a>
 								
 								
 								
@@ -235,9 +246,11 @@
 								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
 								0 Favourites, 0 Re-Tweets<br><br>
 								Tweeted from:<br>
-								<iframe width="100%" height="150" frameborder="0" style="border:0"
-src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe><br><br>
-<center><a href="javascript:void(0)">See replies to tweet</a></center>
+								<div class="map_wrapper">
+									<iframe width="100%" height="150" frameborder="0" style="border:0"
+src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
+								</div><br><br>
+								<center><a href="javascript:void(0)">See replies to tweet</a></center>
 							</td>
 						</tr>
 					</table>
@@ -261,7 +274,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 								<span class="dark">Joined</span> May 2011<br><br>
 								
 								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>
-								<a href="#">View profile and Tweets</a>
+								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">
 
 								
 								
@@ -271,9 +284,11 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
 								0 Favourites, 0 Re-Tweets<br><br>
 								Tweeted from:<br>
-								<iframe width="100%" height="150" frameborder="0" style="border:0"
-src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe><br><br>
-<center><a href="javascript:void(0)">See replies to tweet</a></center>
+								<div class="map_wrapper">
+									<iframe width="100%" height="150" frameborder="0" style="border:0"
+src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
+								</div><br><br>
+								<center><a href="javascript:void(0)">See replies to tweet</a></center>
 							</td>
 						</tr>
 					</table>
@@ -425,7 +440,9 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 									<!--<iframe width="100%" height="150" frameborder="0" style="border:0" id="search-map-canvas"
 	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>-->
 									<input class="maps_input" type="text" name="location" placeholder="e.g. St. George's Church" />
-									<div class="search-map-canvas"></div>
+									<div class="map_wrapper">
+										<div class="search-map-canvas"></div>
+									</div>
 								</td>
 							</tr>
 							<tr>
@@ -448,15 +465,15 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 							</td>
 							<td>
 								jtmcilveen<br>
-								<a href="#">View profile and Tweets</a>
+								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">
 							</td>
 							<td>
 								fabcira<br>
-								<a href="#">View profile and Tweets</a>
+								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">
 							</td>
 							<td>
 								stephenfry<br>
-								<a href="#">View profile and Tweets</a>
+								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">
 							</td>
 							<td>
 								Total<br>
@@ -566,7 +583,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 					<hr>
 					<h1>User venues</h1>
 					Here are the venues for <a href="#">@jtmcilveen</a><br>
-					<a href="#">View profile and Tweets</a>
+					<a href="javascript:void(0)" onclick="getUserAndTweets('none')">
 
 					<table class="tweet_results_table" cellspacing="0">
 						<tr>
@@ -596,8 +613,10 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 					<hr>
 					<h1>Location of Tweets</h1>
 					<div class="white_container">
-						<iframe width="100%" height="350" frameborder="0" style="border:0"
+						<div class="map_wrapper">
+							<iframe width="100%" height="350" frameborder="0" style="border:0"
 	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -698,7 +717,9 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 									<!--<iframe width="100%" height="150" frameborder="0" style="border:0" id="search-map-canvas"
 	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>-->
 									<input class="maps_input" type="text" name="location" placeholder="e.g. St. George's Church" />
-									<div class="search-map-canvas"></div>
+									<div class="map_wrapper">
+										<div class="search-map-canvas"></div>
+									</div>
 								</td>
 							</tr>
 							<tr>
@@ -725,7 +746,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 						<tr>
 							<td>
 								<a href="#">@jtmcilveen</a><br>
-								<a href="#">View profile and Tweets</a>
+								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">
 							</td>
 							<td>
 								1
@@ -734,7 +755,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 						<tr>
 							<td>
 								<a href="#">@jtmcilveen</a><br>
-								<a href="#">View profile and Tweets</a>
+								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">
 							</td>
 							<td>
 								1
@@ -743,7 +764,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 						<tr>
 							<td>
 								<a href="#">@jtmcilveen</a><br>
-								<a href="#">View profile and Tweets</a>
+								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">
 							</td>
 							<td>
 								1
@@ -753,9 +774,55 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 					<hr>
 					<h1>Location of Tweets</h1>
 					<div class="white_container">
-						<iframe width="100%" height="350" frameborder="0" style="border:0"
+						<div class="map_wrapper">
+							<iframe width="100%" height="350" frameborder="0" style="border:0"
 	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
+						</div>
 					</div>
+				</div>
+			</div>
+		</div>
+		<div id="user_container" class="hide">
+			<div class="center_wrapper">
+				<h1><a href="javascript:void(0)" onclick="toggleUserShow()">Back</a> - <a href="#">@jtmcilveen</a>'s profile</h1>
+				<hr>
+			
+				<table class="tweet_table">
+					<tr>
+						<td width="300px">
+							<div class="profile_top clearfix">
+								<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
+								<div class="name_wrapper">
+									<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
+									<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
+								</div>
+							</div>
+						</td>
+						<td>							
+							<span class="dark">Location</span> Whaley Bridge<br>
+							<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
+							<span class="dark">Joined</span> May 2011<br><br>
+							
+							<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span>
+								
+						</td>
+					</tr>
+				</table>
+				
+				<hr>
+				<h1>Tweets</h1>
+				Below are the last 100 tweets for <a href="#">@jtmcilveen</a>
+				
+				<div class="white_container">
+							<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
+							<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
+							0 Favourites, 0 Re-Tweets<br><br>
+							Tweeted from:<br>
+							<div class="map_wrapper">
+								<iframe width="100%" height="150" frameborder="0" style="border:0"
+src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
+							</div><br><br>
+							<center><a href="javascript:void(0)">See replies to tweet</a></center>
 				</div>
 			</div>
 		</div>

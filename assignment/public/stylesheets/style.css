@@ -133,11 +133,15 @@ nav #right .fake_nav_button:hover .hover_container, nav #right .fake_nav_button 
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#28a7e7', endColorstr='#1e98d6',GradientType=0 );
 }
 
-#tab_container {
+#tab_container, #user_container {
 	width: 100%;
 	padding: 20px;
 	box-sizing: border-box;
 	margin-top: 80px;
+}
+
+.hide {
+	display: none;
 }
 
 #tab_container h1 {
@@ -391,11 +395,11 @@ table table {
 	height: 0;
 }
 
-.tweet_table .profile_top {
+.tweet_table .profile_top, .white_container .profile_top {
 	margin-bottom: 20px;
 }
 
-.tweet_table .tweet {
+.tweet_table .tweet, .white_container .tweet {
 	font-size: 24px;
 	color: #363d43;
 	margin: 10px 0;
@@ -426,6 +430,11 @@ table table {
 	width: 100%;
 	height: 250px;
 	margin: 10px 0;
+	
+}
+
+.map_wrapper {
+	background: url(../images/loader.gif) center center no-repeat;	
 }
 
 .tweet_results_table {
