@@ -26,6 +26,57 @@ header, nav {
 }
 
 header {
+	z-index: 13;
+}
+
+#loading_overlay {
+	display: none;	
+}
+
+.loading #loading_overlay {
+	display: block;
+	position: fixed;
+	z-index: 11;
+	background: url(../images/lightloader.gif) center center no-repeat, rgba(0, 0, 0, 0.8);
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+#notification_wrapper {
+	display: block;
+	position: fixed;
+	z-index: 12;
+	width: 300px;
+	right: 20px;
+	bottom: 20px;
+}
+
+#notification_wrapper .notification {
+	width: 100%;
+	padding: 20px;
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.8);
+	border: 1px solid rgba(0,0,0,0.9);
+	color: #fff;
+	box-sizing: border-box;
+	margin-top: 20px;
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+	position: relative;
+}
+
+#notification_wrapper .notification:after {
+	content: "Click to close";
+	display: block;
+	color: rgba(255, 255, 255, .3);
+	font-size: 12px;
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+header {
 	background: #1a1a1a;
 	text-shadow: 0 -1px rgba(0,0,0,0.2);
 	top: 0;

@@ -159,6 +159,56 @@
 				}
 
 			}
+			
+			// Toggle functon for the loading overlay
+			function loadingOverlay(loading) {
+				if (loading)
+					$("body").addClass("loading");
+				else
+					$("body").removeClass("loading");
+			}
+			
+			// Intercepts form submits and cancels default action
+			$(function(){
+				$("form").submit(function(e){
+					
+					loadingOverlay(true);
+					
+					e.preventDefault();
+				    return false;
+				});
+			});
+			
+			// Adds a notification to the screen that will eventually fade and delete
+			function addNotification(title, message, duration) {
+				
+				html = "<div class=\"notification\"><h4>" + title + "</h4>" + message + "</div>";
+				
+				var notification = $(html).appendTo('#notification_wrapper');
+				
+				timeout = setTimeout(function(){notification.fadeOut(300, function() { $(this).remove(); });}, duration);
+				
+				notification.click(function(){clearTimeout(timeout);notification.fadeOut(300, function() { $(this).remove(); });});
+
+			}
+			
+			
+			$(function(){
+				$("form").submit(function(e){
+					
+					loadingOverlay(true);
+					
+					e.preventDefault();
+				    return false;
+				});
+				
+				
+				addNotification("tets", "asdadadasd asdas asdas dad a", 5000);
+				setTimeout(function(){addNotification("test 2", "asdaasd asd dadasd asdas asdas dad a", 2000);}, 1000);
+				setTimeout(function(){addNotification("test 3", "asdaasd asd dadasd asdas asdas dad a", 3000);}, 6000);
+				
+			});
+			
 		</script>
 	</head>
 	<body class="no_twitter no_four">
@@ -191,12 +241,18 @@
 				</div>
 			</div>
 		</nav>
+		<div id="notification_wrapper">
+
+		</div>
+		<div id="loading_overlay">
+			
+		</div>
 		<div id="tab_container">
 			<div id="discussion_tab">
 				<div class="center_wrapper">
 					<h1>Discussion search</h1>
 					Tracking public discussions on specific topics (e.g. via hashtags or keywords): input keywords and/or hashtags. Outputs a list of messages containing the required keyword/hashtags. Its possible to limit the query to a specific geographic region.
-					<form class="map_init">
+					<form action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
 								<td>
@@ -415,7 +471,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 				<div class="center_wrapper">
 					<h1>Specific user discussion search</h1>
 					What specific users discuss about: the ids/screen_names of up to 10 users are provided in input and the most frequent Y keywords used in the last Z days must be displayed (with associated total count, as well as count for each users). Input: user ids, Y, Z – with Z >1
-					<form class="map_init">
+					<form action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
 								<td>
@@ -637,7 +693,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 				<div class="center_wrapper">
 					<h1>User venues search</h1>
 					What points of interest (venues) a specific user has visited in the last X days (input: user id, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published)
-					<form>
+					<form action="/" method="post">
 						<table class="req_twitter_api">
 							<tr>
 								<td>
@@ -741,7 +797,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 				<div class="center_wrapper">
 					<h1>Venue search</h1>
 					Who is visiting venues in a specific geographic area (or visiting a named venue) or have done so in the last X days (input: name of location or coordinates, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published).
-					<form class="map_init">
+					<form action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
 								<td>
