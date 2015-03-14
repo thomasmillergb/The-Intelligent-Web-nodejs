@@ -15,4 +15,9 @@ router.get('/endoftwit', function(req, res, next) {
   res.render('endoftwit', { title: 'Social Tracker', oauth:req.session.oauth });
 
 });
+
+router.get('/endoffour', function(req, res, next) {
+  res.render('endoftwit', { title: 'Social Tracker', oauth:req.session.oauth });
+
+});
 module.exports = router;

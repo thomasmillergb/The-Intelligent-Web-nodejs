@@ -49,8 +49,8 @@ module.exports = function(app){
 				} else {
 					req.session.oauth.access_token = oauth_access_token;
 					req.session.oauth,access_token_secret = oauth_access_token_secret;
-					//console.log(req.session.oauth);
-					res.send(req.session.oauth);
+					console.log(req.session.oauth);
+					res.send("worked. nice one.");
 				}
 			}
 			);

@@ -17,7 +17,18 @@
 				// open popup window and pass field id
 				window.open('/auth/twitter', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
 			}
+			function fourOAuth() {
+				// open popup window and pass field id
+				window.open('/auth/foursqaure', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
+			}
+			function getTwitAuth(token, token_secret){
+				var twitter_token = token;
+				var twitter_token_secret = token_secret;
+			}
 			
+			function getFourAuth(token){
+				var four_token = token;
+			}
 			function initialize() {
 			
 				var mapOptions = {
@@ -152,7 +163,7 @@
 					</div><div class="fake_nav_button">
 					FourSquare
 					<div class="hover_container">
-						<a href="javascript:void(0)" class="button">FourSquare</a>
+						<a href="javascript:fourOAuth()" class="button">FourSquare</a>
 					</div>
 				</div>
 			</div>

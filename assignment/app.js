@@ -13,7 +13,8 @@ var Twit = require('twit');
 
 var OAuthTwitter = require('./oAuth/twitter.js');
 OAuthTwitter(app);
-
+var OAuth2Foursqaure = require('./oAuth/foursquare.js');
+OAuth2Foursqaure(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

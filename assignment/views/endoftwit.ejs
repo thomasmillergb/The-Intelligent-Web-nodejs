@@ -7,14 +7,15 @@
   </head>
   <body>
 <h1>End of the twit line </h1>
-</body>
 <script>
 
-window.opener.getOauth("<%= oauth.token%>" , "<%= oauth.token_secret%>");
+window.opener.getTwitAuth("<%= oauth.token%>","<%= oauth.token_secret%>");
 window.close();
 
 </script>
+</body>
 
 
-</head>
+
+
 </html>
