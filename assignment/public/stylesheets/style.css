@@ -153,13 +153,17 @@ nav #right .fake_nav_button:hover .hover_container, nav #right .fake_nav_button 
 	display: block;
 }
 
-table {
+table, .white_container {
 	margin: 20px auto;
 	width: 100%;
 	table-layout: fixed;
 	background: #fff;
 	border-radius: 6px;
 	padding: 20px;
+}
+
+.white_container {
+	box-sizing: border-box;
 }
 
 table td {
@@ -344,12 +348,12 @@ table table {
 	margin: 0;
 }
 
-.tweet_table a {
+.center_wrapper a {
 	color: #61bfef;
 	text-decoration: none;
 }
 
-.tweet_table a:hover {
+.center_wrapper a:hover {
 	text-decoration: underline;
 }
 
@@ -424,21 +428,13 @@ table table {
 	margin: 10px 0;
 }
 
-.tweet_results_wrapper {
+.tweet_results_table {
 	width: 95%;
-	background: #fff;
-	border-radius: 6px;
-	margin: 0 auto 20px auto;
-	padding: 20px 0;
+	margin: 20px;
 }
 
-.tweet_results_wrapper table {
-	width: 95%;
-	border-collapse: collapse;
-	margin: 0 auto;
-}
-
-.tweet_results_wrapper td {
+.tweet_results_table td {
 	padding: 10px;
-	border: 1px solid #bbb;
+	border: 1px solid #ddd;
+	color: #363d43;
 }

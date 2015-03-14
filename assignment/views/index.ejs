@@ -10,9 +10,8 @@
 			//might want to store in a js file at some point :)
 			function activeTab(id) {
 				$("#tab_container > div").css("display", "none");
-				$('.search-map-canvas').css("height", "0px");
 				$('#' + id).css("display", "block");
-				$('#' + id).find('.search-map-canvas').css("height", "250px");
+				$("html, body").animate({ scrollTop: 0 }, 300);
 				
 			}
 			
@@ -188,7 +187,7 @@
 			<a href="javascript:void(0)" onmousedown="activeTab('discussion_tab')" class="nav_button">Discussion</a>
 			<a href="javascript:void(0)" onmousedown="activeTab('user_dicussion_tab')" class="nav_button">Specific users discussion</a>
 			<a href="javascript:void(0)" onmousedown="activeTab('user_venue_tab')" class="nav_button">User venues</a>
-			<a href="javascript:void(0)" onmousedown="activeTab('venues_tab')" class="nav_button">Venues</a>
+			<a href="javascript:void(0)" onmousedown="activeTab('venue_tab')" class="nav_button">Venue</a>
 			</div>
 			<div id="right">
 				<div class="title">Log in to API:</div>
@@ -358,7 +357,9 @@
 								<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
 								<span class="dark">Joined</span> May 2011<br><br>
 								
-								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span>
+								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>
+								<a href="#">View profile and Tweets</a>
+								
 								
 								
 							</td>
@@ -392,7 +393,9 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 								<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
 								<span class="dark">Joined</span> May 2011<br><br>
 								
-								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span>
+								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>
+								<a href="#">View profile and Tweets</a>
+
 								
 								
 							</td>
@@ -572,91 +575,58 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 					<h1>Tweets</h1>
 					<span>Hit submit above to discover tweets</span>
 
-						<table>
-							<tr>
-								<td>
-								</td>
-								<td>
-									jtmcilveen
-								</td>
-								<td>
-									fabcira
-								</td>
-								<td>
-									stephenfry
-								</td>
-								<td>
-									total
-								</td>
-							</tr>
-							<tr>
-								<td>
-									London
-								</td>
-								<td>
-									5
-								</td>
-								<td>
-									2
-								</td>
-								<td>
-									6
-								</td>
-								<td>
-									13
-								</td>
-							</tr>
-							<tr>
-								<td>
-									Music
-								</td>
-								<td>
-									3
-								</td>
-								<td>
-									4
-								</td>
-								<td>
-									1
-								</td>
-								<td>
-									8
-								</td>
-							</tr>
-						</table>
-					<hr>
-
-					<h1>Tweets</h1>
-					<span>Hit submit above to discover tweets</span>
-				
-					<table class="tweet_table">
+					<table class="tweet_results_table" cellspacing="0">
 						<tr>
-							<td width="300px">
-								<div class="profile_top clearfix">
-									<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
-									<div class="name_wrapper">
-										<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
-										<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
-									</div>
-								</div>
-								
-								
-								<span class="dark">Location</span> Whaley Bridge<br>
-								<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
-								<span class="dark">Joined</span> May 2011<br><br>
-								
-								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span>
-								
-								
+							<td>
 							</td>
 							<td>
-								<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
-								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
-								0 Favourites, 0 Re-Tweets<br><br>
-								Tweeted from:<br>
-								<iframe width="100%" height="150" frameborder="0" style="border:0"
-src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe><br><br>
-<center><a href="javascript:void(0)">See replies to tweet</a></center>
+								jtmcilveen<br>
+								<a href="#">View profile and Tweets</a>
+							</td>
+							<td>
+								fabcira<br>
+								<a href="#">View profile and Tweets</a>
+							</td>
+							<td>
+								stephenfry<br>
+								<a href="#">View profile and Tweets</a>
+							</td>
+							<td>
+								Total<br>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								London
+							</td>
+							<td>
+								5
+							</td>
+							<td>
+								2
+							</td>
+							<td>
+								6
+							</td>
+							<td>
+								13
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Music
+							</td>
+							<td>
+								3
+							</td>
+							<td>
+								4
+							</td>
+							<td>
+								1
+							</td>
+							<td>
+								8
 							</td>
 						</tr>
 					</table>
@@ -666,12 +636,259 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 				<div class="center_wrapper">
 					<h1>User venues search</h1>
 					What points of interest (venues) a specific user has visited in the last X days (input: user id, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published)
+					<form>
+						<table>
+							<tr>
+								<td>
+									Screen Name/ID:
+									<div class="infoicon">
+										<div class="popupinfo">
+											<h2>Screen Name/ID</h2>
+											Explanation about this item.
+										</div>
+									</div>
+								</td>
+								<td>
+									<input type="text" name="screenname" placeholder="e.g. jtmcilven, fabcira, stephenfry" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Number of Days:
+									<div class="infoicon">
+										<div class="popupinfo">
+											<h2>Number of Days</h2>
+											Explanation about this item.
+										</div>
+									</div>
+								</td>
+								<td>
+									<input type="text" name="days" placeholder="e.g. 5 - 0 or less enables live results" value="5" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Live results:
+									<div class="infoicon">
+										<div class="popupinfo">
+											<h2>Live results</h2>
+											Explanation about this item.
+										</div>
+									</div>
+								</td>
+								<td>
+									<div class="onoffswitch">
+									    <input type="checkbox" name="liveresults_people" class="onoffswitch-checkbox" id="liveresults_people">
+									    <label class="onoffswitch-label" for="liveresults_people">
+									        <span class="onoffswitch-inner"></span>
+									        <span class="onoffswitch-switch"></span>
+									    </label>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+								</td>
+								<td class="clearfix">
+									<input class="right" type="submit" name="submit" value="Search" />
+								</td>
+							</tr>
+						</table>
+					</form>
+				
+					<hr>
+					<h1>User venues</h1>
+					Here are the venues for <a href="#">@jtmcilveen</a><br>
+					<a href="#">View profile and Tweets</a>
+
+					<table class="tweet_results_table" cellspacing="0">
+						<tr>
+							<td>
+								Venue
+							</td>
+							<td>
+								Lat/Long
+							</td>
+							<td>
+								Number of visits
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Sheffield
+							</td>
+							<td>
+								53.371143,-1.392339
+							</td>
+							<td>
+								1
+							</td>
+						</tr>
+					</table>
+
+					<hr>
+					<h1>Location of Tweets</h1>
+					<div class="white_container">
+						<iframe width="100%" height="350" frameborder="0" style="border:0"
+	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
+					</div>
 				</div>
 			</div>
-			<div id="venues_tab">
+			<div id="venue_tab">
 				<div class="center_wrapper">
-					<h1>Venues search</h1>
+					<h1>Venue search</h1>
 					Who is visiting venues in a specific geographic area (or visiting a named venue) or have done so in the last X days (input: name of location or coordinates, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published).
+					<form>
+						<table>
+							<tr>
+								<td>
+									Number of Days:
+									<div class="infoicon">
+										<div class="popupinfo">
+											<h2>Number of Days</h2>
+											Explanation about this item.
+										</div>
+									</div>
+								</td>
+								<td>
+									<input type="text" name="days" placeholder="e.g. 5 - 0 or less enables live results" value="5" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Live results:
+									<div class="infoicon">
+										<div class="popupinfo">
+											<h2>Live results</h2>
+											Explanation about this item.
+										</div>
+									</div>
+								</td>
+								<td>
+									<div class="onoffswitch">
+									    <input type="checkbox" name="liveresults_people" class="onoffswitch-checkbox" id="liveresults_people">
+									    <label class="onoffswitch-label" for="liveresults_people">
+									        <span class="onoffswitch-inner"></span>
+									        <span class="onoffswitch-switch"></span>
+									    </label>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<table>
+										<tr>
+											<td>
+												Location Radius (Metres, Optional):
+												<div class="infoicon">
+													<div class="popupinfo">
+														<h2>Radius (Optional)</h2>
+														Explanation about this item.
+													</div>
+												</div>
+											</td>
+											<td>
+												<input type="text" class="radius" name="radius" placeholder="e.g. 1" value="1000" />
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td>
+									<table>
+										<tr>
+											<td>
+												Latitude (Optional):
+												<div class="infoicon">
+													<div class="popupinfo">
+														<h2>Latitude (Optional)</h2>
+														Explanation about this item.
+													</div>
+												</div>
+											</td>
+											<td>
+												<input type="text" class="lat" name="lat" placeholder="e.g. 51.50722" value="53.381796" />
+											</td>
+										</tr>
+										<tr>
+											<td>
+												Longetide (Optional):
+												<div class="infoicon">
+													<div class="popupinfo">
+														<h2>Longetide (Optional)</h2>
+														Explanation about this item.
+													</div>
+												</div>
+											</td>
+											<td>
+												<input type="text" class="long" name="long" placeholder="e.g. -0.12750" value="-1.480719" />
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<!--<iframe width="100%" height="150" frameborder="0" style="border:0" id="search-map-canvas"
+	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>-->
+									<input class="maps_input" type="text" name="location" placeholder="e.g. St. George's Church" />
+									<div class="search-map-canvas"></div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+								</td>
+								<td class="clearfix">
+									<input class="right" type="submit" name="submit" value="Search" />
+								</td>
+							</tr>
+						</table>
+					</form>
+					<hr>
+					<h1>Users at venue</h1>
+					<span>Here are the users that have been found in the search area</span>
+					<table class="tweet_results_table" cellspacing="0">
+						<tr>
+							<td>
+								Username
+							</td>
+							<td>
+								Number of visits
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<a href="#">@jtmcilveen</a><br>
+								<a href="#">View profile and Tweets</a>
+							</td>
+							<td>
+								1
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<a href="#">@jtmcilveen</a><br>
+								<a href="#">View profile and Tweets</a>
+							</td>
+							<td>
+								1
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<a href="#">@jtmcilveen</a><br>
+								<a href="#">View profile and Tweets</a>
+							</td>
+							<td>
+								1
+							</td>
+						</tr>
+					</table>
+					<hr>
+					<h1>Location of Tweets</h1>
+					<div class="white_container">
+						<iframe width="100%" height="350" frameborder="0" style="border:0"
+	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
+					</div>
 				</div>
 			</div>
 		</div>
