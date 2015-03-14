@@ -9,13 +9,19 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var Twit = require('twit');
+
 
 var OAuthTwitter = require('./oAuth/twitter.js');
 OAuthTwitter(app);
 var OAuth2Foursqaure = require('./oAuth/foursquare.js');
 OAuth2Foursqaure(app);
-
+/*
+//var TwitFeed = require('./feed/twit.js');
+app.post('/', function(req, res) {
+  console.log(req.body);
+  res.send(200);
+});
+*/
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
