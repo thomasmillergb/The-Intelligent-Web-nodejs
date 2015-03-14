@@ -16,6 +16,7 @@
     "https-server": "^0.1.2",
     "morgan": "~1.5.1",
     "oauth": "^0.9.12",
+    "request": "^2.53.0",
     "serve-favicon": "~2.2.0",
     "twit": "^1.1.20"
   }

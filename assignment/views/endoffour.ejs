@@ -6,15 +6,16 @@
     
   </head>
   <body>
-<h1>End of the Four line </h1>
-</body>
+<h1>End of the Four liness </h1>
 <script>
-
-window.opener.getOauth("<%= oauth.access_token%>");
+ //getFourAuth(<%=oauth.access_token%>);
+window.opener.getFourAuth("<%=oauth.access_token%>");
 window.close();
 
 </script>
+</body>
 
 
-</head>
+
+
 </html>

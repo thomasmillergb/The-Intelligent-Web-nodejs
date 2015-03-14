@@ -19,9 +19,11 @@ module.exports = function(app){
 			var code = req.query.code;
 			var request = require("request");
  var tokenURL = "https://foursquare.com/oauth2/access_token?client_id="+client_id+"&client_secret="+client_secret+"&grant_type=authorization_code&redirect_uri="+redirect+"&code="+code;
+
 request(tokenURL, function(error, response, body) {
-  var access_token = (JSON.parse(body));
-  res.render('endoffour', { title: 'Social Tracker', oauth: access_token});
+  var access_token = JSON.parse(body);
+  console.log(JSON.parse(body));
+  res.render('endoffour', { title: 'Social Tracker', oauth: JSON.parse(body)});
 });
 			
 	
