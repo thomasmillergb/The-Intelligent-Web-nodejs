@@ -17,9 +17,18 @@
 				// open popup window and pass field id
 				window.open('/auth/twitter', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
 			}
+			function fourOAuth() {
+				// open popup window and pass field id
+				window.open('/auth/foursqaure', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
+			}
+			function getTwitAuth(token, token_secret){
+				var twitter_token = token;
+				var twitter_token_secret = token_secret;
+			}
 			
-			var map;
-			
+			function getFourAuth(token){
+				var four_token = token;
+			}
 			function initialize() {
 			
 				var mapOptions = {
@@ -29,7 +38,7 @@
 				};
 			
 				var markers = [];
-				map = new google.maps.Map(document.getElementById('search-map-canvas'), mapOptions);
+				var map = new google.maps.Map(document.getElementById('search-map-canvas'), mapOptions);
 			
 				// Create the search box and link it to the UI element.
 				var input = document.getElementById('maps_input');
@@ -90,50 +99,42 @@
 				
 				function setLatLong() {
 					templocation = map.getCenter();
-					document.getElementById("lat").value = parseFloat(templocation.k.toFixed(6));
-					document.getElementById("long").value = parseFloat(templocation.D.toFixed(6));
-					Draw_Circle();
+					document.getElementById("lat").value =  templocation.k;
+					document.getElementById("long").value =  templocation.D;
+					Draw_Circle(parseFloat($("#radius").val()), parseFloat($("#lat").val()), parseFloat($("#long").val()));
 				}
-								
+				
+				var draw_circle = null;
+
+				function Draw_Circle(m, latitude, longitude)     
+				{        
+					console.log(latitude);
+					console.log(longitude);
+					       
+					if (draw_circle != null)       
+					{         
+						draw_circle.setMap(null);       
+					}       
+					
+					draw_circle = new google.maps.Circle({         
+						center: new google.maps.LatLng(latitude, longitude),         
+						radius: m,         
+						strokeColor: "#FF0000",         
+						strokeOpacity: 0.8,         
+						strokeWeight: 2,         
+						fillColor: "#FF0000",         
+						fillOpacity: 0.35,         
+						map: map       
+						});
+					
+				}
+				
 				setLatLong();
+				
+				Draw_Circle(1,1,1); 
 			}
 			
-			var draw_circle = null;
-			var lastm;
-			var lastlat;
-			var lastlong;
-
-			function Draw_Circle()     
-			{        
-				m = parseFloat($("#radius").val());
-				latitude = parseFloat($("#lat").val());
-				longitude = parseFloat($("#long").val());
-				
-				if (m == lastm && latitude == lastlat && longitude == lastlong)
-					return;
-				       
-				if (draw_circle != null)       
-				{         
-					draw_circle.setMap(null);       
-				}       
-				
-				draw_circle = new google.maps.Circle({         
-					center: new google.maps.LatLng(latitude, longitude),         
-					radius: m,         
-					strokeColor: "#FF0000",         
-					strokeOpacity: 0.8,         
-					strokeWeight: 2,         
-					fillColor: "#FF0000",         
-					fillOpacity: 0.35,         
-					map: map       
-					});
-				
-			}
 			
-			$(function(){
-				$("#radius, #lat, #long").on("keyup", function(){Draw_Circle();map.setCenter(new google.maps.LatLng(parseFloat($("#lat").val()), parseFloat($("#long").val())));});
-			});
-
 			
 			google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -162,7 +163,7 @@
 					</div><div class="fake_nav_button">
 					FourSquare
 					<div class="hover_container">
-						<a href="javascript:void(0)" class="button">FourSquare</a>
+						<a href="javascript:fourOAuth()" class="button">FourSquare</a>
 					</div>
 				</div>
 			</div>
@@ -198,8 +199,8 @@
 							</td>
 							<td>
 								<div class="onoffswitch">
-								    <input type="checkbox" name="liveresults" class="onoffswitch-checkbox" id="liveresults">
-								    <label class="onoffswitch-label" for="liveresults">
+								    <input type="checkbox" name="liveresults" class="onoffswitch-checkbox" id="myonoffswitch">
+								    <label class="onoffswitch-label" for="myonoffswitch">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -221,8 +222,8 @@
 										</td>
 										<td>
 											<div class="onoffswitch">
-											    <input type="checkbox" name="uselocation" class="onoffswitch-checkbox" id="uselocation">
-											    <label class="onoffswitch-label" for="uselocation">
+											    <input type="checkbox" name="uselocation" class="onoffswitch-checkbox" id="myonoffswitch">
+											    <label class="onoffswitch-label" for="myonoffswitch">
 											        <span class="onoffswitch-inner"></span>
 											        <span class="onoffswitch-switch"></span>
 											    </label>
@@ -326,7 +327,7 @@ src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139
 								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div><br>
 								Tweeted from:<br>
 								<iframe width="100%" height="150" frameborder="0" style="border:0"
-src="https://www.google.com/maps/embed/v1/place?q=53.381796%2C-1.480719&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe><br><br>
+src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe><br><br>
 <center><a href="javascript:void(0)">See replies to tweet</a></center>
 							</td>
 						</tr>
@@ -357,7 +358,7 @@ src="https://www.google.com/maps/embed/v1/place?q=53.381796%2C-1.480719&key=AIza
 								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div><br>
 								Tweeted from:<br>
 								<iframe width="100%" height="150" frameborder="0" style="border:0"
-src="https://www.google.com/maps/embed/v1/place?q=53.381796%2C-1.480719&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe><br><br>
+src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe><br><br>
 <center><a href="javascript:void(0)">See replies to tweet</a></center>
 							</td>
 						</tr>
@@ -375,9 +376,6 @@ src="https://www.google.com/maps/embed/v1/place?q=53.381796%2C-1.480719&key=AIza
 					<h1>Twitter search by location</h1>
 				</div>
 			</div>
-		</div>
-		<div id="copyright">
-			Copyright Group N+1 2015
 		</div>
 	</body>
 </html>

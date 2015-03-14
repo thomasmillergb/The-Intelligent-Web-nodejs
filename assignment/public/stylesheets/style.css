@@ -411,6 +411,7 @@ table table {
 
 .right {
 	float: right;
+<<<<<<< HEAD
 }
 
 
@@ -427,4 +428,6 @@ table table {
 	width: 100%;
 	height: 250px;
 	margin: 10px 0;
+=======
+>>>>>>> e4f47fa0b0ffc86af55acdbfbd8c24dc19ec72eb
 }
