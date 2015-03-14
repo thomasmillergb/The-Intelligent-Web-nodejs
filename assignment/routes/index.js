@@ -8,15 +8,12 @@ router.get('/', function(req, res, next) {
 router.get('/auth/twitter/callback', function(req, res, next) {
 	console.log("callback");
 	console.log(req.session.oauth);
-
-  res.render('endoftwit', { title: 'Social Tracker', oauth:req.session.oauth});
+	res.render('endoftwit', { title: 'Social Tracker', oauth:req.session.oauth});
 });
 router.get('/endoftwit', function(req, res, next) {
-
 	console.log("endoftwit");
 	console.log(req.session.oauth);
-  res.render('endoftwit', { title: 'Social Tracker', oauth:req.session.oauth });
-
+	res.render('endoftwit', { title: 'Social Tracker', oauth:req.session.oauth });
 });
 
 

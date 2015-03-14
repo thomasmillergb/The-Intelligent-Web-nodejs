@@ -8,11 +8,8 @@
   <body>
 <h1>End of the twit line</h1>
 <script>
-
-window.opener.getTwitAuth("<%=oauth.token%>", "<%=oauth.token_secret%>");
-
-window.close();
-
+	window.opener.getTwitAuth("<%=oauth.token%>", "<%=oauth.token_secret%>");
+	window.close();
 </script>
 </body>
 

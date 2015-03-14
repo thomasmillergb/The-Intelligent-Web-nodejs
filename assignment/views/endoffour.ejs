@@ -8,10 +8,8 @@
   <body>
 <h1>End of the Four liness </h1>
 <script>
- //getFourAuth(<%=oauth.access_token%>);
-window.opener.getFourAuth("<%=oauth.access_token%>");
-window.close();
-
+	window.opener.getFourAuth("<%=oauth.access_token%>");
+	window.close();
 </script>
 </body>
 
