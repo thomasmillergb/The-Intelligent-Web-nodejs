@@ -113,7 +113,7 @@ nav .nav_button, nav .fake_nav_button, header .fake_nav_button {
 	position: absolute;
 	bottom: 0px;
 	right: 4px;
-	margin-bottom: -5px;
+	margin-bottom: -3px;
 	content: " ";
 	display: block;
 	background: url(../images/check.png) no-repeat;
@@ -568,3 +568,29 @@ table table {
 .center_margin {
 	margin: 0 auto !important;
 }
+
+.db_table {
+	border-collapse: collapse;
+}
+
+.db_table td, .db_table th {
+	padding: 6px;
+	border: 1px solid #ccc;
+}
+
+.db_table th {
+	background: #f0f0f0;
+	background: -moz-linear-gradient(top, #f0f0f0 0%, #dbdbdb 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f0f0f0), color-stop(100%,#dbdbdb));
+	background: -webkit-linear-gradient(top, #f0f0f0 0%,#dbdbdb 100%);
+	background: -o-linear-gradient(top, #f0f0f0 0%,#dbdbdb 100%);
+	background: -ms-linear-gradient(top, #f0f0f0 0%,#dbdbdb 100%);
+	background: linear-gradient(to bottom, #f0f0f0 0%,#dbdbdb 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f0f0', endColorstr='#dbdbdb',GradientType=0 );
+	text-align: left;
+}
+
+.db_table tr:nth-child(even) td {
+	background: rgba(0,0,0,.02);
+}
+

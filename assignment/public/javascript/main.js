@@ -307,8 +307,6 @@ function appendLocationOfTweets(element, json) {
 	for (i=0;i<tweetJson.length;i++)
 		if (tweetJson[i]['geo'] !== undefined && tweetJson[i]['geo']['coordinates'] !== undefined)
 			markerdata.push({"screen_name": tweetJson[i]["user"]["screen_name"],"tweet": tweetJson[i]["text"],location: tweetJson[i]['geo']['coordinates']});
-			
-	console.log(markerdata);
 	
 	var randomnumber = Math.floor(Math.random() * (99999999 + 1));
 	

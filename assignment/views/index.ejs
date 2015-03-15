@@ -77,8 +77,8 @@
 			</div>
 			<div id="right">
 				<div class="title">Search database:</div>
-				<a href="javascript:void(0)" onmousedown="" class="nav_button">Users</a>
-				<a href="javascript:void(0)" onmousedown="" class="nav_button">Venues</a>
+				<a href="javascript:void(0)" onmousedown="activeTab('database_user_search_tab')" class="nav_button">Users</a>
+				<a href="javascript:void(0)" onmousedown="activeTab('database_venue_search_tab')" class="nav_button">Venues</a>
 			</div>
 		</nav>
 		<div id="notification_wrapper">
@@ -88,6 +88,15 @@
 			
 		</div>
 		<div id="tab_container">
+			
+			<!--
+				
+			####################
+			## DISCUSSION TAB ##	
+			####################
+				
+			-->
+			
 			<div id="discussion_tab">
 				<div class="center_wrapper">
 					<h1>Discussion search</h1>
@@ -230,6 +239,15 @@
 					
 				</div>
 			</div>
+			
+			<!--
+				
+			#########################
+			## USER DISCUSSION TAB ##	
+			#########################
+				
+			-->
+			
 			<div id="user_dicussion_tab">
 				<div class="center_wrapper">
 					<h1>Specific user discussion search</h1>
@@ -452,6 +470,15 @@
 					</table>
 				</div>
 			</div>
+			
+			<!--
+				
+			####################
+			## USER VENUE TAB ##	
+			####################
+				
+			-->
+			
 			<div id="user_venue_tab">
 				<div class="center_wrapper">
 					<h1>User venues search</h1>
@@ -556,6 +583,15 @@
 					</div>
 				</div>
 			</div>
+			
+			<!--
+				
+			###############
+			## VENUE TAB ##	
+			###############
+				
+			-->
+			
 			<div id="venue_tab">
 				<div class="center_wrapper">
 					<h1>Venue search</h1>
@@ -717,7 +753,286 @@
 					</div>
 				</div>
 			</div>
+			
+			<!--
+				
+			#######################
+			## DATABASE USER TAB ##	
+			#######################
+				
+			-->
+			
+			<div id="database_user_search_tab">
+				<div class="center_wrapper">
+					<h1>Database user search</h1>
+					<table class="req_twitter_api">
+						<tr>
+							<td>
+								ID/Screen Name/Name:
+								<div class="infoicon">
+									<div class="popupinfo">
+										<h2>Screen Names/IDs</h2>
+										Explanation about this item.
+									</div>
+								</div>
+							</td>
+							<td>
+								<input type="text" id="database_user_id_screen_name_name" name="id_screen_name_name" placeholder="e.g. jtmcilven, 123912094, James McIlveen" />
+								<script>
+									$(document).ready(function(){  
+										
+										var $rows = $('#database_user_search_table tbody tr');
+										$('#database_user_id_screen_name_name').keyup(function() {
+		
+										    var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+										        reg = RegExp(val, 'i'),
+										        text;
+										
+										    $rows.show().filter(function() {
+										        text = $(this).text().replace(/\s+/g, ' ');
+										        return !reg.test(text);
+										    }).hide();
+										});
+										
+									});
+								</script>
+							</td>
+						</tr>
+					</table>
+					<hr>
+					<div class="white_container">
+						<table id="database_user_search_table" class="db_table">
+							<thead>
+								<tr>
+									<th>
+										Twitter ID
+									</th>
+									<th>
+										Screen Name
+									</th>
+									<th>
+										Name
+									</th>
+									<th>
+										Twitter
+									</th>
+									<th>
+										View saved details
+									</th>
+									<th>
+										Get live tweets
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										1280037504
+									</td>
+									<td>
+										jtmcilveen
+									</td>
+									<td>
+										James McIlveen
+									</td>
+									<td>
+										<a href="#">Twitter</a>
+									</td>
+									<td>
+										<a href="#">View saved details</a>
+									</td>
+									<td>
+										<a href="#">Get live tweets</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										1280037504
+									</td>
+									<td>
+										jtmcilveen
+									</td>
+									<td>
+										James McIlveen
+									</td>
+									<td>
+										<a href="#">Twitter</a>
+									</td>
+									<td>
+										<a href="#">View saved details</a>
+									</td>
+									<td>
+										<a href="#">Get live tweets</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										1280037504
+									</td>
+									<td>
+										jtmcilveen
+									</td>
+									<td>
+										James McIlveen
+									</td>
+									<td>
+										<a href="#">Twitter</a>
+									</td>
+									<td>
+										<a href="#">View saved details</a>
+									</td>
+									<td>
+										<a href="#">Get live tweets</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										1280037504
+									</td>
+									<td>
+										jtmcilveen
+									</td>
+									<td>
+										James McIlveen
+									</td>
+									<td>
+										<a href="#">Twitter</a>
+									</td>
+									<td>
+										<a href="#">View saved details</a>
+									</td>
+									<td>
+										<a href="#">Get live tweets</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<!--
+				
+			########################
+			## DATABASE VENUE TAB ##	
+			########################
+				
+			-->
+			
+			<div id="database_venue_search_tab">
+				<div class="center_wrapper">
+					<h1>Database venue search</h1>
+					<table class="req_twitter_api">
+						<tr>
+							<td>
+								ID/Screen Name/Name:
+								<div class="infoicon">
+									<div class="popupinfo">
+										<h2>Screen Names/IDs</h2>
+										Explanation about this item.
+									</div>
+								</div>
+							</td>
+							<td>
+								<input type="text" id="database_venue_venue_name_coordinates" name="venue_name_coordinates" placeholder="e.g. St Georges Church, 53.3816232,-1.4817597" />
+								<script>
+									$(document).ready(function(){  
+										
+										var $rows = $('#database_venue_search_table tbody tr');
+										$('#database_venue_venue_name_coordinates').keyup(function() {
+		
+										    var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+										        reg = RegExp(val, 'i'),
+										        text;
+										
+										    $rows.show().filter(function() {
+										        text = $(this).text().replace(/\s+/g, ' ');
+										        return !reg.test(text);
+										    }).hide();
+										});
+										
+									});
+								</script>
+							</td>
+						</tr>
+					</table>
+					<hr>
+					<div class="white_container">
+						<table id="database_venue_search_table" class="db_table">
+							<thead>
+								<tr>
+									<th>
+										Venue name
+									</th>
+									<th>
+										Coordinates
+									</th>
+									<th>
+										Number of visitors
+									</th>
+									<th>
+										View users that have visited
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										St George's Church
+									</td>
+									<td>
+										53.3816232,-1.4817597
+									</td>
+									<td>
+										12
+									</td>
+									<td>
+										<a href="#">Users</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										St George's Church
+									</td>
+									<td>
+										53.3816232,-1.4817597
+									</td>
+									<td>
+										12
+									</td>
+									<td>
+										<a href="#">Users</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										St George's Church
+									</td>
+									<td>
+										53.3816232,-1.4817597
+									</td>
+									<td>
+										12
+									</td>
+									<td>
+										<a href="#">Users</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</div>
+		
+		<!--
+				
+		#########################
+		## USER DISCUSSION TAB ##	
+		#########################
+				
+		-->
+		
 		<div id="user_container" class="hide">
 			
 		</div>
