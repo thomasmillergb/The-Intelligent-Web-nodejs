@@ -295,6 +295,9 @@ function appendTweetReplies(element, json) {
 	return $(tweethtml).appendTo(element);								
 }
 
+// A function that takes a list of tweets in json and an DOM element, and appends
+// a map to the element, with the location of each geotagged tweet marked on the map.
+// Markers have labels if the tweet attached to them when they are hovered over
 function appendLocationOfTweets(element, json) {
 	
 	tweetJson = JSON.parse(json);
@@ -349,8 +352,12 @@ function appendLocationOfTweets(element, json) {
 			content: message
 		});
 	
-		google.maps.event.addListener(marker, 'click', function() {
+		google.maps.event.addListener(marker, 'mouseover', function() {
 			infowindow.open(marker.get('map'), marker);
+		});
+		
+		google.maps.event.addListener(marker, 'mouseout', function() {
+			infowindow.open();
 		});
 	}
 	
