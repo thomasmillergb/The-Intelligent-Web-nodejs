@@ -56,6 +56,10 @@ function getUserAndTweets(username) {
 	
 	// TODO: Get tweets from AJAX and and them into the form before it opens
 	
+	setupUserPage(exampleUserJson);
+	for (i = 0; i < 10; i++)
+		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson);
+	
 	toggleUserShow();
 }
 
@@ -205,9 +209,9 @@ function removeTimezone(str) {
 	return str.replace(/\s\+\S+/ig,"");
 }
 
-// Prepends a tweet to an element from the tweets json
+// Appends a tweet to an element from the tweets json including the users account on the left
 // Returns the created element
-function prependTweet(element, json) {
+function appendTweetWithAccount(element, json) {
 	
 		tweetJson = JSON.parse(json);
 		
@@ -215,21 +219,21 @@ function prependTweet(element, json) {
 					
 					
 					
-		if (tweetJson['user']['location'] != null)
+		if (tweetJson['user']['location'] !== undefined)
 			tweethtml +='<span class="dark">Location</span> ' + tweetJson['user']['location'] + '<br>';
 			
-		if (tweetJson['user']['url'] != null)
-			tweethtml +='<span class="dark">Website</span> <a href="' + tweetJson['user']['url'] + '">' + tweetJson['url']['location'] + '</a><br>';
+		if (tweetJson['user']['url'] !== undefined)
+			tweethtml +='<span class="dark">Website</span> <a href="' + tweetJson['user']['url'] + '">' + tweetJson['user']['url'] + '</a><br>';
 		
 		tweethtml +='<span class="dark">Joined</span> ' + removeTimezone(tweetJson['user']['created_at']) + '<br><br>';
 		
-		if (tweetJson['user']['description'] != null)
-			tweethtml +='<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>';
+		if (tweetJson['user']['description'] !== undefined)
+			tweethtml +='<span class="dark">' + tweetJson['user']['description'] + '</span><br><br>';
 			
 			
 		tweethtml +='<a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['id_str'] + '\')">View user\'s profile and Tweets</a></td><td><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['favourites_count'] + ' Favourites, ' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
 
-		if (tweetJson['geo'] != null && tweetJson['geo']['coordinates'] != null)
+		if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
 			tweethtml +='<div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div>';
 		else
 			tweethtml += 'This tweet was not geotagged';
@@ -239,17 +243,64 @@ function prependTweet(element, json) {
 	return $(tweethtml).prependTo(element);
 }
 
+// Appends a tweet to an element from the tweets json without their account
+// Returns the created element
+function appendTweetWithoutAccount(element, json) {
+	
+	tweetJson = JSON.parse(json);
+	
+	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['favourites_count'] + ' Favourites, ' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
+		
+	if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
+		tweethtml +='<div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div>';
+	else
+		tweethtml += 'This tweet was not geotagged';	
+			
+	tweethtml += '<br><br><div class="tweet_replies_wrapper"><center><a href="javascript:void(0)">See replies to tweet</a></center></div>';
+		
+		
+	return $(tweethtml).prependTo(element);
+}
+
 // Prepends a reply tweet to an element from the tweets json
 // Returns the created element
 function appendTweetReplies(element, json) {							
 										
-		tweetJson = JSON.parse(json);
+	tweetJson = JSON.parse(json);
+	
+	var tweethtml = '';
+	
+	tweethtml = '<a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + ' - <a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['id_str'] + '\')">View user\'s profile and Tweets</a><br><div class="tweet">' + tweetJson['text'] + '</div>';
 		
-		var tweethtml = '<a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + ' - <a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['id_str'] + '\')">View user\'s profile and Tweets</a><br><div class="tweet">' + tweetJson['text'] + '</div>';
 		
-		
-		return $(tweethtml).appendTo(element);								
+	return $(tweethtml).appendTo(element);								
 }
 
 
+// Adds the information to the user page before it is dispalyed based on the user's json
+// Returns the created object
+function setupUserPage(json) {
+	
+	userJson = JSON.parse(json);
+		
+	//userJson = userJson['user'];	
+	
+	var userhtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleUserShow()">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s profile</h1><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
+	  				
+	  			
+	if (userJson['location'] !== undefined)
+	  userhtml +='<span class="dark">Location</span> ' + userJson['location'] + '<br>';
+	  
+	if (userJson['url'] !== undefined)
+	  userhtml +='<span class="dark">Website</span> <a href="' + userJson['url'] + '">' + userJson['url'] + '</a><br>';
+	
+	userhtml +='<span class="dark">Joined</span> ' + removeTimezone(userJson['created_at']) + '<br><br>';
+	
+	if (userJson['description'] !== undefined)
+	  userhtml +='<span class="dark">' + userJson['description'] + '</span><br><br>';				
+	
+	userhtml += '</td></tr></table><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_tweet_return"></div></div>';
+	
+	$("#user_container").html(userhtml);
+}
 
