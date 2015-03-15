@@ -60,8 +60,10 @@ function getUserAndTweets(username) {
 	// TODO: Get tweets from AJAX and and them into the form before it opens
 	
 	setupUserPage(exampleUserJson);
+	appendLocationOfTweets($("#user_tweet_location_return"), exampleTweetJson_1);
+	
 	for (i = 0; i < 10; i++)
-		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson);
+		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson_1);
 	
 	toggleUserShow(true);
 }
@@ -227,7 +229,7 @@ function appendTweetWithAccount(element, json) {
 	
 		tweetJson = JSON.parse(json);
 		
-		var tweethtml ='<table class="tweet_table" id="' + tweetJson['id_str'] + '"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + tweetJson['user']['profile_image_url'] + '" alt="' + tweetJson['user']['screen_name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '" class="screen_name">' + tweetJson['user']['name'] + '</a><br><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a><br><br></div></div>';
+		var tweethtml ='<table class="tweet_table" id="' + tweetJson['id_str'] + '"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + tweetJson['user']['profile_image_url'].replace("_normal", "") + '" alt="' + tweetJson['user']['screen_name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '" class="screen_name">' + tweetJson['user']['name'] + '</a><br><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a><br><br></div></div>';
 					
 					
 					
@@ -245,14 +247,17 @@ function appendTweetWithAccount(element, json) {
 			
 		tweethtml +='<a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['id_str'] + '\')">View user\'s profile and Tweets</a></td><td><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['favourites_count'] + ' Favourites, ' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
 
-		if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
-			tweethtml +='<div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div>';
-		else
-			tweethtml += 'This tweet was not geotagged';
+
+		if (false) {
+			if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
+				tweethtml +='<div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div>';
+			else
+				tweethtml += 'This tweet was not geotagged';
+		}
 		
 		tweethtml +='<br><br><div class="tweet_replies_wrapper"><center><a href="javascript:void(0)">See replies to tweet</a></center></div></td></tr></table><hr>';
 		
-	return $(tweethtml).prependTo(element);
+	return $(tweethtml).appendTo(element);
 }
 
 // Appends a tweet to an element from the tweets json without their account
@@ -261,14 +266,16 @@ function appendTweetWithoutAccount(element, json) {
 	
 	tweetJson = JSON.parse(json);
 	
-	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['favourites_count'] + ' Favourites, ' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
-		
-	if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
-		tweethtml +='<div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div>';
-	else
-		tweethtml += 'This tweet was not geotagged';	
+	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['favourites_count'] + ' Favourites, ' + tweetJson['retweet_count'] + ' Re-Tweets<br>';
+	
+	if (false) {
+		if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
+			tweethtml +='<br><div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div><br>';
+		else
+			tweethtml += 'This tweet was not geotagged';
+	}
 			
-	tweethtml += '<br><br><div class="tweet_replies_wrapper"><center><a href="javascript:void(0)">See replies to tweet</a></center></div>';
+	tweethtml += '<br><div class="tweet_replies_wrapper"><center><a href="javascript:void(0)">See replies to tweet</a></center></div>';
 		
 		
 	return $(tweethtml).prependTo(element);
@@ -286,6 +293,60 @@ function appendTweetReplies(element, json) {
 		
 		
 	return $(tweethtml).appendTo(element);								
+}
+
+function appendLocationOfTweets(element, json) {
+	
+	tweetJson = JSON.parse(json);
+	
+	markerdata = [];
+	
+	for (i=0;i<tweetJson.length;i++)
+		if (tweetJson[i]['geo'] !== undefined && tweetJson[i]['geo']['coordinates'] !== undefined)
+			markerdata.push({"screen_name": tweetJson[i]["user"]["screen_name"],"tweet": tweetJson[i]["text"],location: tweetJson[i]['geo']['coordinates']});
+	
+	console.log(markerdata);
+	
+	var randomnumber = Math.floor(Math.random() * (99999999 + 1));
+	
+	locationhtml = '<hr><h1>Location of Tweets</h1><div class="white_container"><div class="map_wrapper"><div class="search-map-canvas" id="map_' + randomnumber + '"></div></div></div>';
+	
+	function initialize() {
+		var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+		var bounds = new google.maps.LatLngBounds();
+		var mapOptions = {
+			zoom: 4,
+			center: myLatlng
+		}
+		var map = new google.maps.Map(document.getElementById('map_' + randomnumber), mapOptions);
+	
+		for (i=0;i<markerdata.length;i++) {
+			console.log(markerdata[i]["location"][0]);
+			console.log(markerdata[i]["location"][1]);
+			
+			var markerLatlng = new google.maps.LatLng(markerdata[i]["location"][0],markerdata[i]["location"][1]);
+			
+			var marker = new google.maps.Marker({
+				position: markerLatlng,
+				map: map,
+				title: markerdata[i]["screen_name"]
+			});
+			
+			bounds.extend(marker.position);
+		}
+		
+		map.fitBounds(bounds);
+		
+		var listener = google.maps.event.addListener(map, "idle", function () {
+		    map.setZoom(map.getZoom() - 2);
+		    google.maps.event.removeListener(listener);
+		});
+	}
+	
+	google.maps.event.addDomListener(window, 'load', initialize);
+	
+	return $(locationhtml).appendTo(element);
+	
 }
 
 
@@ -311,7 +372,7 @@ function setupUserPage(json) {
 	if (userJson['description'] !== undefined && userJson['description'] != null)
 	  userhtml +='<span class="dark">' + userJson['description'] + '</span><br><br>';				
 	
-	userhtml += '</td></tr></table><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_tweet_return"></div></div>';
+	userhtml += '</td></tr></table><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_tweet_location_return"></div><div id="user_tweet_return"></div></div>';
 	
 	$("#user_container").html(userhtml);
 }

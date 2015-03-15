@@ -13,23 +13,34 @@
 			
 			var exampleUserJson = '{"id":308358479,"id_str":"308358479","name":"James McIlveen","screen_name":"jtmcilveen","location":"Whaley Bridge","profile_location":null,"description":"Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University","url":"http://t.co/BiYvW71Wux","entities":{"url":{"urls":[{"url":"http://t.co/BiYvW71Wux","expanded_url":"http://www.jamesmcilveen.com","display_url":"jamesmcilveen.com","indices":[0,22]}]},"description":{"urls":[]}},"protected":true,"followers_count":58,"friends_count":31,"listed_count":0,"created_at":"Tue May 31 08:22:02 +0000 2011","favourites_count":9,"utc_offset":0,"time_zone":"London","geo_enabled":false,"verified":false,"statuses_count":53,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"C0DEED","profile_background_image_url":"http://abs.twimg.com/images/themes/theme1/bg.png","profile_background_image_url_https":"https://abs.twimg.com/images/themes/theme1/bg.png","profile_background_tile":false,"profile_image_url":"http://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_image_url_https":"https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_banner_url":"https://pbs.twimg.com/profile_banners/308358479/1405693222","profile_link_color":"0084B4","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"default_profile":true,"default_profile_image":false,"following":false,"follow_request_sent":false,"notifications":false,"suspended":false,"needs_phone_verification":false}';
 			
-			var exampleTweetJson = '{"coordinates":[53.381796,-1.480719],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"freebandnames","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"Aggressive Ponytail #freebandnames","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.381796,-1.480719]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user":{"profile_sidebar_fill_color":"DDEEF6","profile_sidebar_border_color":"C0DEED","profile_background_tile":false,"name":"Sean Cummings","profile_image_url":"http://a0.twimg.com/profile_images/2359746665/1v6zfgqo8g0d3mk7ii5s_normal.jpeg","created_at":"Mon Apr 26 06:01:55 +0000 2010","location":"LA, CA","follow_request_sent":null,"profile_link_color":"0084B4","is_translator":false,"id_str":"137238150","entities":{"url":{"urls":[{"expanded_url":null,"url":"","indices":[0,0]}]},"description":{"urls":[]}},"default_profile":true,"contributors_enabled":false,"favourites_count":0,"url":null,"profile_image_url_https":"https://si0.twimg.com/profile_images/2359746665/1v6zfgqo8g0d3mk7ii5s_normal.jpeg","utc_offset":-28800,"id":137238150,"profile_use_background_image":true,"listed_count":2,"profile_text_color":"333333","lang":"en","followers_count":70,"protected":false,"notifications":null,"profile_background_image_url_https":"https://si0.twimg.com/images/themes/theme1/bg.png","profile_background_color":"C0DEED","verified":false,"geo_enabled":true,"time_zone":"Pacific Time (US & Canada)","description":"Born 330 Live 310","default_profile_image":false,"profile_background_image_url":"http://a0.twimg.com/images/themes/theme1/bg.png","statuses_count":579,"friends_count":110,"following":null,"show_all_inline_media":false,"screen_name":"sean_cummings"},"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null}';
+			var exampleTweetJson_1 = '{"coordinates":[53.381796,-1.480719],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"example","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"This is an #example tweet 1111111111","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.381796,-1.480719]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user":' + exampleUserJson + ',"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null}';
+			
+			var exampleTweetJson_2 = '{"coordinates":[53.3816232,-1.4817597],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"example","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"This is an #example tweet 2222222222","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.3816232,-1.4817597]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user":' + exampleUserJson + ',"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null}';
+			
+			var collectionOfTweets = '[' + exampleTweetJson_1 + ',' + exampleTweetJson_2 + ']';
 			
 			$(function(){
 				
 				addNotification("Notification test", "This is the first test notification out of two.", 5000);
 				setTimeout(function(){addNotification("Test 2", "This is the final test. Well until you refresh", 5000);}, 2000);
-
-				// Adds a tweet dynamically to the page by passing its json
-				var newtweet = appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson);
 				
-				//Gets the reply wrapper element and then clears it
-				reply_wrapper = newtweet.find(".tweet_replies_wrapper");
-				reply_wrapper.html("<h3>Repies to Tweet</h3><br>");
+				/////////////////////////////////
+				// Discussion search imitation //
+				/////////////////////////////////
 				
-				// Adds 3 replies replies to the dynamically created tweet
-				for (i=0;i<3;i++)
-					appendTweetReplies(reply_wrapper, exampleTweetJson, false);
+					// Adds a tweet dynamically to the page by passing its json
+					appendLocationOfTweets($("#discussion_tweet_return"), collectionOfTweets);
+					$("#discussion_tweet_return").append("<hr><h1>Tweets</h1>");
+					var newtweet = appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_1);
+					appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_2);
+					
+					//Gets the reply wrapper element and then clears it
+					reply_wrapper = newtweet.find(".tweet_replies_wrapper");
+					reply_wrapper.html("<h3>Repies to Tweet</h3><br>");
+					
+					// Adds 3 replies replies to the dynamically created tweet
+					for (i=0;i<3;i++)
+						appendTweetReplies(reply_wrapper, exampleTweetJson_1, false);
 				
 				
 			});
@@ -204,55 +215,11 @@
 							</tr>
 						</table>
 					</form>
-					
-					<hr>
-					
-					<h1>Tweets</h1>
-					<span>Hit submit above to discover tweets</span>
 				
 					<div id="discussion_tweet_return">
 					
-						<table class="tweet_table">
-							<tr>
-								<td width="300px">
-									<div class="profile_top clearfix">
-										<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
-										<div class="name_wrapper">
-											<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
-											<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
-										</div>
-									</div>
-									
-									
-									<span class="dark">Location</span> Whaley Bridge<br>
-									<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
-									<span class="dark">Joined</span> May 2011<br><br>
-									
-									<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>
-									<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-	
-									
-									
-								</td>
-								<td>
-									<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
-									<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
-									0 Favourites, 0 Re-Tweets<br><br>
-									
-									<div class="map_wrapper">
-										<iframe width="100%" height="150" frameborder="0" style="border:0"
-	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
-									</div><br><br>
-									<center><a href="javascript:void(0)">See replies to tweet</a></center>
-									
-									<h3>Replies</h3>
-									<div class="white_container">
-										<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013 - <a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a><br>
-										<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
-									</div>
-								</td>
-							</tr>
-						</table>
+						
+						
 					</div>
 					
 					
@@ -747,55 +714,6 @@
 			</div>
 		</div>
 		<div id="user_container" class="hide">
-			
-			
-			
-			
-			<div class="center_wrapper">
-				<h1><a href="javascript:void(0)" onclick="toggleUserShow()">Back</a> - <a href="#">@jtmcilveen</a>'s profile</h1>
-				<hr>
-			
-				<table class="tweet_table">
-					<tr>
-						<td width="300px">
-							<div class="profile_top clearfix">
-								<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
-								<div class="name_wrapper">
-									<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
-									<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
-								</div>
-							</div>
-						</td>
-						<td>							
-							<span class="dark">Location</span> Whaley Bridge<br>
-							<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
-							<span class="dark">Joined</span> May 2011<br><br>
-							
-							<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span>
-								
-						</td>
-					</tr>
-				</table>
-				
-				<hr>
-				<h1>Tweets</h1>
-				Below are the last 100 tweets for <a href="#">@jtmcilveen</a>
-				
-				<div class="white_container">
-					<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
-					<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
-					0 Favourites, 0 Re-Tweets<br><br>
-					
-					<div class="map_wrapper">
-						<iframe width="100%" height="150" frameborder="0" style="border:0"
-src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
-					</div><br><br>
-					<center><a href="javascript:void(0)">See replies to tweet</a></center>
-				</div>
-			</div>
-			
-			
-			
 			
 		</div>
 		<div id="copyright">
