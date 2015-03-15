@@ -4,9 +4,12 @@ var haveFourAPITokens = false;
 
 // Changes the active tab
 function activeTab(id) {
+	//$('body').scrollTop(1000);
+	
 	$("#tab_container > div").css("display", "none");
 	$('#' + id).css("display", "block");
-	$("html, body").animate({ scrollTop: 0 }, 300);
+	toggleUserShow(false);
+	
 	window.location.hash = '#' + id;
 }
 
@@ -60,13 +63,22 @@ function getUserAndTweets(username) {
 	for (i = 0; i < 10; i++)
 		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson);
 	
-	toggleUserShow();
+	toggleUserShow(true);
 }
 
 // Toggles whether the client is focused on the user panel
-function toggleUserShow() {
-	$("#tab_container, #user_container").toggleClass("hide");
-	$("html, body").animate({ scrollTop: 0 }, 300);
+function toggleUserShow(show) {
+	$('html, body').scrollTop(0);
+	
+	if (show) {
+		$("#tab_container").addClass("hide");
+		$("#user_container").removeClass("hide");
+	}
+	else {
+		$("#tab_container").removeClass("hide");
+		$("#user_container").addClass("hide");
+	}
+	
 }
 
 // Callback function for Twitter child window
@@ -118,12 +130,12 @@ function forgetFourAuth() {
 // Checks to see if we have api tokens on page load
 $(function(){
 	
-	if (localStorage.getItem("twitter_token") !== null && localStorage.getItem("twitter_token_secret") !== null)
+	if (localStorage.getItem("twitter_token") != null && localStorage.getItem("twitter_token_secret") != null)
 		haveTwitterAPITokens = true;
 	else
 		haveTwitterAPITokens = false;
 	
-	if (localStorage.getItem("four_token") !== null)
+	if (localStorage.getItem("four_token") != null)
 		haveFourAPITokens = true;
 	else
 		haveFourAPITokens = false;
@@ -219,15 +231,15 @@ function appendTweetWithAccount(element, json) {
 					
 					
 					
-		if (tweetJson['user']['location'] !== undefined)
+		if (tweetJson['user']['location'] !== undefined && tweetJson['user']['location'] != null)
 			tweethtml +='<span class="dark">Location</span> ' + tweetJson['user']['location'] + '<br>';
 			
-		if (tweetJson['user']['url'] !== undefined)
+		if (tweetJson['user']['url'] !== undefined && tweetJson['user']['url'] != null)
 			tweethtml +='<span class="dark">Website</span> <a href="' + tweetJson['user']['url'] + '">' + tweetJson['user']['url'] + '</a><br>';
 		
 		tweethtml +='<span class="dark">Joined</span> ' + removeTimezone(tweetJson['user']['created_at']) + '<br><br>';
 		
-		if (tweetJson['user']['description'] !== undefined)
+		if (tweetJson['user']['description'] !== undefined && tweetJson['user']['description'] != null)
 			tweethtml +='<span class="dark">' + tweetJson['user']['description'] + '</span><br><br>';
 			
 			
@@ -285,18 +297,18 @@ function setupUserPage(json) {
 		
 	//userJson = userJson['user'];	
 	
-	var userhtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleUserShow()">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s profile</h1><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
+	var userhtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleUserShow(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s profile</h1><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
 	  				
 	  			
-	if (userJson['location'] !== undefined)
+	if (userJson['location'] !== undefined && userJson['location'] != null)
 	  userhtml +='<span class="dark">Location</span> ' + userJson['location'] + '<br>';
 	  
-	if (userJson['url'] !== undefined)
+	if (userJson['url'] !== undefined && userJson['url'] != null)
 	  userhtml +='<span class="dark">Website</span> <a href="' + userJson['url'] + '">' + userJson['url'] + '</a><br>';
 	
 	userhtml +='<span class="dark">Joined</span> ' + removeTimezone(userJson['created_at']) + '<br><br>';
 	
-	if (userJson['description'] !== undefined)
+	if (userJson['description'] !== undefined && userJson['description'] != null)
 	  userhtml +='<span class="dark">' + userJson['description'] + '</span><br><br>';				
 	
 	userhtml += '</td></tr></table><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_tweet_return"></div></div>';

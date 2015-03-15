@@ -199,9 +199,11 @@ nav #right .fake_nav_button:hover .hover_container, nav #right .fake_nav_button 
 
 #tab_container, #user_container {
 	width: 100%;
-	padding: 20px;
 	box-sizing: border-box;
-	margin-top: 80px;
+}
+
+#user_container {
+	padding: 100px 20px 20px 20px;
 }
 
 .hide {
@@ -215,6 +217,7 @@ nav #right .fake_nav_button:hover .hover_container, nav #right .fake_nav_button 
 
 #tab_container > div {
 	display: none;
+	padding: 100px 20px 20px 20px;
 }
 
 #tab_container > div:first-child {

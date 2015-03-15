@@ -17,9 +17,8 @@
 			
 			$(function(){
 				
-				addNotification("tets", "asdadadasd asdas asdas dad a", 5000);
-				setTimeout(function(){addNotification("test 2", "asdaasd asd dadasd asdas asdas dad a", 2000);}, 1000);
-				setTimeout(function(){addNotification("test 3", "asdaasd asd dadasd asdas asdas dad a", 3000);}, 6000);
+				addNotification("Notification test", "This is the first test notification out of two.", 5000);
+				setTimeout(function(){addNotification("Test 2", "This is the final test. Well until you refresh", 5000);}, 2000);
 
 				// Adds a tweet dynamically to the page by passing its json
 				var newtweet = appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson);
