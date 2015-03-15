@@ -193,17 +193,6 @@ function loadingOverlay(loading) {
 		$("body").removeClass("loading");
 }
 
-// Intercepts form submits and cancels default action
-$(function(){
-	$("form").submit(function(e){
-		
-		loadingOverlay(true);
-		
-		e.preventDefault();
-	    return false;
-	});
-});
-
 // Adds a notification to the screen that will eventually fade and delete
 function addNotification(title, message, duration) {
 	
@@ -354,6 +343,7 @@ function appendLocationOfTweets(element, json) {
 		var bounds = new google.maps.LatLngBounds();
 		var mapOptions = {
 			zoom: 4,
+			scrollwheel: false,
 			center: myLatlng
 		}
 		var map = new google.maps.Map(document.getElementById('map_' + randomnumber), mapOptions);
@@ -436,3 +426,41 @@ function setupUserPage(json) {
 	$("#alternate_panel_container").html(userhtml);
 }
 
+// Appends an alement with a table of a set of users most used words in their tweets when given the json for it
+function mostUsedWordsTable(element, json) {
+	
+	// TODO: make json design and make a table from it
+	
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td></td><td>jtmcilveen<br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>fabcira<br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>stephenfry<br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>Total<br></td></tr><tr><td>London</td><td>5</td><td>2</td><td>6</td><td>13</td></tr><tr><td>Music</td><td>3</td><td>4</td><td>1</td><td>8</td></tr></table>';
+	
+	element.append(tablehtml);
+	
+	return tablehtml;
+
+}
+
+// Appends an element with a table of a users most visited venues from json
+function mostVisitedVenues(element, json) {
+	
+	// TODO: make json design and make a table from it
+	
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td></tr><tr><td>Sheffield</td><td>53.371143,-1.392339</td><td>1</td></tr></table>';
+	
+	element.append(tablehtml);
+	
+	return tablehtml;
+
+}
+
+// Appends an element with a table of number of visits of particular users at a venue from json
+function mostVisitedVenues(element, json) {
+	
+	// TODO: make json design and make a table from it
+	
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Number of visits</td></tr><tr><td><a href="#">@jtmcilveen</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>1</td></tr><tr><td><a href="#">@jtmcilveen</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>1</td></tr><tr><td><a href="#">@jtmcilveen</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>1</td></tr></table>';
+	
+	element.append(tablehtml);
+	
+	return tablehtml;
+
+}

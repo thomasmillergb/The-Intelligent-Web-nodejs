@@ -6,37 +6,8 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 		<script src="/javascript/main.js"></script>
+		<script src="/javascript/searches.js"></script>
 		<script src="/javascript/mapinit.js"></script>
-		<script>
-			// Onload test data
-			
-			
-			var exampleUserJson = '{"id":308358479,"id_str":"308358479","name":"James McIlveen","screen_name":"jtmcilveen","location":"Whaley Bridge","profile_location":null,"description":"Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University","url":"http://t.co/BiYvW71Wux","entities":{"url":{"urls":[{"url":"http://t.co/BiYvW71Wux","expanded_url":"http://www.jamesmcilveen.com","display_url":"jamesmcilveen.com","indices":[0,22]}]},"description":{"urls":[]}},"protected":true,"followers_count":58,"friends_count":31,"listed_count":0,"created_at":"Tue May 31 08:22:02 +0000 2011","favourites_count":9,"utc_offset":0,"time_zone":"London","geo_enabled":false,"verified":false,"statuses_count":53,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"C0DEED","profile_background_image_url":"http://abs.twimg.com/images/themes/theme1/bg.png","profile_background_image_url_https":"https://abs.twimg.com/images/themes/theme1/bg.png","profile_background_tile":false,"profile_image_url":"http://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_image_url_https":"https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_banner_url":"https://pbs.twimg.com/profile_banners/308358479/1405693222","profile_link_color":"0084B4","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"default_profile":true,"default_profile_image":false,"following":false,"follow_request_sent":false,"notifications":false,"suspended":false,"needs_phone_verification":false}';
-			
-			var exampleTweetJson_1 = '{"coordinates":[53.381796,-1.480719],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"example","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"This is an #example tweet 1111111111","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.381796,-1.480719]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user":' + exampleUserJson + ',"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null}';
-			
-			var exampleTweetJson_2 = '{"coordinates":[53.3816232,-1.4817597],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"example","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"This is an #example tweet 2222222222","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.3816232,-1.4817597]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user":' + exampleUserJson + ',"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null}';
-			
-			var collectionOfTweets = '[' + exampleTweetJson_1 + ',' + exampleTweetJson_2 + ']';
-			
-			$(function(){
-				
-				addNotification("Notification test", "This is the first test notification out of two.", 5000);
-				setTimeout(function(){addNotification("Test 2", "This is the final test. Well until you refresh", 5000);}, 2000);
-				
-				/////////////////////////////////
-				// Discussion search imitation //
-				/////////////////////////////////
-				
-					// Adds a tweet dynamically to the page by passing its json
-					appendLocationOfTweets($("#discussion_tweet_return"), collectionOfTweets);
-					
-					$("#discussion_tweet_return").append("<hr><h1>Tweets</h1>");
-					var newtweet = appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_1);
-					appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_2);
-				
-			});
-		</script>
 	</head>
 	<body class="no_twitter no_four">
 		<header>
@@ -63,7 +34,7 @@
 			<div id="left">
 				<div class="title">Search:</div>
 				<a href="javascript:void(0)" onmousedown="activeTab('discussion_tab')" class="nav_button">Discussion</a>
-				<a href="javascript:void(0)" onmousedown="activeTab('user_dicussion_tab')" class="nav_button">Specific users discussion</a>
+				<a href="javascript:void(0)" onmousedown="activeTab('user_dicussion_tab')" class="nav_button">Users discussion</a>
 				<a href="javascript:void(0)" onmousedown="activeTab('user_venue_tab')" class="nav_button">User venues</a>
 				<a href="javascript:void(0)" onmousedown="activeTab('venue_tab')" class="nav_button">Venue</a>
 			</div>
@@ -93,7 +64,7 @@
 				<div class="center_wrapper">
 					<h1>Discussion search</h1>
 					Tracking public discussions on specific topics (e.g. via hashtags or keywords): input keywords and/or hashtags. Outputs a list of messages containing the required keyword/hashtags. Its possible to limit the query to a specific geographic region.
-					<form action="/" method="post" class="map_init">
+					<form id="discussion_search_form" action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
 								<td>
@@ -187,10 +158,10 @@
 										</tr>
 										<tr>
 											<td>
-												Longetide (Optional):
+												Longitude (Optional):
 												<div class="infoicon">
 													<div class="popupinfo">
-														<h2>Longetide (Optional)</h2>
+														<h2>Longitude (Optional)</h2>
 														Explanation about this item.
 													</div>
 												</div>
@@ -244,7 +215,7 @@
 				<div class="center_wrapper">
 					<h1>Specific user discussion search</h1>
 					What specific users discuss about: the ids/screen_names of up to 10 users are provided in input and the most frequent Y keywords used in the last Z days must be displayed (with associated total count, as well as count for each users). Input: user ids, Y, Z – with Z >1
-					<form action="/" method="post" class="map_init">
+					<form id="user_discussion_search_form" action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
 								<td>
@@ -366,10 +337,10 @@
 										</tr>
 										<tr>
 											<td>
-												Longetide (Optional):
+												Longitude (Optional):
 												<div class="infoicon">
 													<div class="popupinfo">
-														<h2>Longetide (Optional)</h2>
+														<h2>Longitude (Optional)</h2>
 														Explanation about this item.
 													</div>
 												</div>
@@ -401,65 +372,12 @@
 						</table>
 					</form>
 				
-					<hr>
-					<h1>Tweets</h1>
-					<span>Hit submit above to discover tweets</span>
-
-					<table class="tweet_results_table" cellspacing="0">
-						<tr>
-							<td>
-							</td>
-							<td>
-								jtmcilveen<br>
-								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-							</td>
-							<td>
-								fabcira<br>
-								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-							</td>
-							<td>
-								stephenfry<br>
-								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-							</td>
-							<td>
-								Total<br>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								London
-							</td>
-							<td>
-								5
-							</td>
-							<td>
-								2
-							</td>
-							<td>
-								6
-							</td>
-							<td>
-								13
-							</td>
-						</tr>
-						<tr>
-							<td>
-								Music
-							</td>
-							<td>
-								3
-							</td>
-							<td>
-								4
-							</td>
-							<td>
-								1
-							</td>
-							<td>
-								8
-							</td>
-						</tr>
-					</table>
+					<div id="user_discussion_table_return">
+					
+						
+						
+					</div>
+					
 				</div>
 			</div>
 			
@@ -475,7 +393,7 @@
 				<div class="center_wrapper">
 					<h1>User venues search</h1>
 					What points of interest (venues) a specific user has visited in the last X days (input: user id, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published)
-					<form action="/" method="post">
+					<form id="user_venues_search_form" action="/" method="post">
 						<table class="req_twitter_api">
 							<tr>
 								<td>
@@ -535,44 +453,12 @@
 						</table>
 					</form>
 				
-					<hr>
-					<h1>User venues</h1>
-					Here are the venues for <a href="#">@jtmcilveen</a><br>
-					<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-
-					<table class="tweet_results_table" cellspacing="0">
-						<tr>
-							<td>
-								Venue
-							</td>
-							<td>
-								Lat/Long
-							</td>
-							<td>
-								Number of visits
-							</td>
-						</tr>
-						<tr>
-							<td>
-								Sheffield
-							</td>
-							<td>
-								53.371143,-1.392339
-							</td>
-							<td>
-								1
-							</td>
-						</tr>
-					</table>
-
-					<hr>
-					<h1>Location of Tweets</h1>
-					<div class="white_container">
-						<div class="map_wrapper">
-							<iframe width="100%" height="350" frameborder="0" style="border:0"
-	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
-						</div>
+					<div id="user_venues_return">
+					
+						
+						
 					</div>
+				
 				</div>
 			</div>
 			
@@ -588,7 +474,7 @@
 				<div class="center_wrapper">
 					<h1>Venue search</h1>
 					Who is visiting venues in a specific geographic area (or visiting a named venue) or have done so in the last X days (input: name of location or coordinates, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published).
-					<form action="/" method="post" class="map_init">
+					<form id="venue_search_form" action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
 								<td>
@@ -661,10 +547,10 @@
 										</tr>
 										<tr>
 											<td>
-												Longetide (Optional):
+												Longitude (Optional):
 												<div class="infoicon">
 													<div class="popupinfo">
-														<h2>Longetide (Optional)</h2>
+														<h2>Longitude (Optional)</h2>
 														Explanation about this item.
 													</div>
 												</div>
@@ -695,54 +581,13 @@
 							</tr>
 						</table>
 					</form>
-					<hr>
-					<h1>Users at venue</h1>
-					<span>Here are the users that have been found in the search area</span>
-					<table class="tweet_results_table" cellspacing="0">
-						<tr>
-							<td>
-								Username
-							</td>
-							<td>
-								Number of visits
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<a href="#">@jtmcilveen</a><br>
-								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-							</td>
-							<td>
-								1
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<a href="#">@jtmcilveen</a><br>
-								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-							</td>
-							<td>
-								1
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<a href="#">@jtmcilveen</a><br>
-								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-							</td>
-							<td>
-								1
-							</td>
-						</tr>
-					</table>
-					<hr>
-					<h1>Location of Tweets</h1>
-					<div class="white_container">
-						<div class="map_wrapper">
-							<iframe width="100%" height="350" frameborder="0" style="border:0"
-	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
-						</div>
+					
+					<div id="venue_return">
+					
+						
+						
 					</div>
+					
 				</div>
 			</div>
 			

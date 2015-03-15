@@ -13,6 +13,7 @@ $(function(){
 		
 			var mapOptions = {
 				center: { lat: 53.381796, lng: -1.480719},
+				scrollwheel: false,
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				zoom: 14
 			};
