@@ -304,7 +304,7 @@ function appendLocationOfTweets(element, json) {
 	for (i=0;i<tweetJson.length;i++)
 		if (tweetJson[i]['geo'] !== undefined && tweetJson[i]['geo']['coordinates'] !== undefined)
 			markerdata.push({"screen_name": tweetJson[i]["user"]["screen_name"],"tweet": tweetJson[i]["text"],location: tweetJson[i]['geo']['coordinates']});
-	
+			
 	console.log(markerdata);
 	
 	var randomnumber = Math.floor(Math.random() * (99999999 + 1));
@@ -321,8 +321,6 @@ function appendLocationOfTweets(element, json) {
 		var map = new google.maps.Map(document.getElementById('map_' + randomnumber), mapOptions);
 	
 		for (i=0;i<markerdata.length;i++) {
-			console.log(markerdata[i]["location"][0]);
-			console.log(markerdata[i]["location"][1]);
 			
 			var markerLatlng = new google.maps.LatLng(markerdata[i]["location"][0],markerdata[i]["location"][1]);
 			
@@ -331,6 +329,8 @@ function appendLocationOfTweets(element, json) {
 				map: map,
 				title: markerdata[i]["screen_name"]
 			});
+				
+			attachLabel(marker, "<h3>@" + markerdata[i]["screen_name"] + "</h3>" + markerdata[i]["tweet"]);
 			
 			bounds.extend(marker.position);
 		}
@@ -340,6 +340,17 @@ function appendLocationOfTweets(element, json) {
 		var listener = google.maps.event.addListener(map, "idle", function () {
 		    map.setZoom(map.getZoom() - 2);
 		    google.maps.event.removeListener(listener);
+		});
+	
+	}
+	
+	function attachLabel(marker, message) {
+		var infowindow = new google.maps.InfoWindow({
+			content: message
+		});
+	
+		google.maps.event.addListener(marker, 'click', function() {
+			infowindow.open(marker.get('map'), marker);
 		});
 	}
 	
