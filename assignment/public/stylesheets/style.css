@@ -17,7 +17,6 @@ header, nav {
 	height: 40px;
 	width: 100%;
 	line-height: 40px;
-	text-align: center;
 	position: fixed;
 	left: 0;
 	z-index: 10;
@@ -27,6 +26,8 @@ header, nav {
 
 header {
 	z-index: 13;
+	padding-left: 10px;
+	box-sizing: border-box;
 }
 
 #loading_overlay {
@@ -92,12 +93,12 @@ nav #left {
 	margin-left: 10px;
 }
 
-nav #right {
+nav #right, header #right {
 	float: right;
 	margin-right: 10px;
 }
 
-nav .nav_button, nav .fake_nav_button {
+nav .nav_button, nav .fake_nav_button, header .fake_nav_button {
 	display: block;
 	text-decoration: none;
 	height: 40px;
@@ -121,30 +122,30 @@ nav .nav_button, nav .fake_nav_button {
 	height: 16px;
 }
 
-nav .title {
+header .title, nav .title {
 	margin-right: 10px;
 	float: left;
 }
 
-nav .nav_button, nav .fake_nav_button  {
+nav .nav_button, header .fake_nav_button  {
 	float: left;
 }
 
-nav .nav_button:hover, nav .fake_nav_button:hover {
+nav .nav_button:hover, header .fake_nav_button:hover {
 	color: #fff;
 	background: #61bfef;
 	text-shadow: 0 -1px rgba(0, 0, 0, .2);
 }
 
-nav #left .nav_button:first-child, nav #right .fake_nav_button:first-child {
+nav #left .nav_button:first-child, header #right .fake_nav_button:first-child {
 	margin-left: 10px;
 }
 
-nav .fake_nav_button {
+nav .fake_nav_button, header .fake_nav_button {
 	position: relative;	
 }
 
-nav .fake_nav_button .hover_container {
+header .fake_nav_button .hover_container {
 	display: none;
 	background: #e6e6e6;
 	box-shadow: 0 10px 20px rgba(0,0,0,0.1);
@@ -155,7 +156,7 @@ nav .fake_nav_button .hover_container {
 	top: 40px;
 }
 
-nav #right .fake_nav_button:hover .hover_container, nav #right .fake_nav_button .hover_container:hover {
+header #right .fake_nav_button:hover .hover_container, header #right .fake_nav_button .hover_container:hover {
 	display: block;
 }
 

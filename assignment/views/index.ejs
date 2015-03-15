@@ -49,15 +49,6 @@
 	<body class="no_twitter no_four">
 		<header>
 			<%= title %>
-		</header>
-		<nav>
-			<div id="left">
-			<div class="title">Search:</div>
-			<a href="javascript:void(0)" onmousedown="activeTab('discussion_tab')" class="nav_button">Discussion</a>
-			<a href="javascript:void(0)" onmousedown="activeTab('user_dicussion_tab')" class="nav_button">Specific users discussion</a>
-			<a href="javascript:void(0)" onmousedown="activeTab('user_venue_tab')" class="nav_button">User venues</a>
-			<a href="javascript:void(0)" onmousedown="activeTab('venue_tab')" class="nav_button">Venue</a>
-			</div>
 			<div id="right">
 				<div class="title">Log in to API:</div>
 				<div id="twitter_api_button" class="fake_nav_button">
@@ -74,6 +65,20 @@
 						<a href="javascript:forgetFourAuth()" class="button have_four_show">Logout</a>
 					</div>
 				</div>
+			</div>
+		</header>
+		<nav>
+			<div id="left">
+				<div class="title">Search:</div>
+				<a href="javascript:void(0)" onmousedown="activeTab('discussion_tab')" class="nav_button">Discussion</a>
+				<a href="javascript:void(0)" onmousedown="activeTab('user_dicussion_tab')" class="nav_button">Specific users discussion</a>
+				<a href="javascript:void(0)" onmousedown="activeTab('user_venue_tab')" class="nav_button">User venues</a>
+				<a href="javascript:void(0)" onmousedown="activeTab('venue_tab')" class="nav_button">Venue</a>
+			</div>
+			<div id="right">
+				<div class="title">Search database:</div>
+				<a href="javascript:void(0)" onmousedown="" class="nav_button">Users</a>
+				<a href="javascript:void(0)" onmousedown="" class="nav_button">Venues</a>
 			</div>
 		</nav>
 		<div id="notification_wrapper">
