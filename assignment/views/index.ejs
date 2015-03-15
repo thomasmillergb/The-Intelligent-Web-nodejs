@@ -5,210 +5,33 @@
 		<link rel='stylesheet' href='/stylesheets/style.css' />
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+		<script src="/javascript/main.js"></script>
 		<script src="/javascript/mapinit.js"></script>
 		<script>
-			
-			var haveTwitterAPITokens = false;
-			var haveFourAPITokens = false;
-
-			// Changes the active tab
-			function activeTab(id) {
-				$("#tab_container > div").css("display", "none");
-				$('#' + id).css("display", "block");
-				$("html, body").animate({ scrollTop: 0 }, 300);
-				window.location.hash = '#' + id;
-			}
-			
-			// Opens child window in order to obtain API keys for Twitter
-			function twitterOAuth() {
-				// open popup window and pass field id
-				window.open('/auth/twitter', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
-			}
-			
-			// Opens child window in order to obtain API keys for FourSquare
-			function fourOAuth() {
-				// open popup window and pass field id
-				window.open('/auth/foursqaure', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
-			}
-			
-			
-			
-			// Not a clue what this does or what it is for
-			function getTwitAuth(token, token_secret){
-
-				var twitter_token = token;
-				var twitter_token_secret = token_secret;
-
-				var twitTokens = {token: twitter_token ,token_secret:twitter_token_secret};
-	
-				$.ajax({
-                    type: "POST",
-                    dataType: 'json',
-                    url: "http://127.0.0.1:3000/",
-                    data: twitTokens,
-                    success: function(){    
-                        location.reload();   
-                    }
-                 });
-				
-
-				
-
-				twitter_token = token;
-				twitter_token_secret = token_secret;
-
-			}
-			
-			
-			// Gets a user and their tweets
-			function getUserAndTweets(username) {
-				
-				// TODO: Get tweets from AJAX and and them into the form before it opens
-				
-				toggleUserShow();
-			}
-			
-			// Toggles whether the client is focused on the user panel
-			function toggleUserShow() {
-				$("#tab_container, #user_container").toggleClass("hide");
-				$("html, body").animate({ scrollTop: 0 }, 300);
-			}
-			
-			// Callback function for Twitter child window
-			function setTwitterAuth(token, token_secret) {
-				localStorage.setItem('twitter_token', token);
-				localStorage.setItem('twitter_token_secret', token_secret);
-				
-				haveTwitterAPITokens = true;
-				
-				setRestrictions();
-			}
-			
-			// Callback function for FourSquare child window
-			function SetFourAuth(token){
-				localStorage.setItem('four_token', token);
-				
-				haveFourAPITokens = true;
-				
-				setRestrictions();
-			}
-			
-			// Unset the Twitter API tokens
-			function forgetTwitterAuth() {
-				localStorage.removeItem('twitter_token');
-				localStorage.removeItem('twitter_token_secret');
-				
-				haveTwitterAPITokens = false;
-				
-				setRestrictions();
-			}
-			
-			// Unset the FourSquare API tokens
-			function forgetFourAuth() {
-				localStorage.removeItem('four_token');
-				
-				haveFourAPITokens = false;
-				
-				setRestrictions();
-			}
-			
-			// Checks to see if we have api tokens on page load
+			// Onload test data
 			$(function(){
-				
-				if (localStorage.getItem("twitter_token") !== null && localStorage.getItem("twitter_token_secret") !== null)
-					haveTwitterAPITokens = true;
-				else
-					haveTwitterAPITokens = false;
-				
-				if (localStorage.getItem("four_token") !== null)
-					haveFourAPITokens = true;
-				else
-					haveFourAPITokens = false;
-				
-				setRestrictions();
-				
-			});
-			
-			
-			// Applies restrictions to forms so that they can not be used if the user has not obtained API tokens
-			function setRestrictions() {
-				if (haveTwitterAPITokens)
-				{
-					$("body").removeClass("no_twitter");
-					$("body").addClass("twitter");
-					$("#twitter_api_button").addClass("check");
-				}
-				else
-				{
-					$("body").addClass("no_twitter");
-					$("body").removeClass("twitter");
-					$("#twitter_api_button").removeClass("check");
-				}
-					
-				if (haveFourAPITokens)
-				{
-					$("body").removeClass("no_four");
-					$("body").addClass("four");
-					$("#foursquare_api_button").addClass("check");
-				}
-				else
-				{
-					$("body").addClass("no_four");
-					$("body").removeClass("four");
-					$("#foursquare_api_button").removeClass("check");
-				}
-
-			}
-			
-			// Toggle functon for the loading overlay
-			function loadingOverlay(loading) {
-				if (loading)
-					$("body").addClass("loading");
-				else
-					$("body").removeClass("loading");
-			}
-			
-			// Intercepts form submits and cancels default action
-			$(function(){
-				$("form").submit(function(e){
-					
-					loadingOverlay(true);
-					
-					e.preventDefault();
-				    return false;
-				});
-			});
-			
-			// Adds a notification to the screen that will eventually fade and delete
-			function addNotification(title, message, duration) {
-				
-				html = "<div class=\"notification\"><h4>" + title + "</h4>" + message + "</div>";
-				
-				var notification = $(html).appendTo('#notification_wrapper');
-				
-				timeout = setTimeout(function(){notification.fadeOut(300, function() { $(this).remove(); });}, duration);
-				
-				notification.click(function(){clearTimeout(timeout);notification.fadeOut(300, function() { $(this).remove(); });});
-
-			}
-			
-			
-			$(function(){
-				$("form").submit(function(e){
-					
-					loadingOverlay(true);
-					
-					e.preventDefault();
-				    return false;
-				});
-				
 				
 				addNotification("tets", "asdadadasd asdas asdas dad a", 5000);
 				setTimeout(function(){addNotification("test 2", "asdaasd asd dadasd asdas asdas dad a", 2000);}, 1000);
 				setTimeout(function(){addNotification("test 3", "asdaasd asd dadasd asdas asdas dad a", 3000);}, 6000);
 				
+				var exampleTweetJson = '{"coordinates":[53.381796,-1.480719],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"freebandnames","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"Aggressive Ponytail #freebandnames","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.381796,-1.480719]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user":{"profile_sidebar_fill_color":"DDEEF6","profile_sidebar_border_color":"C0DEED","profile_background_tile":false,"name":"Sean Cummings","profile_image_url":"http://a0.twimg.com/profile_images/2359746665/1v6zfgqo8g0d3mk7ii5s_normal.jpeg","created_at":"Mon Apr 26 06:01:55 +0000 2010","location":"LA, CA","follow_request_sent":null,"profile_link_color":"0084B4","is_translator":false,"id_str":"137238150","entities":{"url":{"urls":[{"expanded_url":null,"url":"","indices":[0,0]}]},"description":{"urls":[]}},"default_profile":true,"contributors_enabled":false,"favourites_count":0,"url":null,"profile_image_url_https":"https://si0.twimg.com/profile_images/2359746665/1v6zfgqo8g0d3mk7ii5s_normal.jpeg","utc_offset":-28800,"id":137238150,"profile_use_background_image":true,"listed_count":2,"profile_text_color":"333333","lang":"en","followers_count":70,"protected":false,"notifications":null,"profile_background_image_url_https":"https://si0.twimg.com/images/themes/theme1/bg.png","profile_background_color":"C0DEED","verified":false,"geo_enabled":true,"time_zone":"Pacific Time (US & Canada)","description":"Born 330 Live 310","default_profile_image":false,"profile_background_image_url":"http://a0.twimg.com/images/themes/theme1/bg.png","statuses_count":579,"friends_count":110,"following":null,"show_all_inline_media":false,"screen_name":"sean_cummings"},"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null}';
+				
+				
+				
+				// Adds a tweet dynamically to the page by passing its json
+				var newtweet = prependTweet($("#discussion_tweet_return"), exampleTweetJson);
+				
+				//Gets the reply wrapper element and then clears it
+				reply_wrapper = newtweet.find(".tweet_replies_wrapper");
+				reply_wrapper.html("<h3>Repies to Tweet</h3><br>");
+				
+				// Adds 3 replies replies to the dynamically created tweet
+				for (i=0;i<3;i++)
+					appendTweetReplies(reply_wrapper, exampleTweetJson);
+				
+				
 			});
-			
 		</script>
 	</head>
 	<body class="no_twitter no_four">
@@ -386,85 +209,52 @@
 					<h1>Tweets</h1>
 					<span>Hit submit above to discover tweets</span>
 				
-					<table class="tweet_table">
-						<tr>
-							<td width="300px">
-								<div class="profile_top clearfix">
-									<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
-									<div class="name_wrapper">
-										<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
-										<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
-									</div>
-								</div>
-								
-								
-								<span class="dark">Location</span> Whaley Bridge<br>
-								<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
-								<span class="dark">Joined</span> May 2011<br><br>
-								
-								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>
-								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-								
-								
-								
-							</td>
-							<td>
-								<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
-								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
-								0 Favourites, 0 Re-Tweets<br><br>
-								
-								<div class="map_wrapper">
-									<iframe width="100%" height="150" frameborder="0" style="border:0"
-src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
-								</div><br><br>
-								<center><a href="javascript:void(0)">See replies to tweet</a></center>
-							</td>
-						</tr>
-					</table>
+					<div id="discussion_tweet_return">
 					
-					<hr>
-					
-					<table class="tweet_table">
-						<tr>
-							<td width="300px">
-								<div class="profile_top clearfix">
-									<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
-									<div class="name_wrapper">
-										<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
-										<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
+						<table class="tweet_table">
+							<tr>
+								<td width="300px">
+									<div class="profile_top clearfix">
+										<img class="profile_image" src="https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_400x400.jpeg" alt="James McIlveen" height="100" width="100">
+										<div class="name_wrapper">
+											<a href="http://www.twitter.com/jtmcilveen" class="screen_name">James McIlveen</a><br>
+											<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a><br><br>
+										</div>
 									</div>
-								</div>
-								
-								
-								<span class="dark">Location</span> Whaley Bridge<br>
-								<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
-								<span class="dark">Joined</span> May 2011<br><br>
-								
-								<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>
-								<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
-
-								
-								
-							</td>
-							<td>
-								<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
-								<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
-								0 Favourites, 0 Re-Tweets<br><br>
-								
-								<div class="map_wrapper">
-									<iframe width="100%" height="150" frameborder="0" style="border:0"
-src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
-								</div><br><br>
-								<center><a href="javascript:void(0)">See replies to tweet</a></center>
-								
-								<h3>Replies</h3>
-								<div class="white_container">
-									<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013 - <a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a><br>
+									
+									
+									<span class="dark">Location</span> Whaley Bridge<br>
+									<span class="dark">Website</span> <a href="http://www.jamesmcilveen.com">www.jamesmcilveen.com</a><br>
+									<span class="dark">Joined</span> May 2011<br><br>
+									
+									<span class="dark">Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University</span><br><br>
+									<a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a>
+	
+									
+									
+								</td>
+								<td>
+									<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013<br>
 									<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
-								</div>
-							</td>
-						</tr>
-					</table>
+									0 Favourites, 0 Re-Tweets<br><br>
+									
+									<div class="map_wrapper">
+										<iframe width="100%" height="150" frameborder="0" style="border:0"
+	src="https://www.google.com/maps/embed/v1/place?q=sheffield&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe>
+									</div><br><br>
+									<center><a href="javascript:void(0)">See replies to tweet</a></center>
+									
+									<h3>Replies</h3>
+									<div class="white_container">
+										<a href="http://www.twitter.com/jtmcilveen">@jtmcilveen</a> 13:41 6th May 2013 - <a href="javascript:void(0)" onclick="getUserAndTweets('none')">View user's profile and Tweets</a><br>
+										<div class="tweet">Anyone heard of the app <a href="http://www.twitter.com/Laser_Chambers">@Laser_Chambers</a>? It's a puzzle game coming soon to iPad/iPhone.etc Looks great! Check it out- <a href="http://jampinstudios.com/">http://jampinstudios.com/</a></div>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					
+					
 				</div>
 			</div>
 			<div id="user_dicussion_tab">

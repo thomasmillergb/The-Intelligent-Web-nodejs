@@ -446,7 +446,7 @@ table table {
 }
 
 .tweet_table td {
-	padding: 20px;
+	padding: 10px;
 	vertical-align: top;
 }
 
@@ -559,4 +559,8 @@ table table {
 
 .no_four .no_four_show {
 	display: block !important;
+}
+
+.center_margin {
+	margin: 0 auto !important;
 }
