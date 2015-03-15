@@ -109,6 +109,14 @@ nav .nav_button, nav .fake_nav_button, header .fake_nav_button {
 	width: auto;
 }
 
+nav .nav_button:first-of-type, nav .fake_nav_button:first-of-type, header .fake_nav_button:first-of-type {
+	box-shadow: -1px 0 rgba(0, 0, 0, .1);
+}
+
+nav .nav_button:last-child, nav .fake_nav_button:last-child, header .fake_nav_button:last-child {
+	box-shadow: 1px 0 rgba(255, 255, 255, .4);
+}
+
 .fake_nav_button.check:after {
 	position: absolute;
 	bottom: 0px;
