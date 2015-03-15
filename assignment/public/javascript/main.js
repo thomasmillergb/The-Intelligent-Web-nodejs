@@ -2,13 +2,19 @@
 var haveTwitterAPITokens = false;
 var haveFourAPITokens = false;
 
+var gmapsloaded = false;
+
+$(window).load(function() {
+    window.loaded = true;
+});
+
 // Changes the active tab
 function activeTab(id) {
 	//$('body').scrollTop(1000);
 	
 	$("#tab_container > div").css("display", "none");
 	$('#' + id).css("display", "block");
-	toggleUserShow(false);
+	toggleAlternatePanel(false);
 	
 	window.location.hash = '#' + id;
 }
@@ -59,26 +65,28 @@ function getUserAndTweets(username) {
 	
 	// TODO: Get tweets from AJAX and and them into the form before it opens
 	
+	toggleAlternatePanel(true);
+	
 	setupUserPage(exampleUserJson);
-	appendLocationOfTweets($("#user_tweet_location_return"), exampleTweetJson_1);
+	appendLocationOfTweets($("#user_tweet_location_return"), collectionOfTweets);
 	
 	for (i = 0; i < 10; i++)
 		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson_1);
 	
-	toggleUserShow(true);
+	
 }
 
 // Toggles whether the client is focused on the user panel
-function toggleUserShow(show) {
+function toggleAlternatePanel(show) {
 	$('html, body').scrollTop(0);
 	
 	if (show) {
 		$("#tab_container").addClass("hide");
-		$("#user_container").removeClass("hide");
+		$("#alternate_panel_container").removeClass("hide");
 	}
 	else {
 		$("#tab_container").removeClass("hide");
-		$("#user_container").addClass("hide");
+		$("#alternate_panel_container").addClass("hide");
 	}
 	
 }
@@ -312,6 +320,8 @@ function appendLocationOfTweets(element, json) {
 	
 	locationhtml = '<hr><h1>Location of Tweets</h1><div class="white_container"><div class="map_wrapper"><div class="search-map-canvas" id="map_' + randomnumber + '"></div></div></div>';
 	
+	var mapreturn = $(locationhtml).appendTo(element);
+	
 	function initialize() {
 		var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
 		var bounds = new google.maps.LatLngBounds();
@@ -359,9 +369,15 @@ function appendLocationOfTweets(element, json) {
 		});
 	}
 	
-	google.maps.event.addDomListener(window, 'load', initialize);
+	if (window.loaded){
+		initialize();
+	}	
+	else {
+		google.maps.event.addDomListener(window, 'load', initialize);
+	}
+		
 	
-	return $(locationhtml).appendTo(element);
+	return mapreturn;
 	
 }
 
@@ -374,7 +390,7 @@ function setupUserPage(json) {
 		
 	//userJson = userJson['user'];	
 	
-	var userhtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleUserShow(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s profile</h1><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
+	var userhtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s profile</h1><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
 	  				
 	  			
 	if (userJson['location'] !== undefined && userJson['location'] != null)
@@ -388,8 +404,8 @@ function setupUserPage(json) {
 	if (userJson['description'] !== undefined && userJson['description'] != null)
 	  userhtml +='<span class="dark">' + userJson['description'] + '</span><br><br>';				
 	
-	userhtml += '</td></tr></table><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_tweet_location_return"></div><div id="user_tweet_return"></div></div>';
+	userhtml += '</td></tr></table><div id="user_tweet_location_return"></div><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_tweet_return"></div></div>';
 	
-	$("#user_container").html(userhtml);
+	$("#alternate_panel_container").html(userhtml);
 }
 

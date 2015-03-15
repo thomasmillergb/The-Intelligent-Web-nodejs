@@ -75,7 +75,7 @@ $(function(){
 			});
 			
 			$(".nav_button").on("mouseup", function(){
-				toggleUserShow(false);
+				toggleAlternatePanel(false);
 				google.maps.event.trigger(map, 'resize');
 			});
 			

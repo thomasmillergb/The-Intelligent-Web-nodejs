@@ -198,12 +198,12 @@ header #right .fake_nav_button:hover .hover_container, header #right .fake_nav_b
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#28a7e7', endColorstr='#1e98d6',GradientType=0 );
 }
 
-#tab_container, #user_container {
+#tab_container, #alternate_panel_container {
 	width: 100%;
 	box-sizing: border-box;
 }
 
-#user_container {
+#alternate_panel_container {
 	padding: 100px 20px 20px 20px;
 }
 
