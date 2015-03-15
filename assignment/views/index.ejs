@@ -34,15 +34,6 @@
 					$("#discussion_tweet_return").append("<hr><h1>Tweets</h1>");
 					var newtweet = appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_1);
 					appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_2);
-					
-					//Gets the reply wrapper element and then clears it
-					reply_wrapper = newtweet.find(".tweet_replies_wrapper");
-					reply_wrapper.html("<h3>Repies to Tweet</h3><br>");
-					
-					// Adds 3 replies replies to the dynamically created tweet
-					for (i=0;i<3;i++)
-						appendTweetReplies(reply_wrapper, exampleTweetJson_1, false);
-				
 				
 			});
 		</script>

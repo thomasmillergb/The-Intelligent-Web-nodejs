@@ -70,7 +70,7 @@ function getUserAndTweets(username) {
 	setupUserPage(exampleUserJson);
 	appendLocationOfTweets($("#user_tweet_location_return"), collectionOfTweets);
 	
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < 100; i++)
 		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson_1);
 	
 	
@@ -263,9 +263,15 @@ function appendTweetWithAccount(element, json) {
 				tweethtml += 'This tweet was not geotagged';
 		}
 		
-		tweethtml +='<br><br><div class="tweet_replies_wrapper"><center><a href="javascript:void(0)">See replies to tweet</a></center></div></td></tr></table><hr>';
+		tweethtml +='<br><div class="tweet_replies_wrapper"><center><a class="tweet_replies_button" href="javascript:void(0)">See replies to tweet</a></center></div></td></tr></table><hr>';
 		
-	return $(tweethtml).appendTo(element);
+	returnelement = $(tweethtml).appendTo(element);
+	
+	returnelement.find(".tweet_replies_button").click(function(){
+		getReplies($(this).closest(".tweet_replies_wrapper"), tweetJson['id_str']);
+	});
+		
+	return returnelement;
 }
 
 // Appends a tweet to an element from the tweets json without their account
@@ -283,13 +289,34 @@ function appendTweetWithoutAccount(element, json) {
 			tweethtml += 'This tweet was not geotagged';
 	}
 			
-	tweethtml += '<br><div class="tweet_replies_wrapper"><center><a href="javascript:void(0)">See replies to tweet</a></center></div>';
+	tweethtml += '<br><div class="tweet_replies_wrapper"><center><a href="javascript:void(0)" class="tweet_replies_button">See replies to tweet</a></center></div>';
 		
+	returnelement = $(tweethtml).appendTo(element);
+	
+	returnelement.find(".tweet_replies_button").click(function(){
+		getReplies($(this).closest(".tweet_replies_wrapper"), tweetJson['id_str']);
+	});
 		
-	return $(tweethtml).prependTo(element);
+	return returnelement;
+		
 }
 
-// Prepends a reply tweet to an element from the tweets json
+// Adds reply tweets in place of the reply tweet button
+function getReplies(element, tweet_id) {
+	
+	element.html("<h3>Repies to Tweet</h3><br>");
+	
+	// TODO: Get actual replies
+	
+	for (i=0;i<3;i++) {
+		console.log("sada");
+		appendTweetReplies(element, exampleTweetJson_1);
+	}
+						
+	element.append("Original tweet id_str: " + tweetJson['id_str']);
+}
+
+// Appends a reply tweet to an element from the tweets json
 // Returns the created element
 function appendTweetReplies(element, json) {							
 										
