@@ -15,7 +15,7 @@ var venueUserVistorsJson = '[{"user":"jtmcilveen", "user_id":"839249234", "visit
 
 var exampleMarkerJson = '[{"label":"<h3>@jtmcilveen</h3>Random tweet number 1","lat":53.381796,"long":-1.480719}, {"label":"<h3>@jtmcilveen</h3>Random tweet number 2","lat":53.3816232,"long":-1.4817597}]';
 
-// Discussion search
+
 $(function(){
 	
 	// When the number of days on a form is set to 0 or less, enable live results,
@@ -41,6 +41,7 @@ $(function(){
 			
 	});
 	
+	// Discussion search
 	$("#discussion_search_form").submit(function(e){
 		
 		// TODO: Add in AJAX request to the server for the json information and then use the functions below
@@ -73,10 +74,8 @@ $(function(){
 		e.preventDefault();
 	    return false;
 	});
-});
 
-// User discussion search
-$(function(){
+	// User discussion search
 	$("#user_discussion_search_form").submit(function(e){
 		
 		// TODO: Add in AJAX request to the server for the json information and then use the functions below
@@ -110,10 +109,8 @@ $(function(){
 		e.preventDefault();
 	    return false;
 	});
-});
 
-// User venue search
-$(function(){
+	// User venue search
 	$("#user_venues_search_form").submit(function(e){
 		
 		// TODO: Add in AJAX request to the server for the json information and then use the functions below
@@ -146,10 +143,8 @@ $(function(){
 		e.preventDefault();
 	    return false;
 	});
-});
 
-// Venue search
-$(function(){
+	// Venue search
 	$("#venue_search_form").submit(function(e){
 		
 		// TODO: Add in AJAX request to the server for the json information and then use the functions below
