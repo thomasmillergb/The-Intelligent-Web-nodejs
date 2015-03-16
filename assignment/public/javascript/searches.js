@@ -7,10 +7,44 @@ var exampleTweetJson_2 = '{"coordinates":[53.3816232,-1.4817597],"favorited":fal
 
 var collectionOfTweets = '[' + exampleTweetJson_1 + ',' + exampleTweetJson_2 + ']';
 
+var userDiscussionJson = '{"users":[{"username":"jtmcilveen", "user_id":"839249234"},{"username":"fabcirca", "user_id":"839249235"},{"username":"stephenfry", "user_id":"839249236"}],"words":[{"word":"London","occurences":[5,2,6]},{"word":"Music","occurences":[3,4,1]}]}';
+
+var visitedVenuesJson = '[{"venue":"Sheffield", "lat":"53.371143", "long":"-1.392339", "visits":"2"},{"venue":"Sheffield 2", "lat":"53.371143", "long":"-1.38", "visits":"1"}]';
+
+var venueUserVistorsJson = '[{"user":"jtmcilveen", "user_id":"839249234", "visits":"5"},{"user":"fabcirca", "user_id":"839249235", "visits":"2"}]';
+
+var exampleMarkerJson = '[{"label":"<h3>@jtmcilveen</h3>Random tweet number 1","lat":53.381796,"long":-1.480719}, {"label":"<h3>@jtmcilveen</h3>Random tweet number 2","lat":53.3816232,"long":-1.4817597}]';
+
 // Discussion search
 $(function(){
+	
+	// When the number of days on a form is set to 0 or less, enable live results,
+	// otherwise, disable them
+	$("[name='days']").on("keyup", function () {
+		console.log(parseInt($(this).val()));
+		if (parseInt($(this).val()) <= 0 || parseInt($(this).val()) == NaN)
+			$(this).parent().parent().parent().parent().parent().find("[name='liveresults']").prop('checked', true);
+		else
+			$(this).parent().parent().parent().parent().parent().find("[name='liveresults']").prop('checked', false);
+	});
+	
+	// When the live results is enabled in a form, set the number of days to 0.
+	// If it is disabled, make sure the number is not below 0
+	$("[name='liveresults']").click(function () {
+		
+		if ($(this).is(':checked')) {
+			$(this).parent().parent().parent().parent().parent().parent().find("[name='days']").val('0');
+		} else {
+			if (parseInt($(this).parent().parent().parent().parent().parent().parent().find("[name='days']").val()) <= 0)
+				$(this).parent().parent().parent().parent().parent().parent().find("[name='days']").val('5');
+		}
+			
+	});
+	
 	$("#discussion_search_form").submit(function(e){
 		
+		// TODO: Add in AJAX request to the server for the json information and then use the functions below
+		// in order to push the data to the front end.
 		
 		/////////////////////////////////
 		// Discussion search imitation //
@@ -22,7 +56,7 @@ $(function(){
 		
 		setTimeout(function() {
 			// Adds a tweet dynamically to the page by passing its json
-			appendLocationOfTweets($("#discussion_tweet_return"), collectionOfTweets);
+			appendLocation($("#discussion_tweet_return"), collectionOfTweets);
 			
 			$("#discussion_tweet_return").append("<hr><h1>Tweets</h1>");
 			var newtweet = appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_1);
@@ -45,6 +79,8 @@ $(function(){
 $(function(){
 	$("#user_discussion_search_form").submit(function(e){
 		
+		// TODO: Add in AJAX request to the server for the json information and then use the functions below
+		// in order to push the data to the front end.
 		
 		//////////////////////////////////////
 		// User discussion search imitation //
@@ -59,7 +95,9 @@ $(function(){
 			
 			$("#user_discussion_table_return").append("<hr><h1>Tweets</h1>");
 			
-			mostUsedWordsTable($("#user_discussion_table_return"), exampleTweetJson_1);
+			mostUsedWordsTable($("#user_discussion_table_return"), userDiscussionJson);
+			
+			appendLocation($("#user_discussion_table_return"), exampleMarkerJson);
 			
 			loadingOverlay(false);
 			
@@ -78,6 +116,8 @@ $(function(){
 $(function(){
 	$("#user_venues_search_form").submit(function(e){
 		
+		// TODO: Add in AJAX request to the server for the json information and then use the functions below
+		// in order to push the data to the front end.
 		
 		//////////////////////////////////
 		// User venues search imitation //
@@ -89,11 +129,11 @@ $(function(){
 		
 		setTimeout(function() {
 			
-			$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"#\">@jtmcilveen</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('none')\">View user's profile and Tweets</a>");
+			$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/jtmcilveen\">@jtmcilveen</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('none')\">View user's profile and Tweets</a>");
 			
-			mostVisitedVenues($("#user_venues_return"), exampleTweetJson_1);
-			
-			appendLocationOfTweets($("#user_venues_return"), collectionOfTweets);
+			visitedVenues($("#user_venues_return"), visitedVenuesJson);
+
+			appendLocation($("#user_venues_return"), exampleMarkerJson);
 			
 			loadingOverlay(false);
 			
@@ -112,6 +152,8 @@ $(function(){
 $(function(){
 	$("#venue_search_form").submit(function(e){
 		
+		// TODO: Add in AJAX request to the server for the json information and then use the functions below
+		// in order to push the data to the front end.
 		
 		////////////////////////////
 		// Venue search imitation //
@@ -125,9 +167,9 @@ $(function(){
 	
 			$("#venue_return").append("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
 			
-			mostVisitedVenues($("#venue_return"), exampleTweetJson_1);
+			mostVisitedVenues($("#venue_return"), venueUserVistorsJson);
 			
-			appendLocationOfTweets($("#venue_return"), collectionOfTweets);
+			appendLocation($("#venue_return"), exampleMarkerJson);
 			
 			loadingOverlay(false);
 			

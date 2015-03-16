@@ -68,7 +68,7 @@ function getUserAndTweets(username) {
 	toggleAlternatePanel(true);
 	
 	setupUserPage(exampleUserJson);
-	appendLocationOfTweets($("#user_tweet_location_return"), collectionOfTweets);
+	appendLocation($("#user_tweet_location_return"), collectionOfTweets);
 	
 	for (i = 0; i < 100; i++)
 		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson_1);
@@ -319,18 +319,12 @@ function appendTweetReplies(element, json) {
 	return $(tweethtml).appendTo(element);								
 }
 
-// A function that takes a list of tweets in json and an DOM element, and appends
+// A function that takes a list of location and labels in json and an DOM element, and appends
 // a map to the element, with the location of each geotagged tweet marked on the map.
 // Markers have labels if the tweet attached to them when they are hovered over
-function appendLocationOfTweets(element, json) {
+function appendLocation(element, json) {
 	
-	tweetJson = JSON.parse(json);
-	
-	markerdata = [];
-	
-	for (i=0;i<tweetJson.length;i++)
-		if (tweetJson[i]['geo'] !== undefined && tweetJson[i]['geo']['coordinates'] !== undefined)
-			markerdata.push({"screen_name": tweetJson[i]["user"]["screen_name"],"tweet": tweetJson[i]["text"],location: tweetJson[i]['geo']['coordinates']});
+	markerJson = JSON.parse(json);
 	
 	var randomnumber = Math.floor(Math.random() * (99999999 + 1));
 	
@@ -348,17 +342,17 @@ function appendLocationOfTweets(element, json) {
 		}
 		var map = new google.maps.Map(document.getElementById('map_' + randomnumber), mapOptions);
 	
-		for (i=0;i<markerdata.length;i++) {
+		for (i=0;i<markerJson.length;i++) {
 			
-			var markerLatlng = new google.maps.LatLng(markerdata[i]["location"][0],markerdata[i]["location"][1]);
+			var markerLatlng = new google.maps.LatLng(markerJson[i]["lat"],markerJson[i]["long"]);
 			
 			var marker = new google.maps.Marker({
 				position: markerLatlng,
 				map: map,
-				title: markerdata[i]["screen_name"]
+				title: markerJson[i]["label"]
 			});
 				
-			attachLabel(marker, "<h3>@" + markerdata[i]["screen_name"] + "</h3>" + markerdata[i]["tweet"]);
+			attachLabel(marker, markerJson[i]["label"]);
 			
 			bounds.extend(marker.position);
 		}
@@ -429,9 +423,31 @@ function setupUserPage(json) {
 // Appends an alement with a table of a set of users most used words in their tweets when given the json for it
 function mostUsedWordsTable(element, json) {
 	
-	// TODO: make json design and make a table from it
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td></td>';
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td></td><td>jtmcilveen<br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>fabcira<br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>stephenfry<br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>Total<br></td></tr><tr><td>London</td><td>5</td><td>2</td><td>6</td><td>13</td></tr><tr><td>Music</td><td>3</td><td>4</td><td>1</td><td>8</td></tr></table>';
+	tableJson = JSON.parse(json);
+	
+	for (i=0;i<tableJson['users'].length;i++)
+		tablehtml += '<td><a href="http://www.twitter.com/' + tableJson['users'][i]['username'] + '">@' + tableJson['users'][i]['username'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tableJson['users'][i]['user_id'] + '\')">View user\'s profile and Tweets</a></td>';
+	
+	tablehtml += '<td>Total</td></tr>';
+	
+	for (i=0;i<tableJson['words'].length;i++) {
+		
+		tablehtml += '<tr><td>' + tableJson['words'][i]['word'] + '</td>';
+		
+		var total = 0;
+		
+		for (j=0;j<tableJson['words'][i]['occurences'].length;j++) {
+			total += tableJson['words'][i]['occurences'][j];
+			tablehtml += '<td>' + tableJson['words'][i]['occurences'][j] + '</td>';
+		}
+			
+		tablehtml += '<td>' + total + '</td></tr>';
+		
+	}
+
+	tablehtml += '</table>';
 	
 	element.append(tablehtml);
 	
@@ -440,11 +456,18 @@ function mostUsedWordsTable(element, json) {
 }
 
 // Appends an element with a table of a users most visited venues from json
-function mostVisitedVenues(element, json) {
+function visitedVenues(element, json) {
 	
-	// TODO: make json design and make a table from it
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td></tr>';
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td></tr><tr><td>Sheffield</td><td>53.371143,-1.392339</td><td>1</td></tr></table>';
+	tableJson = JSON.parse(json);
+	
+	for (i=0;i<tableJson.length;i++) {
+		row = tableJson[i];
+		tablehtml += '<tr><td>' + row['venue'] + '</td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td></tr>';
+	}
+	
+	tablehtml += '</table>';
 	
 	element.append(tablehtml);
 	
@@ -455,9 +478,16 @@ function mostVisitedVenues(element, json) {
 // Appends an element with a table of number of visits of particular users at a venue from json
 function mostVisitedVenues(element, json) {
 	
-	// TODO: make json design and make a table from it
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Number of visits</td></tr>';
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Number of visits</td></tr><tr><td><a href="#">@jtmcilveen</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>1</td></tr><tr><td><a href="#">@jtmcilveen</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>1</td></tr><tr><td><a href="#">@jtmcilveen</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'none\')">View user\'s profile and Tweets</a></td><td>1</td></tr></table>';
+	tableJson = JSON.parse(json);
+	
+	for (i=0;i<tableJson.length;i++) {
+		row = tableJson[i];
+		tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['username'] + '">@' + row['username'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user_id'] + '\')">View user\'s profile and Tweets</a></td><td>' + row['visits'] + '</td></tr>';
+	}
+	
+	tablehtml += '</table>';
 	
 	element.append(tablehtml);
 	
