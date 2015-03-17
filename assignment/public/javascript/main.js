@@ -59,23 +59,6 @@ function getTwitAuth(token, token_secret){
 
 }
 
-
-// Gets a user and their tweets
-function getUserAndTweets(username) {
-	
-	// TODO: Get tweets from AJAX and and them into the form before it opens
-	
-	toggleAlternatePanel(true);
-	
-	setupUserPage(exampleUserJson);
-	appendLocation($("#user_tweet_location_return"), collectionOfTweets);
-	
-	for (i = 0; i < 100; i++)
-		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson_1);
-	
-	
-}
-
 // Toggles whether the client is focused on the user panel
 function toggleAlternatePanel(show) {
 	$('html, body').scrollTop(0);
@@ -295,14 +278,13 @@ function getReplies(element, tweet_id) {
 	
 	element.html("<h3>Repies to Tweet</h3><br>");
 	
-	// TODO: Get actual replies
+	// TODO: Get actual replies using ajax
 	
 	for (i=0;i<3;i++) {
 		console.log("sada");
 		appendTweetReplies(element, exampleTweetJson_1);
 	}
-						
-	element.append("Original tweet id_str: " + tweetJson['id_str']);
+
 }
 
 // Appends a reply tweet to an element from the tweets json
@@ -492,5 +474,135 @@ function mostVisitedVenues(element, json) {
 	element.append(tablehtml);
 	
 	return tablehtml;
+
+}
+
+// Appends an element with a table of users in the database
+function databaseUserTable(element, json) {
+	
+	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
+	
+	tableJson = JSON.parse(json);
+	
+	for (i=0;i<tableJson.length;i++) {
+		row = tableJson[i];
+		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'308358479\')">Get live tweets</a></td></tr>';
+	}
+	
+	tablehtml += '</tbody></table></div>';
+	
+	element.append(tablehtml);
+	
+	return tablehtml;
+
+}
+
+// Appends an element with a table of venues in the database
+function databaseVenueTable(element, json) {
+	
+	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Venue name</th><th>Coordinates</th><th>Number of visitors</th><th>View users that have visited</th></tr></thead><tbody>';
+	
+	tableJson = JSON.parse(json);
+	
+	for (i=0;i<tableJson.length;i++) {
+		row = tableJson[i];
+		tablehtml += '<tr><td>' + row['venue'] + '</td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['coordinates'] + '\')">Users</a></td></tr>';
+	}
+	
+	tablehtml += '</tbody></table></div>';
+	
+	element.append(tablehtml);
+	
+	return tablehtml;
+
+}
+
+// Gets a user and their tweets
+function getUserAndTweets(user_id) {
+	
+	// TODO: Get tweets from AJAX and and them into the form before it opens
+	
+	toggleAlternatePanel(true);
+	
+	setupUserPage(exampleUserJson);
+	appendLocation($("#user_tweet_location_return"), exampleMarkerJson);
+	
+	for (i = 0; i < 100; i++)
+		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson_1);
+	
+	
+}
+
+// Gets a user and their tweets
+function getDatabaseUserAndTweets(user_id) {
+	
+	// TODO: Get tweets from AJAX and and them into the form before it opens
+	
+	toggleAlternatePanel(true);
+	
+	setupUserDatabasePage(exampleUserJson);
+	appendLocation($("#user_database_tweet_location_return"), exampleMarkerJson);
+	
+	for (i = 0; i < 100; i++)
+		appendTweetWithoutAccount($("#user_database_tweet_return"), exampleTweetJson_1);
+	
+	
+}
+
+
+// Gets a user and their tweets
+function setupUserDatabasePage(json) {
+	
+	userJson = JSON.parse(json);
+		
+	//userJson = userJson['user'];	
+	
+	var userhtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s details from database</h1><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
+	  				
+	  			
+	if (userJson['location'] !== undefined && userJson['location'] != null)
+	  userhtml +='<span class="dark">Location</span> ' + userJson['location'] + '<br>';
+	  
+	if (userJson['url'] !== undefined && userJson['url'] != null)
+	  userhtml +='<span class="dark">Website</span> <a href="' + userJson['url'] + '">' + userJson['url'] + '</a><br>';
+	
+	userhtml +='<span class="dark">Joined</span> ' + removeTimezone(userJson['created_at']) + '<br><br>';
+	
+	if (userJson['description'] !== undefined && userJson['description'] != null)
+	  userhtml +='<span class="dark">' + userJson['description'] + '</span><br><br>';				
+	
+	userhtml += '</td></tr></table><div id="user_database_tweet_location_return"></div><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_database_tweet_return"></div></div>';
+	
+	$("#alternate_panel_container").html(userhtml);
+}
+
+// Gets a list of users from the database
+function getDatabaseUserAtVenue(venue) {
+	
+	// TODO: Get tweets from AJAX and and them into the form before it opens
+	
+	toggleAlternatePanel(true);
+	
+	setupVenueUsersDatabasePage(databaseUserJson);
+		
+}
+
+// Appends an element with a table of users that visited a venue in the database
+function setupVenueUsersDatabasePage(json) {
+	
+	var tablehtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - Users that have visited LOCATION GOES HERE</h1><hr>';
+	
+	tablehtml += '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
+	
+	tableJson = JSON.parse(json);
+	
+	for (i=0;i<tableJson.length;i++) {
+		row = tableJson[i];
+		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'308358479\')">Get live tweets</a></td></tr>';
+	}
+	
+	tablehtml += '</tbody></table></div>';
+	
+	$("#alternate_panel_container").html(tablehtml);
 
 }

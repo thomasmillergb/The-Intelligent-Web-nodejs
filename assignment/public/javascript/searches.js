@@ -15,8 +15,18 @@ var venueUserVistorsJson = '[{"user":"jtmcilveen", "user_id":"839249234", "visit
 
 var exampleMarkerJson = '[{"label":"<h3>@jtmcilveen</h3>Random tweet number 1","lat":53.381796,"long":-1.480719}, {"label":"<h3>@jtmcilveen</h3>Random tweet number 2","lat":53.3816232,"long":-1.4817597}]';
 
+var databaseUserJson = '[{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"},{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"},{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"}]';
+
+var databaseVenueJson = '[{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12}]';
 
 $(function(){
+	
+	// Put default data into databse user table
+	databaseUserTable($("#database_user_table_return"), databaseUserJson);
+	
+	// Put default data into database venue table
+	databaseVenueTable($("#database_venue_table_return"), databaseVenueJson);
+	
 	
 	// When the number of days on a form is set to 0 or less, enable live results,
 	// otherwise, disable them
@@ -57,11 +67,10 @@ $(function(){
 		
 		setTimeout(function() {
 			// Adds a tweet dynamically to the page by passing its json
-			appendLocation($("#discussion_tweet_return"), collectionOfTweets);
+			appendLocation($("#discussion_tweet_return"), exampleMarkerJson);
 			
-			$("#discussion_tweet_return").append("<hr><h1>Tweets</h1>");
-			var newtweet = appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_1);
-			appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_2);
+			for (i=0;i<100;i++)
+				appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_1);
 			
 			loadingOverlay(false);
 			
@@ -171,6 +180,66 @@ $(function(){
 			scrollToElement($("#venue_return"));
 			
 			addNotification("User discussion search", "Search successfull. Scroll down for results.", 5000);
+		}, 1000);
+		
+		
+		e.preventDefault();
+	    return false;
+	});
+	
+	// User database search
+	$("#database_user_form").submit(function(e){
+		
+		// TODO: Add in AJAX request to the server for the json information and then use the functions below
+		// in order to push the data to the front end.
+		
+		/////////////////////////////
+		// User database imitation //
+		/////////////////////////////
+		
+		loadingOverlay(true);
+		
+		$("#database_user_table_return").html("");
+		
+		setTimeout(function() {
+	
+			databaseUserTable($("#database_user_table_return"), databaseUserJson);
+			
+			loadingOverlay(false);
+			
+			scrollToElement($("#database_user_table_return"));
+			
+			addNotification("User database search", "Search successfull. Scroll down for results.", 5000);
+		}, 1000);
+		
+		
+		e.preventDefault();
+	    return false;
+	});
+	
+	// venue database search
+	$("#database_venue_form").submit(function(e){
+		
+		// TODO: Add in AJAX request to the server for the json information and then use the functions below
+		// in order to push the data to the front end.
+		
+		//////////////////////////////
+		// Venue database imitation //
+		//////////////////////////////
+		
+		loadingOverlay(true);
+		
+		$("#database_venue_table_return").html("");
+		
+		setTimeout(function() {
+	
+			databaseVenueTable($("#database_venue_table_return"), databaseVenueJson);
+			
+			loadingOverlay(false);
+			
+			scrollToElement($("#database_venue_table_return"));
+			
+			addNotification("Venue database search", "Search successfull. Scroll down for results.", 5000);
 		}, 1000);
 		
 		
