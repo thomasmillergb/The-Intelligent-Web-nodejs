@@ -446,8 +446,7 @@ function visitedVenues(element, json) {
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a>
-		</td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td></tr>';
+		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td></tr>';
 	}
 	
 	tablehtml += '</table>';
