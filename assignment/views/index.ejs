@@ -8,6 +8,38 @@
 		<script src="/javascript/main.js"></script>
 		<script src="/javascript/searches.js"></script>
 		<script src="/javascript/mapinit.js"></script>
+		<script>
+			function getTwitAuth1(token, token_secret){
+
+				var twitter_token = token;
+				var twitter_token_secret = token_secret;
+
+				var twitTokens = {token: twitter_token ,token_secret:twitter_token_secret};
+
+				$.ajax({
+                    type: "GET",
+                    dataType: 'json',
+                    url: "http://127.0.0.1:3000/",
+                    data: twitTokens,
+                    success: function(){    
+                        location.reload();   
+                    }
+                 });
+				
+					localStorage.setItem('twitter_token', token);
+					localStorage.setItem('twitter_token_secret', token_secret);
+					
+					haveTwitterAPITokens = true;
+					
+					setRestrictions();
+					
+					addNotification("Twitter API Login", "Logged into Twitter API succesfully.", 5000);
+				
+
+
+			}
+
+		</script>
 	</head>
 	<body class="no_twitter no_four">
 		<header>
@@ -18,6 +50,7 @@
 					Twitter
 					<div class="hover_container ">
 						<a href="javascript:twitterOAuth()" class="button no_twitter_show">Login</a>
+						<a href="/auth/twitter" class="button no_twitter_show">Login without new window</a>
 						<a href="javascript:forgetTwitterAuth()" class="button have_twitter_show">Logout</a>
 					</div>
 				</div>
@@ -677,7 +710,26 @@
 				</div>
 			</div>
 		</div>
-		
+		<!DOCTYPE html>
+<p>Welcome to Express</p>
+
+<div ng-controller="TestApp" class="content"><h2>total count: {{count}}</h2><h3>
+
+<span style="color:green"> Love: <%="countLove"%>
+</span>
+
+<span style="color:red"> Hate: <%="countHate"%>
+</span>
+
+<span> Love and Hate: <%="countMiddle"%>
+</span></h3>
+
+<div ng-repeat="t in twitts">
+
+<p style="color:<%="t.color"%>"><%="t.user.screen_name"%>": <%="t.text"%></p>
+</div>
+</div>
+
 		<!--
 				
 		###############################

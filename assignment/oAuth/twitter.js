@@ -1,3 +1,5 @@
+
+
 var OAuth= require('oauth').OAuth;
 
 //var express = require('express');
@@ -17,7 +19,7 @@ module.exports = function(app){
 		"NlT41DmogCgb5C6PsgogvHy29",
 		"4e0sav0ciNSlafDjMWjQKXAQXCmxAC3vfTQv9TuB5LEiJPP905",
 		"1.0",
-		"http://127.0.0.1:3000/endoftwit",
+		"http://127.0.0.1:3000/auth/twitter/callback",
 		"HMAC-SHA1"
 	);
 	app.get('/auth/twitter', function(req, res){
@@ -36,23 +38,44 @@ module.exports = function(app){
 		}
 		});
 	});
-	app.get('/auth/twitter/callback', function(req, res, next){
+	
+	var twitter = require('ntwitter');
+	app.get('/auth/twitter/callback', function(req, res, next) {
 		if (req.session.oauth) {
 			req.session.oauth.verifier = req.query.oauth_verifier;
 			var oauth = req.session.oauth;
 
-			oa.getOAuthAccessToken(oauth.token,oauth.token_secret,oauth.verifier, 
-			function(error, oauth_access_token, oauth_access_token_secret, results){
-				if (error){
-					console.log(error);
-					res.send("yeah something broke.");
-				} else {
-					req.session.oauth.access_token = oauth_access_token;
-					req.session.oauth,access_token_secret = oauth_access_token_secret;
-					console.log(req.session.oauth);
-					res.send("worked. nice one.");
+			oa.getOAuthAccessToken(oauth.token, oauth.token_secret, oauth.verifier,
+				function(error, oauth_access_token, oauth_access_token_secret, results) {
+					if (error) {
+						console.log(error);
+						res.send("yeah something broke.");
+					} else {
+						req.session.oauth.access_token = oauth_access_token;
+						req.session.oauth.access_token_secret = oauth_access_token_secret;
+						//console.log(results);
+						//console.log(req);
+						var twit = new twitter({
+							consumer_key: "NlT41DmogCgb5C6PsgogvHy29",
+							consumer_secret: "4e0sav0ciNSlafDjMWjQKXAQXCmxAC3vfTQv9TuB5LEiJPP905",
+							access_token_key: req.session.oauth.access_token,
+							access_token_secret: req.session.oauth.access_token_secret
+						});
+
+
+						twit
+							.verifyCredentials(function(err, data) {
+								//console.log(err, data);
+							})
+							.updateStatus('Test tweet from ntwitter/' + twitter.VERSION,
+								function(err, data) {
+									console.log(err, data?data.toString():"");
+									res.redirect('/');
+								}
+						);
+
+					}
 				}
-			}
 			);
 		} else
 			next(new Error("you're not supposed to be here."))

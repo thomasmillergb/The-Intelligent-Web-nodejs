@@ -40,9 +40,9 @@ function getTwitAuth(token, token_secret){
 	var twitter_token_secret = token_secret;
 
 	var twitTokens = {token: twitter_token ,token_secret:twitter_token_secret};
-
+	alert(twitTokens);
 	$.ajax({
-        type: "POST",
+        type: "GET",
         dataType: 'json',
         url: "http://127.0.0.1:3000/",
         data: twitTokens,
@@ -52,10 +52,11 @@ function getTwitAuth(token, token_secret){
      });
 	
 
-	
+	/*
 
 	twitter_token = token;
 	twitter_token_secret = token_secret;
+	*/
 
 }
 
@@ -84,6 +85,20 @@ function setTwitterAuth(token, token_secret) {
 	setRestrictions();
 	
 	addNotification("Twitter API Login", "Logged into Twitter API succesfully.", 5000);
+
+	//required to send session info to nodeserver
+	var twitTokens = {token: twitter_token ,token_secret:twitter_token_secret};
+	alert(twitTokens);
+	$.ajax({
+        type: "GET",
+        dataType: 'json',
+        url: "http://127.0.0.1:3000/",
+        data: twitTokens,
+        success: function(){    
+            location.reload();   
+        }
+     });
+	
 }
 
 // Callback function for FourSquare child window
