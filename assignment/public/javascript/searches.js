@@ -19,6 +19,23 @@ var databaseUserJson = '[{"user_id":"839249234", "user":"jtmcilveen", "name":"Ja
 
 var databaseVenueJson = '[{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12}]';
 
+var socket = io.connect('http://localhost:3001');
+    window.socket = socket;
+    socket.on('newTwitt', function (item) {
+
+        appendTweetWithAccount($("#discussion_tweet_return"), item);
+
+        /*$scope.twitts.push(item);
+
+        $scope.count++;
+
+        //console.log(item);
+        if ($scope.twitts.length > 15)
+            $scope.twitts.splice(0, 1);
+        $scope.$apply();*/
+
+    })
+
 $(function(){
 	
 	// Put default data into databse user table
