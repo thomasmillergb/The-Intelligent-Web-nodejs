@@ -1,5 +1,5 @@
-//main function
-function TrackTweets($scope) {
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope) {
     $scope.count = 1;
     $scope.twitts = [];
     var socket = io.connect('http://localhost:3001');
@@ -17,5 +17,4 @@ function TrackTweets($scope) {
         $scope.$apply();
 
     })
-
-}
+});

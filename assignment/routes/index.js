@@ -38,13 +38,13 @@ var InitStream = function (session) {
         }
     );
 
-
+    console.log(isActive);
     if (!isActive) {
         console.log('init Stream');
         twit.stream('statuses/filter',{track: ['pie']},function (stream) {
                 stream.on('data', function (data) {
-                    //console.log(data);
-                    console.log(data.user.screen_name + " : " + data.text);
+                    console.log(session.oauth.access_token);
+                    //console.log(data.user.screen_name + " : " + data.text);
                     io.sockets.emit('newTwitt', data);
                     // throw  new Exception('end');
                 });
