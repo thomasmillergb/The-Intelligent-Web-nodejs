@@ -1,48 +1,35 @@
-// Test data
-var exampleUserJson = '{"id":308358479,"id_str":"308358479","name":"James McIlveen","screen_name":"jtmcilveen","location":"Whaley Bridge","profile_location":null,"description":"Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University","url":"http://t.co/BiYvW71Wux","entities":{"url":{"urls":[{"url":"http://t.co/BiYvW71Wux","expanded_url":"http://www.jamesmcilveen.com","display_url":"jamesmcilveen.com","indices":[0,22]}]},"description":{"urls":[]}},"protected":true,"followers_count":58,"friends_count":31,"listed_count":0,"created_at":"Tue May 31 08:22:02 +0000 2011","favourites_count":9,"utc_offset":0,"time_zone":"London","geo_enabled":false,"verified":false,"statuses_count":53,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"C0DEED","profile_background_image_url":"http://abs.twimg.com/images/themes/theme1/bg.png","profile_background_image_url_https":"https://abs.twimg.com/images/themes/theme1/bg.png","profile_background_tile":false,"profile_image_url":"http://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_image_url_https":"https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_banner_url":"https://pbs.twimg.com/profile_banners/308358479/1405693222","profile_link_color":"0084B4","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"default_profile":true,"default_profile_image":false,"following":false,"follow_request_sent":false,"notifications":false,"suspended":false,"needs_phone_verification":false}';
 
-var exampleTweetJson_1 = '{"coordinates":[53.381796,-1.480719],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"example","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"This is an #example tweet 1111111111","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.381796,-1.480719]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user":' + exampleUserJson + ',"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null}';
 
-var exampleTweetJson_2 = '{"coordinates":[53.3816232,-1.4817597],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"example","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"This is an #example tweet 2222222222","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.3816232,-1.4817597]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user":' + exampleUserJson + ',"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null}';
+//var socket = io.connect('http://localhost:3001');
+//    window.socket = socket;
+//    socket.on('newTwitt', function (item) {
+//
+//        appendTweetWithAccount($("#discussion_tweet_return"), item);
+//
+//        /*$scope.twitts.push(item);
+//
+//        $scope.count++;
+//
+//        //console.log(item);
+//        if ($scope.twitts.length > 15)
+//            $scope.twitts.splice(0, 1);
+//        $scope.$apply();*/
+//
+//    })
+    
+function getFormData(element) {
+    var formData = {};
+    element.find('[name]').each(function() {
 
-var collectionOfTweets = '[' + exampleTweetJson_1 + ',' + exampleTweetJson_2 + ']';
-
-var userDiscussionJson = '{"users":[{"username":"jtmcilveen", "user_id":"839249234"},{"username":"fabcirca", "user_id":"839249235"},{"username":"stephenfry", "user_id":"839249236"}],"words":[{"word":"London","occurences":[5,2,6]},{"word":"Music","occurences":[3,4,1]}]}';
-
-var visitedVenuesJson = '[{"venue":"Sheffield", "lat":"53.371143", "long":"-1.392339", "visits":"2"},{"venue":"Sheffield 2", "lat":"53.371143", "long":"-1.38", "visits":"1"}]';
-
-var venueUserVistorsJson = '[{"user":"jtmcilveen", "user_id":"839249234", "visits":"5"},{"user":"fabcirca", "user_id":"839249235", "visits":"2"}]';
-
-var exampleMarkerJson = '[{"label":"<h3>@jtmcilveen</h3>Random tweet number 1","lat":53.381796,"long":-1.480719}, {"label":"<h3>@jtmcilveen</h3>Random tweet number 2","lat":53.3816232,"long":-1.4817597}]';
-
-var databaseUserJson = '[{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"},{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"},{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"}]';
-
-var databaseVenueJson = '[{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St George\'s Church", "coordinates":"53.3816232,-1.4817597", "visitors":12}]';
-
-var socket = io.connect('http://localhost:3001');
-    window.socket = socket;
-    socket.on('newTwitt', function (item) {
-
-        appendTweetWithAccount($("#discussion_tweet_return"), item);
-
-        /*$scope.twitts.push(item);
-
-        $scope.count++;
-
-        //console.log(item);
-        if ($scope.twitts.length > 15)
-            $scope.twitts.splice(0, 1);
-        $scope.$apply();*/
-
+	    if ($(this).is(':checkbox'))
+	    	formData[this.name] = $(this).is(':checked'); 
+	    else
+        	formData[this.name] = this.value;  
     })
+    return formData;
+};
 
 $(function(){
-	
-	// Put default data into databse user table
-	databaseUserTable($("#database_user_table_return"), databaseUserJson);
-	
-	// Put default data into database venue table
-	databaseVenueTable($("#database_venue_table_return"), databaseVenueJson);
 	
 	
 	// When the number of days on a form is set to 0 or less, enable live results,
@@ -71,31 +58,64 @@ $(function(){
 	// Discussion search
 	$("#discussion_search_form").submit(function(e){
 		
-		// TODO: Add in AJAX request to the server for the json information and then use the functions below
-		// in order to push the data to the front end.
-		
-		/////////////////////////////////
-		// Discussion search imitation //
-		/////////////////////////////////
-		
 		loadingOverlay(true);
 		
-		$("#discussion_tweet_return").html("");
+		$("#discussion_tweet_return, #discussion_location_return").html("");
 		
-		setTimeout(function() {
-			// Adds a tweet dynamically to the page by passing its json
-			appendLocation($("#discussion_tweet_return"), exampleMarkerJson);
-			
-			for (i=0;i<100;i++)
-				appendTweetWithAccount($("#discussion_tweet_return"), exampleTweetJson_1);
+		socket.emit('discussion_search', getFormData($(this)), function (err, data) {
 			
 			loadingOverlay(false);
 			
-			scrollToElement($("#discussion_tweet_return"));
+			if (err != null) {				
+				addNotification("Error", err, 5000);
+			} else {
+				
+				// Use the streaming API
+				if ($("#discussion_search_form input[name=liveresults]").is(':checked')) {
+					
+					
+					$("#discussion_search_form").addClass("live_steaming");
+					
+					$("#discussion_search_form tr.stop_streaming .button").click(function () {
+						
+						// Stop the streaming
+						socket.emit('discussion_search_stop_stream', function() {
+							$("#discussion_search_form").removeClass("live_steaming");
+						});
+						
+						e.preventDefault();
+						return false;
+					});
+					
+					map = appendLocation($("#discussion_location_return"), []);
+					
+					var newBounds = true;
+					
+					socket.on('stream_discussion_search', function (data) {
+						if (data.marker) {
+							addMarkerToMap(map, data.marker.latitude, data.marker.longitude, data.marker.label, newBounds);
+							newBounds = false;
+						}
+						appendTweetWithAccount($("#discussion_tweet_return"), data.tweet);
+					});
+					
+				// Use the REST API	
+				} else {
+					
+					addNotification("Discussion search", "Search successful", 5000);
+				
+					appendLocation($("#discussion_location_return"), data.markers);
+				
+					for (i=0;i<data.tweets.length;i++)
+						appendTweetWithAccount($("#discussion_tweet_return"), data.tweets[i]);
+					
+					scrollToElement($("#discussion_location_return"));
+					
+				}
+					
+			}
 			
-			addNotification("Discussion search", "Search successfull. Scroll down for results.", 5000);
-		}, 1000);
-		
+		});
 		
 		e.preventDefault();
 	    return false;
@@ -107,33 +127,55 @@ $(function(){
 		// TODO: Add in AJAX request to the server for the json information and then use the functions below
 		// in order to push the data to the front end.
 		
-		//////////////////////////////////////
-		// User discussion search imitation //
-		//////////////////////////////////////
-		
 		loadingOverlay(true);
 		
-		$("#user_discussion_table_return").html("");
+		$("#user_discussion_table_return, #user_discussion_location_return").html("");
 		
-		setTimeout(function() {
-	
+		socket.emit('user_discussion_search', getFormData($(this)), function (err, data) {
 			
-			$("#user_discussion_table_return").append("<hr><h1>Tweets</h1>");
-			
-			mostUsedWordsTable($("#user_discussion_table_return"), userDiscussionJson);
-			
-			appendLocation($("#user_discussion_table_return"), exampleMarkerJson);
 			
 			loadingOverlay(false);
 			
-			scrollToElement($("#user_discussion_table_return"));
+			if (err != null) {				
+				addNotification("Error", err, 5000);
+			} else {
+				
+				if ($("#user_discussion_search_form input[name=liveresults]").is(':checked')) {
+					// Streaming
+					
+					$("#user_discussion_search_form").addClass("live_steaming");
+					
+					$("#user_discussion_search_form tr.stop_streaming .button").click(function () {
+						$("#user_discussion_search_form").removeClass("live_steaming");
+						
+						// Stop the streaming here
+						
+						e.preventDefault();
+						return false;
+					});
+					
+				} else {
+					// Not streaming
+					
+					addNotification("User discussion search", "Search successful", 5000);
+				
+					$("#user_discussion_table_return").append("<hr><h1>Tweets</h1>");
+				
+					mostUsedWordsTable($("#user_discussion_table_return"), data.userdiscussiontable);
+	
+					appendLocation($("#user_discussion_location_return"), data.markers);
+					
+					scrollToElement($("#user_discussion_table_return"));
+					
+				}
+					
+			}
 			
-			addNotification("User discussion search", "Search successfull. Scroll down for results.", 5000);
-		}, 1000);
-		
+		});
 		
 		e.preventDefault();
 	    return false;
+		
 	});
 
 	// User venue search
@@ -142,29 +184,52 @@ $(function(){
 		// TODO: Add in AJAX request to the server for the json information and then use the functions below
 		// in order to push the data to the front end.
 		
-		//////////////////////////////////
-		// User venues search imitation //
-		//////////////////////////////////
-		
 		loadingOverlay(true);
 		
-		$("#user_venues_return").html("");
+		$("#user_venues_return, #user_venues_location_return").html("");
 		
-		setTimeout(function() {
+		socket.emit('user_venues_search', getFormData($(this)), function (err, data) {
 			
-			$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/jtmcilveen\">@jtmcilveen</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('none')\">View user's profile and Tweets</a>");
-			
-			visitedVenues($("#user_venues_return"), visitedVenuesJson);
-
-			appendLocation($("#user_venues_return"), exampleMarkerJson);
 			
 			loadingOverlay(false);
 			
-			scrollToElement($("#user_venues_return"));
+			if (err != null) {				
+				addNotification("Error", err, 5000);
+			} else {
+				
+				if ($("#user_venues_search_form input[name=liveresults]").is(':checked')) {
+					// Streaming
+					
+					$("#user_venues_search_form").addClass("live_steaming");
+					
+					$("#user_venues_search_form tr.stop_streaming .button").click(function () {
+						$("#user_venues_search_form").removeClass("live_steaming");
+						
+						// Stop the streaming here
+						
+						e.preventDefault();
+						return false;
+					});
+					
+				} else {
+					// Not streaming
+					
+					addNotification("User venues search", "Search successful", 5000);
+				
+				
+					$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.screen_name + "\">@" + data.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.id + "')\">View user's profile and Tweets</a>");
+				
+					visitedVenues($("#user_venues_return"), data.visitedvenuestable);
+					
+					appendLocation($("#user_venues_location_return"), data.markers);
+					
+					scrollToElement($("#user_venues_location_return"));
+					
+				}
+
+			}
 			
-			addNotification("User discussion search", "Search successfull. Scroll down for results.", 5000);
-		}, 1000);
-		
+		});
 		
 		e.preventDefault();
 	    return false;
@@ -176,29 +241,51 @@ $(function(){
 		// TODO: Add in AJAX request to the server for the json information and then use the functions below
 		// in order to push the data to the front end.
 		
-		////////////////////////////
-		// Venue search imitation //
-		////////////////////////////
-		
 		loadingOverlay(true);
 		
-		$("#venue_return").html("");
+		$("#venue_return, #venue_return_location_return").html("");
 		
-		setTimeout(function() {
-	
-			$("#venue_return").append("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
+		socket.emit('venue_search', getFormData($(this)), function (err, data) {
 			
-			mostVisitedVenues($("#venue_return"), venueUserVistorsJson);
-			
-			appendLocation($("#venue_return"), exampleMarkerJson);
 			
 			loadingOverlay(false);
 			
-			scrollToElement($("#venue_return"));
+			if (err != null) {				
+				addNotification("Error", err, 5000);
+			} else {
+				
+				if ($("#venue_search_form input[name=liveresults]").is(':checked')) {
+					// Streaming
+					
+					$("#venue_search_form").addClass("live_steaming");
+					
+					$("#venue_search_form tr.stop_streaming .button").click(function () {
+						$("#venue_search_form").removeClass("live_steaming");
+						
+						// Stop the streaming here
+						
+						e.preventDefault();
+						return false;
+					});
+					
+				} else {
+					// Not streaming
+					
+					addNotification("Venue search", "Search successful", 5000);
+				
+					$("#venue_return").append("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
+				
+					mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
+					
+					appendLocation($("#venue_return_location_return"), data.markers);
+					
+					scrollToElement($("#venue_return_location_return"));
+						
+				}
+				
+			}
 			
-			addNotification("User discussion search", "Search successfull. Scroll down for results.", 5000);
-		}, 1000);
-		
+		});
 		
 		e.preventDefault();
 	    return false;
@@ -218,17 +305,23 @@ $(function(){
 		
 		$("#database_user_table_return").html("");
 		
-		setTimeout(function() {
-	
-			databaseUserTable($("#database_user_table_return"), databaseUserJson);
+		socket.emit('database_user_search', getFormData($(this)), function (err, data) {
+			
 			
 			loadingOverlay(false);
 			
-			scrollToElement($("#database_user_table_return"));
+			if (err != null) {				
+				addNotification("Error", err, 5000);
+			} else {
+				addNotification("Database user search", "Search successful", 5000);
+				
+				databaseUserTable($("#database_user_table_return"), data.databaseusertable);
+				
+				scrollToElement($("#database_user_table_return"));
+				
+			}
 			
-			addNotification("User database search", "Search successfull. Scroll down for results.", 5000);
-		}, 1000);
-		
+		});
 		
 		e.preventDefault();
 	    return false;
@@ -248,17 +341,23 @@ $(function(){
 		
 		$("#database_venue_table_return").html("");
 		
-		setTimeout(function() {
-	
-			databaseVenueTable($("#database_venue_table_return"), databaseVenueJson);
+		socket.emit('database_venue_search', getFormData($(this)), function (err, data) {
+			
 			
 			loadingOverlay(false);
 			
-			scrollToElement($("#database_venue_table_return"));
+			if (err != null) {				
+				addNotification("Error", err, 5000);
+			} else {
+				addNotification("Database venue search", "Search successful", 5000);
+				
+				databaseVenueTable($("#database_venue_table_return"), data.databasevenuetable);
 			
-			addNotification("Venue database search", "Search successfull. Scroll down for results.", 5000);
-		}, 1000);
-		
+				scrollToElement($("#database_venue_table_return"));
+				
+			}
+			
+		});
 		
 		e.preventDefault();
 	    return false;
@@ -270,3 +369,138 @@ function scrollToElement(element) {
         scrollTop: element.offset().top - 100
     }, 500);
 }
+
+// Adds reply tweets in place of the reply tweet button
+function getReplies(element, tweet_id) {
+	
+	element.html("<h3>Repies to Tweet</h3><br>");
+	
+	loadingOverlay(true);
+	
+	socket.emit('get_tweet_replies', tweet_id, function (err, data) {
+		
+		loadingOverlay(false);
+		
+		if (err != null) {				
+			addNotification("Error", err, 5000);
+		} else {
+			addNotification("Tweet replies", "Replies retrieved successfully", 5000);
+			
+			for (i=0;i<data.tweets.length;i++) {
+				appendTweetReplies(element, data.tweets[i]);
+			}
+			
+		}
+		
+	});
+	
+}
+
+// Gets a list of users from the database
+function getDatabaseUserAtVenue(venue) {
+	
+	// TODO: Get tweets from AJAX and and them into the form before it opens
+	
+	toggleAlternatePanel(true);
+	
+	loadingOverlay(true);
+	
+	socket.emit('database_get_users_at_venue', venue, function (err, data) {
+		
+		loadingOverlay(false);
+		
+		if (err != null) {				
+			addNotification("Error", err, 5000);
+		} else {
+			addNotification("Database: Users at venue", "Table recieved", 5000);
+			
+			setupVenueUsersDatabasePage(data);
+			
+		}
+		
+	});
+	
+}
+
+// Gets a user and their tweets
+function getDatabaseUserAndTweets(user_id) {
+	
+	// TODO: Get tweets from AJAX and and them into the form before it opens
+	
+	toggleAlternatePanel(true);
+	
+	loadingOverlay(true);
+	
+	socket.emit('database_get_user_and_tweets', user_id, function (err, data) {
+		
+		loadingOverlay(false);
+		
+		if (err != null) {				
+			addNotification("Error", err, 5000);
+		} else {
+			addNotification("Database: User and tweets", "Data recieved", 5000);
+			
+			setupUserDatabasePage(data.user);
+			appendLocation($("#user_database_tweet_location_return"), data.markers);
+			
+			for (i = 0; i < data.tweets.length; i++)
+				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
+			
+		}
+		
+	});
+
+	
+}
+
+// Gets a user and their tweets
+function getUserAndTweets(user_id) {
+	
+	// TODO: Get tweets from AJAX and and them into the form before it opens
+	
+	toggleAlternatePanel(true);
+	
+	loadingOverlay(true);
+	
+	socket.emit('get_user_and_tweets', user_id, function (err, data) {
+		
+		loadingOverlay(false);
+		
+		if (err != null) {				
+			addNotification("Error", err, 5000);
+		} else {
+			addNotification("User and tweets", "Data recieved", 5000);
+			
+			setupUserPage(data.user);
+			appendLocation($("#user_tweet_location_return"), data.markers);
+			
+			for (i = 0; i < data.tweets.length; i++)
+				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
+			
+		}
+		
+	});
+	
+}
+
+
+
+var exampleUserJson = {"id":308358479,"id_str":"308358479","name":"James McIlveen","screen_name":"jtmcilveen","location":"Whaley Bridge","profile_location":null,"description":"Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University","url":"http://t.co/BiYvW71Wux","entities":{"url":{"urls":[{"url":"http://t.co/BiYvW71Wux","expanded_url":"http://www.jamesmcilveen.com","display_url":"jamesmcilveen.com","indices":[0,22]}]},"description":{"urls":[]}},"protected":true,"followers_count":58,"friends_count":31,"listed_count":0,"created_at":"Tue May 31 08:22:02 +0000 2011","favourites_count":9,"utc_offset":0,"time_zone":"London","geo_enabled":false,"verified":false,"statuses_count":53,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"C0DEED","profile_background_image_url":"http://abs.twimg.com/images/themes/theme1/bg.png","profile_background_image_url_https":"https://abs.twimg.com/images/themes/theme1/bg.png","profile_background_tile":false,"profile_image_url":"http://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_image_url_https":"https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_banner_url":"https://pbs.twimg.com/profile_banners/308358479/1405693222","profile_link_color":"0084B4","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"default_profile":true,"default_profile_image":false,"following":false,"follow_request_sent":false,"notifications":false,"suspended":false,"needs_phone_verification":false};
+
+var exampleTweetJson_1 = {"coordinates":[53.381796,-1.480719],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"example","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"This is an #example tweet 1111111111","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.381796,-1.480719]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user": exampleUserJson,"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null};
+
+var exampleTweetJson_2 = {"coordinates":[53.3816232,-1.4817597],"favorited":false,"truncated":false,"created_at":"Mon Sep 24 03:35:21 +0000 2012","id_str":"250075927172759552","entities":{"urls":[],"hashtags":[{"text":"example","indices":[20,34]}],"user_mentions":[]},"in_reply_to_user_id_str":null,"contributors":null,"text":"This is an #example tweet 2222222222","metadata":{"iso_language_code":"en","result_type":"recent"},"retweet_count":0,"in_reply_to_status_id_str":null,"id":250075927172759552,"geo":{"type":"point","coordinates":[53.3816232,-1.4817597]},"retweeted":false,"in_reply_to_user_id":null,"place":null,"user": exampleUserJson ,"in_reply_to_screen_name":null,"source":"<a>Twitter for Mac</a>","in_reply_to_status_id":null};
+
+var collectionOfTweets = [exampleTweetJson_1,exampleTweetJson_2];
+
+var userDiscussionJson = {"users":[{"username":"jtmcilveen", "user_id":"839249234"},{"username":"fabcirca", "user_id":"839249235"},{"username":"stephenfry", "user_id":"839249236"}],"words":[{"word":"London","occurences":[5,2,6]},{"word":"Music","occurences":[3,4,1]}]};
+
+var visitedVenuesJson = [{"venue":"Sheffield", "lat":"53.371143", "long":"-1.392339", "visits":"2"},{"venue":"Sheffield 2", "lat":"53.371143", "long":"-1.38", "visits":"1"}];
+
+var venueUserVistorsJson = [{"user":"jtmcilveen", "user_id":"839249234", "visits":"5"},{"user":"fabcirca", "user_id":"839249235", "visits":"2"}];
+
+var exampleMarkerJson = [{"label":"<h3>@jtmcilveen</h3>Random tweet number 1","lat":53.381796,"long":-1.480719}, {"label":"<h3>@jtmcilveen</h3>Random tweet number 2","lat":53.3816232,"long":-1.4817597}];
+
+var databaseUserJson = [{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"},{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"},{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"}];
+
+var databaseVenueJson = [{"venue":"St Georges Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St Georges Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St Georges Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St Georges Church", "coordinates":"53.3816232,-1.4817597", "visitors":12}];

@@ -7,54 +7,21 @@
 		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>	
-        <script src='/javascript/socket.io.js'></script>
+        <script src="/javascript/socket.io.js"></script>
 
 		<script src="/javascript/main.js"></script>
 		<script src="/javascript/searches.js"></script>
 		<script src="/javascript/mapinit.js"></script>
-		<script>
-			function getTwitAuth1(token, token_secret){
-
-				var twitter_token = token;
-				var twitter_token_secret = token_secret;
-
-				var twitTokens = {token: twitter_token ,token_secret:twitter_token_secret};
-
-				$.ajax({
-                    type: "GET",
-                    dataType: 'json',
-                    url: "http://127.0.0.1:3000/",
-                    data: twitTokens,
-                    success: function(){    
-                        location.reload();   
-                    }
-                 });
-				
-					localStorage.setItem('twitter_token', token);
-					localStorage.setItem('twitter_token_secret', token_secret);
-					
-					haveTwitterAPITokens = true;
-					
-					setRestrictions();
-					
-					addNotification("Twitter API Login", "Logged into Twitter API succesfully.", 5000);
-				
-
-
-			}
-
-		</script>
 	</head>
 	<body class="no_twitter no_four">
 		<header>
-			<%= title %>
+			<%= title %> - Inteligent web assignment
 			<div id="right">
 				<div class="title">Log in to API:</div>
 				<div id="twitter_api_button" class="fake_nav_button">
 					Twitter
 					<div class="hover_container ">
 						<a href="javascript:twitterOAuth()" class="button no_twitter_show">Login</a>
-						<a href="/auth/twitter" class="button no_twitter_show">Login without new window</a>
 						<a href="javascript:forgetTwitterAuth()" class="button have_twitter_show">Logout</a>
 					</div>
 				</div>
@@ -227,8 +194,19 @@
 									<input class="right" type="submit" name="submit" value="Search" />
 								</td>
 							</tr>
+							<tr class="stop_streaming">
+								<td class="clearfix">
+									<a href="javascript:void(0)" class="button">Stop streaming</a>
+								</td>
+							</tr>
 						</table>
 					</form>
+				
+					<div id="discussion_location_return">
+					
+						
+						
+					</div>
 				
 					<div id="discussion_tweet_return">
 					
@@ -265,7 +243,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="screenname" placeholder="e.g. jtmcilven, fabcira, stephenfry" />
+									<input type="text" name="screennames" placeholder="e.g. jtmcilven, fabcira, stephenfry" />
 								</td>
 							</tr>
 							<tr>
@@ -406,10 +384,21 @@
 									<input class="right" type="submit" name="submit" value="Search" />
 								</td>
 							</tr>
+							<tr class="stop_streaming">
+								<td class="clearfix">
+									<a href="javascript:void(0)" class="button">Stop streaming</a>
+								</td>
+							</tr>
 						</table>
 					</form>
-				
+					
 					<div id="user_discussion_table_return">
+					
+						
+						
+					</div>
+					
+					<div id="user_discussion_location_return">
 					
 						
 						
@@ -487,8 +476,19 @@
 									<input class="right" type="submit" name="submit" value="Search" />
 								</td>
 							</tr>
+							<tr class="stop_streaming">
+								<td class="clearfix">
+									<a href="javascript:void(0)" class="button">Stop streaming</a>
+								</td>
+							</tr>
 						</table>
 					</form>
+					
+					<div id="user_venues_location_return">
+					
+						
+						
+					</div>
 				
 					<div id="user_venues_return">
 					
@@ -616,8 +616,19 @@
 									<input class="right" type="submit" name="submit" value="Search" />
 								</td>
 							</tr>
+							<tr class="stop_streaming">
+								<td class="clearfix">
+									<a href="javascript:void(0)" class="button">Stop streaming</a>
+								</td>
+							</tr>
 						</table>
 					</form>
+					
+					<div id="venue_return_location_return">
+					
+						
+						
+					</div>
 					
 					<div id="venue_return">
 					
@@ -713,6 +724,20 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<!--
+				
+		###############################
+		## ALTERNATE PANEL CONTAINER ##	
+		###############################
+				
+		-->
+		
+		<div id="alternate_panel_container" class="hide">
+			
+		</div>
+		<div id="copyright">
+			Copyright 2015 <%= title %>.
 		</div>
 	</body>
 </html>

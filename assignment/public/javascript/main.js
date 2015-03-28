@@ -1,4 +1,4 @@
-
+var socket;
 var haveTwitterAPITokens = false;
 var haveFourAPITokens = false;
 
@@ -31,35 +31,6 @@ function fourOAuth() {
 	window.open('/auth/foursqaure', 'popuppage', 'width=600,toolbar=1,resizable=1,scrollbars=yes,height=400,top=100,left=100');
 }
 
-
-
-// Not a clue what this does or what it is for
-function getTwitAuth(token, token_secret){
-
-	var twitter_token = token;
-	var twitter_token_secret = token_secret;
-
-	var twitTokens = {token: twitter_token ,token_secret:twitter_token_secret};
-	alert(twitTokens);
-	$.ajax({
-        type: "GET",
-        dataType: 'json',
-        url: "http://127.0.0.1:3000/",
-        data: twitTokens,
-        success: function(){    
-            location.reload();   
-        }
-     });
-	
-
-	/*
-
-	twitter_token = token;
-	twitter_token_secret = token_secret;
-	*/
-
-}
-
 // Toggles whether the client is focused on the user panel
 function toggleAlternatePanel(show) {
 	$('html, body').scrollTop(0);
@@ -80,24 +51,14 @@ function setTwitterAuth(token, token_secret) {
 	localStorage.setItem('twitter_token', token);
 	localStorage.setItem('twitter_token_secret', token_secret);
 	
+	console.log('twitter_token: ' + token);
+	console.log('twitter_token_secret: ' + token);
+	
 	haveTwitterAPITokens = true;
 	
 	setRestrictions();
 	
 	addNotification("Twitter API Login", "Logged into Twitter API succesfully.", 5000);
-
-	//required to send session info to nodeserver
-	var twitTokens = {token: twitter_token ,token_secret:twitter_token_secret};
-	alert(twitTokens);
-	$.ajax({
-        type: "GET",
-        dataType: 'json',
-        url: "http://127.0.0.1:3000/",
-        data: twitTokens,
-        success: function(){    
-            location.reload();   
-        }
-     });
 	
 }
 
@@ -155,6 +116,7 @@ $(function(){
 
 // Applies restrictions to forms so that they can not be used if the user has not obtained API tokens
 function setRestrictions() {
+	
 	if (haveTwitterAPITokens)
 	{
 		$("body").removeClass("no_twitter");
@@ -179,6 +141,23 @@ function setRestrictions() {
 		$("body").addClass("no_four");
 		$("body").removeClass("four");
 		$("#foursquare_api_button").removeClass("check");
+	}
+
+	// Reset socket connection
+	socket = io.connect('http://localhost:3001')
+
+	if (haveTwitterAPITokens) {
+		if (!socket.socket.connected)
+			socket.on('connect', function () {
+				socket.emit('twitter_tokens', localStorage.getItem("twitter_token"), localStorage.getItem("twitter_token_secret"), function(data) {
+					addNotification("Twitter", data, 5000);
+				});
+			});
+		else {
+			socket.emit('twitter_tokens', localStorage.getItem("twitter_token"), localStorage.getItem("twitter_token_secret"), function(data) {
+					addNotification("Twitter", data, 5000);
+				});
+		}	
 	}
 
 }
@@ -220,9 +199,7 @@ function removeTimezone(str) {
 
 // Appends a tweet to an element from the tweets json including the users account on the left
 // Returns the created element
-function appendTweetWithAccount(element, json) {
-	
-		tweetJson = json;
+function appendTweetWithAccount(element, tweetJson) {
 		
 		var tweethtml ='<table class="tweet_table" id="' + tweetJson['id_str'] + '"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + tweetJson['user']['profile_image_url'].replace("_normal", "") + '" alt="' + tweetJson['user']['screen_name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '" class="screen_name">' + tweetJson['user']['name'] + '</a><br><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a><br><br></div></div>';
 					
@@ -240,7 +217,7 @@ function appendTweetWithAccount(element, json) {
 			tweethtml +='<span class="dark">' + tweetJson['user']['description'] + '</span><br><br>';
 			
 			
-		tweethtml +='<a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['id_str'] + '\')">View user\'s profile and Tweets</a></td><td><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['favourites_count'] + ' Favourites, ' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
+		tweethtml +='<a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['id_str'] + '\')">View user\'s profile and Tweets</a></td><td><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
 
 
 		if (false) {
@@ -263,9 +240,7 @@ function appendTweetWithAccount(element, json) {
 
 // Appends a tweet to an element from the tweets json without their account
 // Returns the created element
-function appendTweetWithoutAccount(element, json) {
-	
-	tweetJson = JSON.parse(json);
+function appendTweetWithoutAccount(element, tweetJson) {
 	
 	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['favourites_count'] + ' Favourites, ' + tweetJson['retweet_count'] + ' Re-Tweets<br>';
 	
@@ -288,25 +263,9 @@ function appendTweetWithoutAccount(element, json) {
 		
 }
 
-// Adds reply tweets in place of the reply tweet button
-function getReplies(element, tweet_id) {
-	
-	element.html("<h3>Repies to Tweet</h3><br>");
-	
-	// TODO: Get actual replies using ajax
-	
-	for (i=0;i<3;i++) {
-		console.log("sada");
-		appendTweetReplies(element, exampleTweetJson_1);
-	}
-
-}
-
 // Appends a reply tweet to an element from the tweets json
 // Returns the created element
-function appendTweetReplies(element, json) {							
-										
-	tweetJson = JSON.parse(json);
+function appendTweetReplies(element, tweetJson) {							
 	
 	var tweethtml = '';
 	
@@ -319,15 +278,15 @@ function appendTweetReplies(element, json) {
 // A function that takes a list of location and labels in json and an DOM element, and appends
 // a map to the element, with the location of each geotagged tweet marked on the map.
 // Markers have labels if the tweet attached to them when they are hovered over
-function appendLocation(element, json) {
-	
-	markerJson = JSON.parse(json);
+function appendLocation(element, markerJson) {
 	
 	var randomnumber = Math.floor(Math.random() * (99999999 + 1));
 	
 	locationhtml = '<hr><h1>Location of Tweets</h1><div class="white_container"><div class="map_wrapper"><div class="search-map-canvas" id="map_' + randomnumber + '"></div></div></div>';
 	
-	var mapreturn = $(locationhtml).appendTo(element);
+	var mapreturn;
+	
+	$(locationhtml).appendTo(element);
 	
 	function initialize() {
 		var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
@@ -338,7 +297,7 @@ function appendLocation(element, json) {
 			center: myLatlng
 		}
 		var map = new google.maps.Map(document.getElementById('map_' + randomnumber), mapOptions);
-	
+		mapreturn = map;
 		for (i=0;i<markerJson.length;i++) {
 			
 			var markerLatlng = new google.maps.LatLng(markerJson[i]["lat"],markerJson[i]["long"]);
@@ -389,12 +348,60 @@ function appendLocation(element, json) {
 	
 }
 
+// Adds a new marker to a map object
+function addMarkerToMap(map, latitude, longitude, label, newBounds) {
+	var markerLatlng = new google.maps.LatLng(latitude, longitude);
+	
+	var marker = new google.maps.Marker({
+		position: markerLatlng,
+		map: map,
+		title: label
+	});
+		
+	var bounds;
+	
+	if (newBounds) {
+		bounds = new google.maps.LatLngBounds();
+		
+		bounds.extend(marker.position);
+	
+		map.fitBounds(bounds);
+		
+		var listener = google.maps.event.addListener(map, "idle", function () {
+		    map.setZoom(map.getZoom() - 4);
+		    google.maps.event.removeListener(listener);
+		});
+	}
+
+	
+	attachLabel(marker, label);
+	
+	
+	
+	//var listener = google.maps.event.addListener(map, "idle", function () {
+	//    map.setZoom(map.getZoom() - 2);
+	//    google.maps.event.removeListener(listener);
+	//});
+		
+	function attachLabel(marker, message) {
+		var infowindow = new google.maps.InfoWindow({
+			content: message
+		});
+	
+		google.maps.event.addListener(marker, 'mouseover', function() {
+			infowindow.open(marker.get('map'), marker);
+		});
+		
+		google.maps.event.addListener(marker, 'mouseout', function() {
+			infowindow.open();
+		});
+	}
+}
+
 
 // Adds the information to the user page before it is dispalyed based on the user's json
 // Returns the created object
-function setupUserPage(json) {
-	
-	userJson = JSON.parse(json);
+function setupUserPage(userJson) {
 		
 	//userJson = userJson['user'];	
 	
@@ -418,11 +425,9 @@ function setupUserPage(json) {
 }
 
 // Appends an alement with a table of a set of users most used words in their tweets when given the json for it
-function mostUsedWordsTable(element, json) {
+function mostUsedWordsTable(element, tableJson) {
 	
 	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td></td>';
-	
-	tableJson = JSON.parse(json);
 	
 	for (i=0;i<tableJson['users'].length;i++)
 		tablehtml += '<td><a href="http://www.twitter.com/' + tableJson['users'][i]['username'] + '">@' + tableJson['users'][i]['username'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tableJson['users'][i]['user_id'] + '\')">View user\'s profile and Tweets</a></td>';
@@ -453,11 +458,9 @@ function mostUsedWordsTable(element, json) {
 }
 
 // Appends an element with a table of a users most visited venues from json
-function visitedVenues(element, json) {
+function visitedVenues(element, tableJson) {
 	
 	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td></tr>';
-	
-	tableJson = JSON.parse(json);
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
@@ -473,11 +476,9 @@ function visitedVenues(element, json) {
 }
 
 // Appends an element with a table of number of visits of particular users at a venue from json
-function mostVisitedVenues(element, json) {
+function mostVisitedVenues(element, tableJson) {
 	
 	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Number of visits</td></tr>';
-	
-	tableJson = JSON.parse(json);
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
@@ -493,11 +494,9 @@ function mostVisitedVenues(element, json) {
 }
 
 // Appends an element with a table of users in the database
-function databaseUserTable(element, json) {
+function databaseUserTable(element, tableJson) {
 	
 	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
-	
-	tableJson = JSON.parse(json);
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
@@ -512,63 +511,8 @@ function databaseUserTable(element, json) {
 
 }
 
-// Appends an element with a table of venues in the database
-function databaseVenueTable(element, json) {
-	
-	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Venue name</th><th>Coordinates</th><th>Number of visitors</th><th>View users that have visited</th></tr></thead><tbody>';
-	
-	tableJson = JSON.parse(json);
-	
-	for (i=0;i<tableJson.length;i++) {
-		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['venue'] + '</td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['coordinates'] + '\')">Users</a></td></tr>';
-	}
-	
-	tablehtml += '</tbody></table></div>';
-	
-	element.append(tablehtml);
-	
-	return tablehtml;
-
-}
-
 // Gets a user and their tweets
-function getUserAndTweets(user_id) {
-	
-	// TODO: Get tweets from AJAX and and them into the form before it opens
-	
-	toggleAlternatePanel(true);
-	
-	setupUserPage(exampleUserJson);
-	appendLocation($("#user_tweet_location_return"), exampleMarkerJson);
-	
-	for (i = 0; i < 100; i++)
-		appendTweetWithoutAccount($("#user_tweet_return"), exampleTweetJson_1);
-	
-	
-}
-
-// Gets a user and their tweets
-function getDatabaseUserAndTweets(user_id) {
-	
-	// TODO: Get tweets from AJAX and and them into the form before it opens
-	
-	toggleAlternatePanel(true);
-	
-	setupUserDatabasePage(exampleUserJson);
-	appendLocation($("#user_database_tweet_location_return"), exampleMarkerJson);
-	
-	for (i = 0; i < 100; i++)
-		appendTweetWithoutAccount($("#user_database_tweet_return"), exampleTweetJson_1);
-	
-	
-}
-
-
-// Gets a user and their tweets
-function setupUserDatabasePage(json) {
-	
-	userJson = JSON.parse(json);
+function setupUserDatabasePage(userJson) {
 		
 	//userJson = userJson['user'];	
 	
@@ -591,28 +535,33 @@ function setupUserDatabasePage(json) {
 	$("#alternate_panel_container").html(userhtml);
 }
 
-// Gets a list of users from the database
-function getDatabaseUserAtVenue(venue) {
+// Appends an element with a table of venues in the database
+function databaseVenueTable(element, tableJson) {
 	
-	// TODO: Get tweets from AJAX and and them into the form before it opens
-	
-	toggleAlternatePanel(true);
-	
-	setupVenueUsersDatabasePage(databaseUserJson);
-		
-}
-
-// Appends an element with a table of users that visited a venue in the database
-function setupVenueUsersDatabasePage(json) {
-	
-	var tablehtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - Users that have visited LOCATION GOES HERE</h1><hr>';
-	
-	tablehtml += '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
-	
-	tableJson = JSON.parse(json);
+	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Venue name</th><th>Coordinates</th><th>Number of visitors</th><th>View users that have visited</th></tr></thead><tbody>';
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
+		tablehtml += '<tr><td>' + row['venue'] + '</td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['coordinates'] + '\')">Users</a></td></tr>';
+	}
+	
+	tablehtml += '</tbody></table></div>';
+	
+	element.append(tablehtml);
+	
+	return tablehtml;
+
+}
+
+// Appends an element with a table of users that visited a venue in the database
+function setupVenueUsersDatabasePage(data) {
+	
+	var tablehtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - Users that have visited ' + data.location_name + '</h1><hr>';
+	
+	tablehtml += '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
+	
+	for (i=0;i<data.databaseusertable.length;i++) {
+		row = data.databaseusertable[i];
 		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'308358479\')">Get live tweets</a></td></tr>';
 	}
 	

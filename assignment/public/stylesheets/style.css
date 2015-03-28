@@ -204,6 +204,7 @@ header #right .fake_nav_button:hover .hover_container, header #right .fake_nav_b
 	background: -ms-linear-gradient(top, #28a7e7 0%,#1e98d6 100%);
 	background: linear-gradient(to bottom, #28a7e7 0%,#1e98d6 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#28a7e7', endColorstr='#1e98d6',GradientType=0 );
+	text-decoration: none !important;
 }
 
 #tab_container, #alternate_panel_container {
@@ -602,3 +603,15 @@ table table {
 	background: rgba(0,0,0,.02);
 }
 
+
+.live_steaming tr {
+	display: none;
+}
+
+tr.stop_streaming {
+	display: none !important;
+}
+
+.live_steaming tr.stop_streaming {
+	display: inherit !important;
+}

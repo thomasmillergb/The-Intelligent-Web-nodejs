@@ -8,8 +8,7 @@
   <body>
 <h1>Twitter API tokens obtained. Closing window.</h1>
 <script>
-	//window.opener.setTwittierAuth("<%=oauth.token%>", "<%=oauth.token_secret%>");
-	window.opener.getTwitAuth1("<%=oauth.token%>", "<%=oauth.token_secret%>");
+	window.opener.setTwitterAuth("<%= access_token_key %>", "<%= access_token_secret %>");
 	window.close();
 </script>
 </body>
