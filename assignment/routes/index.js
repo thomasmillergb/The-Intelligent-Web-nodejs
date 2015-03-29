@@ -1,7 +1,7 @@
 /*
  * GET home page.
  */
-
+var keyWords = require('./keywords.js');
 var twitter = require('ntwitter');
 var io = require('socket.io').listen(3001, {log: false});
 var twitterAPI;
@@ -197,7 +197,7 @@ io.on('connection', function(socket){
 			// params.radius
 			// params.lat
 			// params.long
-				
+			keyWords.reset();
 		    var tempData = {};
         	var userDiscussionJsonData = {};
         	userDiscussionJsonData.users = [];
@@ -230,11 +230,13 @@ io.on('connection', function(socket){
 		                	//console.log(userMan+ "1");
 		                	//console.log(data);
 			                for (var indx in data) {
-			                	var currentData = data[indx];
-								console.log(userMan+ " " + indx);				
+			                	var currentData = data[indx];				
 								var found;
+								keyWords.addWords(currentData.user.screen_name, currentData.text);
 								if(countOfUsers==0){
 									userDiscussionJsonData.users.push({username: currentData.user.screen_name, user_id:currentData.user.id});
+									//console.log(currentData)
+
 									countOfUsers += 1;
 								}
 								else{
@@ -271,12 +273,16 @@ io.on('connection', function(socket){
 						//A Node walkaround to return data only when finished
 							if(countOfUsers == users.length){
 									console.log("hey");
-
-									userDiscussionJsonData.words = [{word: "london" , occurences:[5,2,5]}];
+							
+									console.log(users);
+									//console.log();
+									var x = keyWords.reformatToJamesJson(keyWords.topKeyWords(5,users));
+									console.log(x);
+									userDiscussionJsonData.words = x;
 							        
 						            data1.markers = tempData;
 									data1.userdiscussiontable = userDiscussionJsonData;
-									console.log(userDiscussionJsonData);
+									//console.log(userDiscussionJsonData);
 									fn(null, data1);
 							}
 						}
