@@ -5,20 +5,12 @@
 var twitter = require('ntwitter');
 var io = require('socket.io').listen(3001, {log: false});
 var twitterAPI;
+var twitterRestAPI;
 
+var Twit = require('twit');
 
 exports.index = function (req, res) {
-    
     res.render('index', { title: 'Group N+1' });
-    if (req.session.oauth) {
-        //InitStream(req.session);
-    }
-    else
-    {
-
-        //res.render('index', { title: 'Express', name: "nope" });
-    }
-
 };
 
 io.on('connection', function(socket){
@@ -37,14 +29,23 @@ io.on('connection', function(socket){
 	        access_token_key: twitter_token,
 	        access_token_secret: twitter_token_secret
 	    });
+	    twitterRestAPI = new Twit({
+		  consumer_key: 'NlT41DmogCgb5C6PsgogvHy29',
+		  consumer_secret: '4e0sav0ciNSlafDjMWjQKXAQXCmxAC3vfTQv9TuB5LEiJPP905',
+		  access_token: twitter_token,
+		  access_token_secret: temp_twitter_token_secret	
+		});
 		
 		
 		twitterAPI.verifyCredentials(function (err, data) {
-            if (err)
+            if (err){
             	fn('There was a problem verifiying your Twitter credentials.<br>' + err);
-            else
+            }
+            else{
             	fn('Connection to Twitter was succesfull!');
+            }
         });
+
 		
 		
 	});
@@ -119,12 +120,50 @@ io.on('connection', function(socket){
 		
 		// Use REST API
 		} else {
-			var data = {};
+			var searchParams;
+			if(params.uselocation)
+				searchParams = { q: params.search, geocode: [params.lat, params.long, params.radius], count: 200 };
+			else
+				searchParams = { q: params.search, count: 200 };
+
+			    twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
+	                if(!err){
+		               
+		                var tempData = {};
+	                
+	                    console.log(data);
+		                for (var indx in data.statuses) {
+		                	var currentData = data.statuses[indx];
+		                	if (currentData["coordinates"]) {
+			                    
+			                    tempData.marker = {};
+			                    tempData.marker.latitude = currentData["coordinates"]["coordinates"][1];
+			                    tempData.marker.longitude = currentData["coordinates"]["coordinates"][0];
+			                    tempData.marker.label = "<h3>@" + currentData['user']["screen_name"] + "</h3>" + currentData["text"] + "";
+			                    //console.log(marker);
+			                    
+	                    	}
+	                    	
+		                	
+
+		                }
+	            
+		            
+		            data.markers = tempData;
+					data.tweets = data.statuses;
+					fn(null, data);
+				}
+				else{
+
+					console.log(err);
+				}
+            })
+			
+
+
+			//var data = {};
 		
-			data.markers = exampleMarkerJson;
-			data.tweets = collectionOfTweets;
-	
-			fn(null, data);
+			
 			
 		}
 		
@@ -146,13 +185,115 @@ io.on('connection', function(socket){
 		for (var index in params) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
+		if (params.liveresults) {	
 
-		var data = {};
-		
-		data.markers = exampleMarkerJson;
-		data.userdiscussiontable = userDiscussionJson;
+		} 
+		else {
+			// params.screennames
+			// params.keywords
+			// params.days
+			// params.liveresults
+			// params.uselocation
+			// params.radius
+			// params.lat
+			// params.long
+				
+		    var tempData = {};
+        	var userDiscussionJsonData = {};
+        	userDiscussionJsonData.users = [];
+        	var i =0;
+			var users = params.screennames.split(" ");
+			var countOfUsers = 0;
 
-		fn(null, data);
+			var data1 = {};
+
+			users.forEach(function(userMan){
+
+				console.log(userMan);
+				var searchParams;
+				//console.log(userMan);
+				if(params.uselocation){
+					searchParams = { screen_name: userMan, geocode: [params.lat, params.long, params.radius],since_id:params.days, count: 200 };
+
+				}
+				else{
+					searchParams = { screen_name: userMan,since_id:params.days, count: 200 };
+					
+				}
+				if(searchParams){
+				
+					twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
+
+					
+		                if(!err){
+			               
+		                	//console.log(userMan+ "1");
+		                	//console.log(data);
+			                for (var indx in data) {
+			                	var currentData = data[indx];
+								console.log(userMan+ " " + indx);				
+								var found;
+								if(countOfUsers==0){
+									userDiscussionJsonData.users.push({username: currentData.user.screen_name, user_id:currentData.user.id});
+									countOfUsers += 1;
+								}
+								else{
+									var found = false;
+									 
+									userDiscussionJsonData.users.forEach(function(obj, i){
+										
+									    if(obj.username ==  currentData.user.screen_name) {
+									    	found = true;
+						
+									    }
+
+									});
+									if(!found){
+										userDiscussionJsonData.users.push({username: currentData.user.screen_name, user_id:currentData.user.id});
+										countOfUsers += 1;
+									}
+								}
+			                	if (currentData["coordinates"]) {
+				                    
+				                    tempData.marker = {};
+				                    tempData.marker.latitude = currentData["coordinates"]["coordinates"][1];
+				                    tempData.marker.longitude = currentData["coordinates"]["coordinates"][0];
+				                    tempData.marker.label = "<h3>@" + currentData['user']["screen_name"] + "</h3>" + currentData["text"] + "";
+				                    //console.log(marker);
+				                    
+		                    	}
+			                
+
+								
+							
+                    		}
+                    		console.log(countOfUsers);
+						//A Node walkaround to return data only when finished
+							if(countOfUsers == users.length){
+									console.log("hey");
+
+									userDiscussionJsonData.words = [{word: "london" , occurences:[5,2,5]}];
+							        
+						            data1.markers = tempData;
+									data1.userdiscussiontable = userDiscussionJsonData;
+									console.log(userDiscussionJsonData);
+									fn(null, data1);
+							}
+						}
+						else{
+
+							console.log(err);
+						
+						}
+		            });
+				}
+			});
+				
+
+			
+			//starts here first
+		}	
+
 	});
 	
 	socket.on('user_venues_search', function(params, fn) {
