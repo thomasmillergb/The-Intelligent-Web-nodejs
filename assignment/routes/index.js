@@ -332,7 +332,8 @@ io.on('connection', function(socket){
         	var userDiscussionJsonData = {};
         	userDiscussionJsonData.users = [];
         	var i =0;
-			var users = params.screennames.split(" ");
+
+			var users = params.screennames.replace(/\s/g, '').split(",");
 			var countOfUsers = 0;
 
 			var data1 = {};
