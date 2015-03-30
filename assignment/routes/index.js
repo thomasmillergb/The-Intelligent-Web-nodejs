@@ -173,9 +173,7 @@ io.on('connection', function(socket){
 
 		console.log("user_discussion_search params:");
 		
-		// params.screenname
-		// params.keywords
-		// params.days
+		// params.search
 		// params.liveresults
 		// params.uselocation
 		// params.radius
@@ -185,9 +183,141 @@ io.on('connection', function(socket){
 		for (var index in params) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
+		
+		var data1 = {};
+		
+		// Use streaming API
+		
+		filterParams = {};
+		
+		if (params.search != '')
+		  filterParams["track"] =  [params.screennames];
+		
+		if (params.uselocation) {
+		  var bounds = getBoundingBox([params.lat, params.long], params.radius/1000);
+		  filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
+		  console.log(bounds);
+		}
+		
 		if (params.liveresults) {	
+            var screennames = [];
+            var tempData = {};
+            var userDiscussionJsonData = {};
+			userDiscussionJsonData.users = [];	
+			var countOfUsers = 0;
+			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
 
+                stream.on('data', function (data) {
+       
+                    tempData.tweet = data;
+                    // Its geotaggggeddd! Yaaaay
+                    if (data["coordinates"]) {
+	                    console.log(data["coordinates"]);
+	                    tempData.marker = {};
+	                    tempData.marker.latitude = data["coordinates"]["coordinates"][1];
+	                    tempData.marker.longitude = data["coordinates"]["coordinates"][0];
+	                    tempData.marker.label = "<h3>@" + data['user']["screen_name"] + "</h3>" + data["text"] + "";
+	                    
+                    }
+        			if(countOfUsers==0){
+						userDiscussionJsonData.users.push({username: data.user.screen_name, user_id:data.user.id});
+						screennames.push(data.user.screen_name);
+						//console.log(currentData)
+
+						countOfUsers += 1;
+					}
+					else{
+						var found = false;
+						 
+						userDiscussionJsonData.users.forEach(function(obj, i){
+							
+						    if(obj.username ==  data.user.screen_name) {
+						    	found = true;
+			
+						    }
+
+						});
+						if(!found){
+							userDiscussionJsonData.users.push({username: data.user.screen_name, user_id:data.user.id});
+							screennames.push(data.user.screen_name);
+							countOfUsers += 1;
+						}
+					}
+
+                    keyWords.addWords(data.user.screen_name, data.text);
+          	
+					userDiscussionJsonData.words = keyWords.reformatToJamesJson(keyWords.topKeyWords(5,screennames));;
+			        
+		            data1.markers = tempData.marker;
+					data1.userdiscussiontable = userDiscussionJsonData;
+                  	console.log(data1);
+
+                    io.sockets.emit('stream_user_discussion_search', data1);
+                });
+                
+                twitterAPI.currentDiscussionStream = stream;
+            });
+            
+            socket.on('user_discussion_search_stop_stream', function(fn) {
+	            
+	            if (twitterAPI.currentDiscussionStream != undefined) {
+					twitterAPI.currentDiscussionStream.destroy();
+					twitterAPI.currentDiscussionStream = undefined;
+					keyWords.reset();
+	            }
+	            
+	            return fn();
+	      
+	        });
+	        
+	        fn();
+			/*
+
+			console.log("0");
+			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
+                stream.on('data', function (data) {
+                    console.log("1");
+                    var tempData = {};
+                    tempData.tweet = data;
+                    
+
+					
+
+                    // Its geotaggggeddd! Yaaaay
+                    if (data["coordinates"]) {
+	                    console.log(data["coordinates"]);
+	                    tempData.marker = {};
+	                    tempData.marker.latitude = data["coordinates"]["coordinates"][1];
+	                    tempData.marker.longitude = data["coordinates"]["coordinates"][0];
+	                    tempData.marker.label = "<h3>@" + data['user']["screen_name"] + "</h3>" + data["text"] + "";
+	                    
+                    }
+                    console.log(data.user.screen_name +" text  " +data.text);
+                    keyWords.addWords(data.user.screen_name, data.text);
+                  	words =  keyWords.reformatToJamesJson(keyWords.topKeyWords(5,users));
+                  	console.log(words);
+                    io.sockets.emit('stream_discussion_search', tempData);
+                });
+                
+                twitterAPI.currentDiscussionStream = stream;
+            });
+            
+            socket.on('discussion_search_stop_stream', function(fn) {
+	            
+	            if (twitterAPI.currentDiscussionStream != undefined) {
+					twitterAPI.currentDiscussionStream.destroy();
+					twitterAPI.currentDiscussionStream = undefined;
+					keyWords.reset();
+	            }
+	            
+	            return fn();
+	      
+        	});
+	        
+	     */
+	        
 		} 
+
 		else {
 			// params.screennames
 			// params.keywords
