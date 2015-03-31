@@ -44,7 +44,8 @@ http.createServer(app).listen(app.get('port'), function() {
 var util = require('util');
 var OAuthTwitter = require('./oAuth/twitter.js');
 OAuthTwitter(app);
-
+var OAuthTwitter = require('./oAuth/foursquare.js');
+OAuthTwitter(app);
 
 
 
