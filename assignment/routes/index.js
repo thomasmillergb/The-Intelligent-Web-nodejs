@@ -2,6 +2,7 @@
  * GET home page.
  */
 var keyWords = require('./keywords.js');
+var twitterFunctions = require('./twitterFunction.js');
 var twitter = require('ntwitter');
 var io = require('socket.io').listen(3001, {log: false});
 var twitterAPI;
@@ -82,20 +83,17 @@ io.on('connection', function(socket){
 		
 		if (params.liveresults) {		
 			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
+				
+                
+
                 stream.on('data', function (data) {
                     
                     var tempData = {};
                     tempData.tweet = data;
-                    
+                    tempData.marker = [];
                     // Its geotaggggeddd! Yaaaay
-                    if (data["coordinates"]) {
-	                    console.log(data["coordinates"]);
-	                    tempData.marker = {};
-	                    tempData.marker.latitude = data["coordinates"]["coordinates"][1];
-	                    tempData.marker.longitude = data["coordinates"]["coordinates"][0];
-	                    tempData.marker.label = "<h3>@" + data['user']["screen_name"] + "</h3>" + data["text"] + "";
-	                    
-                    }
+                   
+		     		tempData.marker = twitterFunctions.venues(data,tempData.marker)[0];
 
                     //console.log(data.user.screen_name + " : " + data.text);
                     io.sockets.emit('stream_discussion_search', tempData);
@@ -122,34 +120,20 @@ io.on('connection', function(socket){
 		} else {
 			var searchParams;
 			if(params.uselocation)
-				searchParams = { q: params.search, geocode: [params.lat, params.long, params.radius], count: 200 };
+				searchParams = { q: params.search, geocode: [params.lat, params.long, params.radius + "mi" ], count: 200 };
 			else
 				searchParams = { q: params.search, count: 200 };
 
 			    twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
 	                if(!err){
-		               
-		                var tempData = {};
-	                
-	                    console.log(data);
+	                	var venues =[];
 		                for (var indx in data.statuses) {
 		                	var currentData = data.statuses[indx];
-		                	if (currentData["coordinates"]) {
-			                    
-			                    tempData.marker = {};
-			                    tempData.marker.latitude = currentData["coordinates"]["coordinates"][1];
-			                    tempData.marker.longitude = currentData["coordinates"]["coordinates"][0];
-			                    tempData.marker.label = "<h3>@" + currentData['user']["screen_name"] + "</h3>" + currentData["text"] + "";
-			                    //console.log(marker);
-			                    
-	                    	}
-	                    	
-		                	
-
+		     				venues = twitterFunctions.venues(currentData,venues);
 		                }
 	            
 		            
-		            data.markers = tempData;
+		            data.markers = venues;
 					data.tweets = data.statuses;
 					fn(null, data);
 				}
@@ -158,13 +142,6 @@ io.on('connection', function(socket){
 					console.log(err);
 				}
             })
-			
-
-
-			//var data = {};
-		
-			
-			
 		}
 		
 	});
@@ -205,50 +182,21 @@ io.on('connection', function(socket){
             var userDiscussionJsonData = {};
 			userDiscussionJsonData.users = [];	
 			var countOfUsers = 0;
+			var venues =[];
 			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
 
                 stream.on('data', function (data) {
        
                     tempData.tweet = data;
                     // Its geotaggggeddd! Yaaaay
-                    if (data["coordinates"]) {
-	                    console.log(data["coordinates"]);
-	                    tempData.marker = {};
-	                    tempData.marker.latitude = data["coordinates"]["coordinates"][1];
-	                    tempData.marker.longitude = data["coordinates"]["coordinates"][0];
-	                    tempData.marker.label = "<h3>@" + data['user']["screen_name"] + "</h3>" + data["text"] + "";
-	                    
-                    }
-        			if(countOfUsers==0){
-						userDiscussionJsonData.users.push({username: data.user.screen_name, user_id:data.user.id});
-						screennames.push(data.user.screen_name);
-						//console.log(currentData)
-
-						countOfUsers += 1;
-					}
-					else{
-						var found = false;
-						 
-						userDiscussionJsonData.users.forEach(function(obj, i){
-							
-						    if(obj.username ==  data.user.screen_name) {
-						    	found = true;
-			
-						    }
-
-						});
-						if(!found){
-							userDiscussionJsonData.users.push({username: data.user.screen_name, user_id:data.user.id});
-							screennames.push(data.user.screen_name);
-							countOfUsers += 1;
-						}
-					}
+              		venues = twitterFunctions.venues(data,venues);
+        			userDiscussionJsonData.users = twitterFunctions.users_discussion(currentData, userDiscussionJsonData.users)
 
                     keyWords.addWords(data.user.screen_name, data.text);
           	
-					userDiscussionJsonData.words = keyWords.reformatToJamesJson(keyWords.topKeyWords(5,screennames));;
+					userDiscussionJsonData.words = keyWords.topKeyWords(5,screennames);
 			        
-		            data1.markers = tempData.marker;
+		            data1.markers = venues;
 					data1.userdiscussiontable = userDiscussionJsonData;
                   	console.log(data1);
 
@@ -270,52 +218,7 @@ io.on('connection', function(socket){
 	      
 	        });
 	        
-	        fn();
-			/*
-
-			console.log("0");
-			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
-                stream.on('data', function (data) {
-                    console.log("1");
-                    var tempData = {};
-                    tempData.tweet = data;
-                    
-
-					
-
-                    // Its geotaggggeddd! Yaaaay
-                    if (data["coordinates"]) {
-	                    console.log(data["coordinates"]);
-	                    tempData.marker = {};
-	                    tempData.marker.latitude = data["coordinates"]["coordinates"][1];
-	                    tempData.marker.longitude = data["coordinates"]["coordinates"][0];
-	                    tempData.marker.label = "<h3>@" + data['user']["screen_name"] + "</h3>" + data["text"] + "";
-	                    
-                    }
-                    console.log(data.user.screen_name +" text  " +data.text);
-                    keyWords.addWords(data.user.screen_name, data.text);
-                  	words =  keyWords.reformatToJamesJson(keyWords.topKeyWords(5,users));
-                  	console.log(words);
-                    io.sockets.emit('stream_discussion_search', tempData);
-                });
-                
-                twitterAPI.currentDiscussionStream = stream;
-            });
-            
-            socket.on('discussion_search_stop_stream', function(fn) {
-	            
-	            if (twitterAPI.currentDiscussionStream != undefined) {
-					twitterAPI.currentDiscussionStream.destroy();
-					twitterAPI.currentDiscussionStream = undefined;
-					keyWords.reset();
-	            }
-	            
-	            return fn();
-	      
-        	});
-	        
-	     */
-	        
+	        fn();	        
 		} 
 
 		else {
@@ -327,14 +230,12 @@ io.on('connection', function(socket){
 			// params.radius
 			// params.lat
 			// params.long
-			keyWords.reset();
+			
 		    var tempData = {};
-        	var userDiscussionJsonData = {};
-        	userDiscussionJsonData.users = [];
         	var i =0;
 
 			var users = params.screennames.replace(/\s/g, '').split(",");
-			var countOfUsers = 0;
+			
 
 			var data1 = {};
 
@@ -344,7 +245,7 @@ io.on('connection', function(socket){
 				var searchParams;
 				//console.log(userMan);
 				if(params.uselocation){
-					searchParams = { screen_name: userMan, geocode: [params.lat, params.long, params.radius],since_id:params.days, count: 200 };
+					searchParams = { screen_name: userMan, geocode: [params.lat, params.long, params.radius + "mi"],since_id:params.days, count: 200 };
 
 				}
 				else{
@@ -357,44 +258,20 @@ io.on('connection', function(socket){
 
 					
 		                if(!err){
-			               
+				            keyWords.reset();  
+				        	var userDiscussionJsonData = {};
+				        	userDiscussionJsonData.users = [];
+				        	var venues =[];
+				        	var countOfUsers = 0;
 		                	//console.log(userMan+ "1");
 		                	//console.log(data);
 			                for (var indx in data) {
-			                	var currentData = data[indx];				
-								var found;
+			                	var currentData = data[indx];
+
 								keyWords.addWords(currentData.user.screen_name, currentData.text);
-								if(countOfUsers==0){
-									userDiscussionJsonData.users.push({username: currentData.user.screen_name, user_id:currentData.user.id});
-									//console.log(currentData)
-
-									countOfUsers += 1;
-								}
-								else{
-									var found = false;
-									 
-									userDiscussionJsonData.users.forEach(function(obj, i){
-										
-									    if(obj.username ==  currentData.user.screen_name) {
-									    	found = true;
+								userDiscussionJsonData.users = twitterFunctions.users_discussion(currentData, userDiscussionJsonData.users)
 						
-									    }
-
-									});
-									if(!found){
-										userDiscussionJsonData.users.push({username: currentData.user.screen_name, user_id:currentData.user.id});
-										countOfUsers += 1;
-									}
-								}
-			                	if (currentData["coordinates"]) {
-				                    
-				                    tempData.marker = {};
-				                    tempData.marker.latitude = currentData["coordinates"]["coordinates"][1];
-				                    tempData.marker.longitude = currentData["coordinates"]["coordinates"][0];
-				                    tempData.marker.label = "<h3>@" + currentData['user']["screen_name"] + "</h3>" + currentData["text"] + "";
-				                    //console.log(marker);
-				                    
-		                    	}
+			                	venues = twitterFunctions.venues(currentData,venues);
 			                
 
 								
@@ -402,16 +279,10 @@ io.on('connection', function(socket){
                     		}
                     		console.log(countOfUsers);
 						//A Node walkaround to return data only when finished
-							if(countOfUsers == users.length){
-									console.log("hey");
-							
-									console.log(users);
-									//console.log();
-									var x = keyWords.reformatToJamesJson(keyWords.topKeyWords(5,users));
-									console.log(x);
-									userDiscussionJsonData.words = x;
-							        
-						            data1.markers = tempData;
+							if(userDiscussionJsonData.users.length == users.length){
+									userDiscussionJsonData.words = keyWords.topKeyWords(5,users);;
+							        console.log(userDiscussionJsonData.words);
+						            data1.markers = venues;
 									data1.userdiscussiontable = userDiscussionJsonData;
 									//console.log(userDiscussionJsonData);
 									fn(null, data1);
@@ -425,10 +296,6 @@ io.on('connection', function(socket){
 		            });
 				}
 			});
-				
-
-			
-			//starts here first
 		}	
 
 	});
@@ -444,14 +311,44 @@ io.on('connection', function(socket){
 		for (var index in params) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
-		
-		var data = {};
-		
-		data.user = exampleUserJson;
-		data.markers = exampleMarkerJson;
-		data.visitedvenuestable = visitedVenuesJson;
+		if(params.liveresults){
 
-		fn(null, data);
+
+		}
+		else{
+			var	searchParams = { screen_name: params.screenname,since_id:params.days, count: 200 };
+			if(searchParams){
+				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
+	                if(!err){
+		               var user;
+	                	
+	                	var venues =[];
+		                for (var indx in data) {
+		                	var currentData = data[indx];			
+
+							var found;
+							user= currentData.user;
+							venues = twitterFunctions.venues(currentData,venues);
+                		}
+                		var data = {};
+		
+						data.user = user;
+						data.markers = venues;
+						data.visitedvenuestable = venues;
+						console.log(data);
+						fn(null, data);
+                		
+					//A Node walkaround to return data only when finished
+
+					}
+					else{
+
+						console.log(err);
+					
+					}
+	            });
+			}
+		}
 	});
 	
 	socket.on('venue_search', function(params, fn) {
@@ -467,13 +364,42 @@ io.on('connection', function(socket){
 		for (var index in params) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
-		
-		var data = {};
-		
-		data.markers = exampleMarkerJson;
-		data.visitedvenuestable = venueUserVistorsJson;
+		if(params.liveresults){
 
-		fn(null, data);
+
+		}
+		else{
+			var searchParams;
+				searchParams = { q: "iPhone", geocode: [params.lat, params.long, params.radius + "mi"], count: 200 };
+			
+				//searchParams = { q: "iPhone", count: 200 };
+
+			    twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
+	                if(!err){
+		               
+		             
+	                	var venues =[];
+	                    var usersList =[];
+	                    //console.log("data:" +data[0]);
+		        			for (var indx in data.statuses) {
+		        				var currentData = data.statuses[indx];
+								usersList = twitterFunctions.users(currentData.user, usersList);
+				                venues = twitterFunctions.venues(currentData,venues);
+                    		}
+                    		var data = {};
+                    		data.visitedvenuestable = usersList;
+                    		data.markers = venues;
+                    		fn(null, data);
+                    		
+				}
+				else{
+
+					console.log(err);
+				}
+            });
+		}
+			
+		
 	});
 	
 	socket.on('database_user_search', function(params, fn) {
@@ -612,7 +538,8 @@ function getBoundingBox(centerPoint, distance) {
 	return [coordinates[0]["_degLat"], coordinates[0]["_degLon"], coordinates[1]["_degLat"], coordinates[1]["_degLon"]];
 	
 }
-
+	//data.user = exampleUserJson;
+	//data.markers = exampleMarkerJson;
 
 // Test data
 var exampleUserJson = {"id":308358479,"id_str":"308358479","name":"James McIlveen","screen_name":"jtmcilveen","location":"Whaley Bridge","profile_location":null,"description":"Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University","url":"http://t.co/BiYvW71Wux","entities":{"url":{"urls":[{"url":"http://t.co/BiYvW71Wux","expanded_url":"http://www.jamesmcilveen.com","display_url":"jamesmcilveen.com","indices":[0,22]}]},"description":{"urls":[]}},"protected":true,"followers_count":58,"friends_count":31,"listed_count":0,"created_at":"Tue May 31 08:22:02 +0000 2011","favourites_count":9,"utc_offset":0,"time_zone":"London","geo_enabled":false,"verified":false,"statuses_count":53,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"C0DEED","profile_background_image_url":"http://abs.twimg.com/images/themes/theme1/bg.png","profile_background_image_url_https":"https://abs.twimg.com/images/themes/theme1/bg.png","profile_background_tile":false,"profile_image_url":"http://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_image_url_https":"https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_banner_url":"https://pbs.twimg.com/profile_banners/308358479/1405693222","profile_link_color":"0084B4","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"default_profile":true,"default_profile_image":false,"following":false,"follow_request_sent":false,"notifications":false,"suspended":false,"needs_phone_verification":false};
