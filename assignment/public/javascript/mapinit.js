@@ -101,7 +101,7 @@ $(function(){
 
 		function Draw_Circle()     
 		{        
-			m = parseFloat(currentform.find(".radius").val());
+			m = parseFloat(currentform.find(".radius").val()*1609.34);
 			latitude = parseFloat(currentform.find(".lat").val());
 			longitude = parseFloat(currentform.find(".long").val());
 			

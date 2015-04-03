@@ -13,7 +13,7 @@ var sort_by = function(field, reverse, primer){
 
 
 exports.venues = function(currentData, venues){
-    if (currentData["coordinates"]) {
+    if (currentData["coordinates"] || currentData.place) {
         
 		//console.log(currentData);
         marker = {};
@@ -23,10 +23,13 @@ exports.venues = function(currentData, venues){
         else{
         	marker.venue = "Unknowed";
         	}
-        console.log(marker.venue);
-        marker.lat = currentData.coordinates.coordinates[1];
-        marker.long = currentData.coordinates.coordinates[0];
-        marker.label = "<h3>@" + currentData.user.screen_name + "</h3>" + currentData.text + "";
+        //console.log(marker.venue);
+        if(currentData["coordinates"] ){
+        	//improvement find long and lat from place name
+	        marker.lat = currentData.coordinates.coordinates[1];
+	        marker.long = currentData.coordinates.coordinates[0];
+	        marker.label = "<h3>@" + currentData.user.screen_name + "</h3>" + currentData.text + "";
+    	}
         //console.log(currentData);	
         //console.log(marker);
         if(venues.length == 0){
@@ -52,8 +55,12 @@ exports.venues = function(currentData, venues){
         }
         
 	}
-	console.log(venues);
+	
+	//var visitedVenuesJson = [{"venue":"Sheffield", "lat":"53.371143", "long":"-1.392339", "visits":"2"},{"venue":"Sheffield 2", "lat":"53.371143", "long":"-1.38", "visits":"1"}];
 	venues = venues.sort(sort_by('visits', true,parseInt));
+	//console.log(venues);
+
+
 	return venues;
 }
 
@@ -75,7 +82,7 @@ exports.users = function(currentUser, usersList){
 			
 	    	if(person.user_id == user.user_id){
 	    		person.visits += 1;
-	    		console.log(person.user_id);
+	    		//console.log(person.user_id);
 	    		found = true
 	    		return true;
 	   		}

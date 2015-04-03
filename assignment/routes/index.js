@@ -10,7 +10,7 @@ var twitterRestAPI;
 
 var Twit = require('twit');
 
-exports.index = function (req, res) {
+exports.index = function (req, res, callbacks) {
     res.render('index', { title: 'Group N+1' });
 };
 
@@ -76,7 +76,7 @@ io.on('connection', function(socket){
 		  filterParams["track"] =  [params.search];
 		
 		if (params.uselocation) {
-		  var bounds = getBoundingBox([params.lat, params.long], params.radius/1000);
+		  var bounds = getBoundingBox([params.lat, params.long], params.radius);
 		  filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
 		  console.log(bounds);
 		}
@@ -160,7 +160,7 @@ io.on('connection', function(socket){
 		for (var index in params) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
-		
+		//console.log("amount of key workds : "+ params.keywords);
 		var data1 = {};
 		
 		// Use streaming API
@@ -168,10 +168,10 @@ io.on('connection', function(socket){
 		filterParams = {};
 		
 		if (params.search != '')
-		  filterParams["track"] =  [params.screennames];
+		  
 		
 		if (params.uselocation) {
-		  var bounds = getBoundingBox([params.lat, params.long], params.radius/1000);
+		  var bounds = getBoundingBox([params.lat, params.long], params.radius);
 		  filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
 		  console.log(bounds);
 		}
@@ -183,29 +183,50 @@ io.on('connection', function(socket){
 			userDiscussionJsonData.users = [];	
 			var countOfUsers = 0;
 			var venues =[];
-			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
+			var userIDString = "";
+			var users = params.screennames.replace(/\s/g, '').split(",");
 
-                stream.on('data', function (data) {
-       
-                    tempData.tweet = data;
-                    // Its geotaggggeddd! Yaaaay
-              		venues = twitterFunctions.venues(data,venues);
-        			userDiscussionJsonData.users = twitterFunctions.users_discussion(currentData, userDiscussionJsonData.users)
+/*
+			users.forEach(function(user,next){
+				 
+				//needs to get userID before the stream can start
+				twitterRestAPI.get('users/show', {screen_name: user}, function(err, data, response ) {
+					
+					userIDString = data.id;
+					next();
 
-                    keyWords.addWords(data.user.screen_name, data.text);
-          	
-					userDiscussionJsonData.words = keyWords.topKeyWords(5,screennames);
-			        
-		            data1.markers = venues;
-					data1.userdiscussiontable = userDiscussionJsonData;
-                  	console.log(data1);
+				});
+			});
+*/
+				//var newString = userIDString.substr(0, userIDString.length-1);
+				console.log(userIDString);
+        	
+        			//	var userid = data.id;
+        		//	console.log(userid);
+        		//	filterParams['follow'] =  userid;
+        		/*
+					currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
 
-                    io.sockets.emit('stream_user_discussion_search', data1);
-                });
-                
-                twitterAPI.currentDiscussionStream = stream;
-            });
-            
+		                stream.on('data', function (data) {
+		       
+		                    tempData.tweet = data;
+		                    // Its geotaggggeddd! Yaaaay
+		              		venues = twitterFunctions.venues(data,venues);
+
+		                    keyWords.addWords(data.user.screen_name, data.text);
+		          			
+							userDiscussionJsonData = keyWords.topKeyWords(params.keywords,screennames);
+					        console.log(data);
+				            data1.markers = venues;
+							data1.userdiscussiontable = userDiscussionJsonData;
+		                  	console.log(data1.userdiscussiontable);
+
+		                    io.sockets.emit('stream_user_discussion_search', data1);
+		                });
+		                
+		                twitterAPI.currentDiscussionStream = stream;
+		            });
+				*/
             socket.on('user_discussion_search_stop_stream', function(fn) {
 	            
 	            if (twitterAPI.currentDiscussionStream != undefined) {
@@ -230,18 +251,14 @@ io.on('connection', function(socket){
 			// params.radius
 			// params.lat
 			// params.long
-			
-		    var tempData = {};
-        	var i =0;
-
 			var users = params.screennames.replace(/\s/g, '').split(",");
 			
 
 			var data1 = {};
-
+			keyWords.reset();
+			var counter = 0;
 			users.forEach(function(userMan){
 
-				console.log(userMan);
 				var searchParams;
 				//console.log(userMan);
 				if(params.uselocation){
@@ -258,33 +275,23 @@ io.on('connection', function(socket){
 
 					
 		                if(!err){
-				            keyWords.reset();  
-				        	var userDiscussionJsonData = {};
-				        	userDiscussionJsonData.users = [];
 				        	var venues =[];
-				        	var countOfUsers = 0;
-		                	//console.log(userMan+ "1");
-		                	//console.log(data);
 			                for (var indx in data) {
 			                	var currentData = data[indx];
 
 								keyWords.addWords(currentData.user.screen_name, currentData.text);
-								userDiscussionJsonData.users = twitterFunctions.users_discussion(currentData, userDiscussionJsonData.users)
 						
 			                	venues = twitterFunctions.venues(currentData,venues);
-			                
-
-								
-							
+			             
                     		}
-                    		console.log(countOfUsers);
+                    		counter += 1;
+                    		
 						//A Node walkaround to return data only when finished
-							if(userDiscussionJsonData.users.length == users.length){
-									userDiscussionJsonData.words = keyWords.topKeyWords(5,users);;
-							        console.log(userDiscussionJsonData.words);
+							if(counter == users.length){
+									
+									userDiscussionJsonData = keyWords.topKeyWords(params.keywords,users);
 						            data1.markers = venues;
 									data1.userdiscussiontable = userDiscussionJsonData;
-									//console.log(userDiscussionJsonData);
 									fn(null, data1);
 							}
 						}
@@ -312,6 +319,55 @@ io.on('connection', function(socket){
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
 		if(params.liveresults){
+			//var	filterParams = {track:params.screenname};
+			var	filterParams = {screen_name :params.screenname};
+			console.log(filterParams);
+			
+        	twitterRestAPI.get('users/show', filterParams, function(err, data, response) {
+        		if(!err){
+        		var userid = data.id;
+        			currentTwitStream = twitterAPI.stream('statuses/filter', { follow: userid },function (stream) {
+						var venues =[];
+		                stream.on('data', function (data) {
+		              
+		                	console.log(data);
+							user= data.user;
+							
+							venues = twitterFunctions.venues(data,venues);
+		            		var data = {};
+			
+							data.user = user;
+							data.markers = venues[0];
+							data.visitedvenuestable = venues;
+							//console.log(data);
+
+		                    //console.log(data.user.screen_name + " : " + data.text);
+		                    io.sockets.emit('stream_user_venues_search', data);
+		                    // throw  new Exception('end');
+		                
+
+		                });
+		                
+		                twitterAPI.currentUserVenuesStream = stream;
+		            });
+    			}
+    			else{
+    				console.log(err);
+    			}
+			});
+            
+            socket.on('discussion_search_stop_stream', function(fn) {
+	            
+	            if (twitterAPI.currentUserVenuesStream != undefined) {
+					twitterAPI.currentUserVenuesStream.destroy();
+					twitterAPI.currentUserVenuesStream = undefined;
+	            }
+	            
+	            return fn();
+	      
+	        });
+	        
+	        fn();
 
 
 		}
@@ -335,7 +391,7 @@ io.on('connection', function(socket){
 						data.user = user;
 						data.markers = venues;
 						data.visitedvenuestable = venues;
-						console.log(data);
+						//console.log(data);
 						fn(null, data);
                 		
 					//A Node walkaround to return data only when finished
@@ -364,14 +420,55 @@ io.on('connection', function(socket){
 		for (var index in params) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
-		if(params.liveresults){
 
+		if(params.liveresults){
+			
+			var	filterParams = { track: params.search };
+			var bounds = getBoundingBox([params.lat, params.long], (params.radius));
+		    filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
+        	console.log(filterParams);
+            var user;
+            
+			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
+
+				var venues =[];
+                stream.on('data', function (data) {
+                	console.log(data);
+					user= data.user;
+					venues = twitterFunctions.venues(data,venues);
+            		var data = {};
+	
+					data.user = user;
+					data.markers = venues[0];
+					data.visitedvenuestable = venues;
+
+                    io.sockets.emit('stream_venues_search', data);
+                    //fn(null, data);
+                    // throw  new Exception('end');
+                });
+                
+                twitterAPI.currentVenuesStream = stream;
+            });
+
+            
+            socket.on('venues_search_search_stop_stream', function(fn) {
+	            
+	            if (twitterAPI.currentVenuesStream != undefined) {
+					twitterAPI.currentVenuesStream.destroy();
+					twitterAPI.currentVenuesStream = undefined;
+	            }
+	            
+	            return fn();
+	      
+	        });
+	        
+	        fn();
 
 		}
 		else{
 			var searchParams;
-				searchParams = { q: "iPhone", geocode: [params.lat, params.long, params.radius + "mi"], count: 200 };
-			
+				searchParams = { q:params.search , geocode: [params.lat, params.long, params.radius + "mi"], count: 200 };
+				
 				//searchParams = { q: "iPhone", count: 200 };
 
 			    twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
@@ -488,31 +585,6 @@ io.on('connection', function(socket){
 
 
 
-//------------------
-//var twit = new twitter({
-//	            consumer_key: "NlT41DmogCgb5C6PsgogvHy29",
-//	            consumer_secret: "4e0sav0ciNSlafDjMWjQKXAQXCmxAC3vfTQv9TuB5LEiJPP905",
-//	            access_token_key: req.session.oauth.access_token,
-//	            access_token_secret: req.session.oauth.access_token_secret
-//	          });
-//
-//
-//	          twit
-//	            .verifyCredentials(function(err, data) {
-//	              console.log(err);
-//	            })
-//	            .updateStatus('Test tweet from ntwitter/' + twitter.VERSION,
-//	              function(err, data) {
-//	                console.log(err, data?data.toString():"");
-//	                //res.redirect('/');
-//	                res.render('endoftwit', { title: 'Social Tracker', oauth:oauth});
-//	              }
-//	          );
-//------------------
-
-
-
-
 //router.get('/auth/twitter/callback'
 exports.authTwitter =  function(req, res, next) {
 	console.log("callback");
@@ -533,7 +605,7 @@ function getBoundingBox(centerPoint, distance) {
 	var GeoPoint = require('geopoint'),
     point = new GeoPoint(parseFloat(centerPoint[0]), parseFloat(centerPoint[1]));
 	
-	coordinates = point.boundingCoordinates(distance, true);
+	coordinates = point.boundingCoordinates(distance* 1.60934, true);
 	
 	return [coordinates[0]["_degLat"], coordinates[0]["_degLon"], coordinates[1]["_degLat"], coordinates[1]["_degLon"]];
 	
