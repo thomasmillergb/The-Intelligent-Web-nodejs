@@ -410,15 +410,24 @@ io.on('connection', function(socket){
 							user= data.user;
 							
 							venues = twitterFunctions.venues(data,venues);
-		            		var data = {};
+		            		var returndata = {};
 			
-							data.user = user;
-							data.markers = venues[0];
-							data.visitedvenuestable = venues;
+							returndata.user = user;
+							returndata.markers = venues[0];
+
+							if (data.coordinates)
+					        {
+						        returndata.markers = {};
+						        returndata.markers.lat = data.coordinates.coordinates[1];
+							    returndata.markers.long = data.coordinates.coordinates[0];
+							    returndata.markers.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
+					        }
+							
+							returndata.visitedvenuestable = venues;
 							//console.log(data);
 
 		                    //console.log(data.user.screen_name + " : " + data.text);
-		                    io.sockets.emit('stream_user_venues_search', data);
+		                    io.sockets.emit('stream_user_venues_search', returndata);
 		                    // throw  new Exception('end');
 		                
 
@@ -527,19 +536,27 @@ io.on('connection', function(socket){
 			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
 
 				var venues =[];
+				var usersList =[];
 				
 				
                 stream.on('data', function (data) {
                 	console.log(data);
 					user= data.user;
 					venues = twitterFunctions.venues(data,venues);
-            		var data = {};
-	
-					data.user = user;
-					data.markers = venues[0];
-					data.visitedvenuestable = venues;
+					usersList = twitterFunctions.users(data.user, usersList);
+            		var returndata = {};
+					
+					if (data.coordinates)
+			        {
+				        returndata.markers = {};
+				        returndata.markers.lat = data.coordinates.coordinates[1];
+					    returndata.markers.long = data.coordinates.coordinates[0];
+					    returndata.markers.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
+			        }
+					
+					returndata.visitedvenuestable = usersList;
 
-                    io.sockets.emit('stream_venues_search', data);
+                    io.sockets.emit('stream_venues_search', returndata);
 
                 });
                 

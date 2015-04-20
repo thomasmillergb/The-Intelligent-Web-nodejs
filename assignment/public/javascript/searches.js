@@ -268,26 +268,15 @@ $(function(){
 						
 						
 						socket.on('stream_user_venues_search', function (data) {
-						
-							console.log(data);
 							
 							$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
 					
-						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
+							visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						
-							//$('.tweet_results_table').remove();
-							//
-							//mostUsedWordsTable($("#user_discussion_table_return"), data.userdiscussiontable);
-							//
-							//console.log(data.marker);
-							//
 							if (data.markers) {
 								addMarkerToMap(map, data.markers.lat, data.markers.long, data.markers.label, newBounds);
 								newBounds = false;
 							}
-							
-							
-							
 							
 						});
 						
@@ -348,17 +337,41 @@ $(function(){
 							$("#venue_search_form").removeClass("live_steaming");
 							
 							// Stop the streaming here
+							socket.emit('venues_search_search_stop_stream', function() {
+								$("#venue_search_form").removeClass("live_steaming");
+							});
 							
 							e.preventDefault();
 							return false;
 						});
+						
+						var map = appendLocation($("#venue_return_location_return"), []);
+						var newBounds = true;
+				
+						
+						socket.on('stream_venues_search', function (data) {
+							
+							
+							$("#venue_return").html("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
+							
+							mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
+						
+							if (data.markers) {
+								addMarkerToMap(map, data.markers.lat, data.markers.long, data.markers.label, newBounds);
+								newBounds = false;
+							}
+							
+						});
+
 						
 					} else {
 						// Not streaming
 						
 						addNotification("Venue search", "Search successful", 5000);
 					
-						$("#venue_return").append("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
+						$("#venue_return").html("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
+						
+						console.log(data);
 					
 						mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
 						
