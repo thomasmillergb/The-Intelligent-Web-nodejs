@@ -129,7 +129,7 @@ $(function(){
 		
 		currentform.find(".radius, .lat, .long").on("keyup", function(){
 		  Draw_Circle();
-		  map.setCenter(new google.maps.LatLng(parseFloat(currentform.find(".lat").get(0).val()), parseFloat(currentform.find(".long").get(0).val())));
+		  map.setCenter(new google.maps.LatLng(parseFloat(currentform.find(".lat").val()), parseFloat(currentform.find(".long").val())));
 		});
 
 		google.maps.event.addDomListener(window, 'load', initialize);

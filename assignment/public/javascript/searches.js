@@ -60,66 +60,70 @@ $(function(){
 		
 		loadingOverlay(true);
 		
-		$("#discussion_tweet_return, #discussion_location_return").html("");
+		if (ValidateForm($(this))) {
 		
-		socket.emit('discussion_search', getFormData($(this)), function (err, data) {
+			$("#discussion_tweet_return, #discussion_location_return").html("");
 			
-			loadingOverlay(false);
-			
-			if (err != null) {				
-				addNotification("Error", err, 5000);
-			} else {
+			socket.emit('discussion_search', getFormData($(this)), function (err, data) {
 				
-				// Use the streaming API
-				if ($("#discussion_search_form input[name=liveresults]").is(':checked')) {
-					
-					
-					$("#discussion_search_form").addClass("live_steaming");
-					
-					$("#discussion_search_form tr.stop_streaming .button").click(function () {
-						
-						// Stop the streaming
-						socket.emit('discussion_search_stop_stream', function() {
-							$("#discussion_search_form").removeClass("live_steaming");
-						});
-						
-						e.preventDefault();
-						return false;
-					});
-					
-					var map = appendLocation($("#discussion_location_return"), []);
-					
-					var newBounds = true;
-					
-					socket.on('stream_discussion_search', function (data) {
-						if (data.marker) {
-							
-							addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, newBounds);
-							
-							
-							
-							newBounds = false;
-						}
-						appendTweetWithAccount($("#discussion_tweet_return"), data.tweet);
-					});
-					
-				// Use the REST API	
+				loadingOverlay(false);
+				
+				if (err != null) {				
+					addNotification("Error", err, 5000);
 				} else {
 					
-					addNotification("Discussion search", "Search successful", 5000);
-				
-					appendLocation($("#discussion_location_return"), data.markers);
-				
-					for (i=0;i<data.tweets.length;i++)
-						appendTweetWithAccount($("#discussion_tweet_return"), data.tweets[i]);
+					// Use the streaming API
+					if ($("#discussion_search_form input[name=liveresults]").is(':checked')) {
+						
+						
+						$("#discussion_search_form").addClass("live_steaming");
+						
+						$("#discussion_search_form tr.stop_streaming .button").click(function () {
+							
+							// Stop the streaming
+							socket.emit('discussion_search_stop_stream', function() {
+								$("#discussion_search_form").removeClass("live_steaming");
+							});
+							
+							e.preventDefault();
+							return false;
+						});
+						
+						var map = appendLocation($("#discussion_location_return"), []);
+						
+						var newBounds = true;
+						
+						socket.on('stream_discussion_search', function (data) {
+							if (data.marker) {
+								
+								addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, newBounds);
+								
+								
+								
+								newBounds = false;
+							}
+							appendTweetWithAccount($("#discussion_tweet_return"), data.tweet);
+						});
+						
+					// Use the REST API	
+					} else {
+						
+						addNotification("Discussion search", "Search successful", 5000);
 					
-					scrollToElement($("#discussion_location_return"));
+						appendLocation($("#discussion_location_return"), data.markers);
 					
+						for (i=0;i<data.tweets.length;i++)
+							appendTweetWithAccount($("#discussion_tweet_return"), data.tweets[i]);
+						
+						scrollToElement($("#discussion_location_return"));
+						
+					}
+						
 				}
-					
-			}
-			
-		});
+				
+			});
+		
+		}
 		
 		e.preventDefault();
 	    return false;
@@ -133,79 +137,83 @@ $(function(){
 		
 		loadingOverlay(true);
 		
-		$("#user_discussion_table_return, #user_discussion_location_return").html("");
+		if (ValidateForm($(this))) {
 		
-		socket.emit('user_discussion_search', getFormData($(this)), function (err, data) {
+			$("#user_discussion_table_return, #user_discussion_location_return").html("");
 			
-			
-			loadingOverlay(false);
-			
-			if (err != null) {				
-				addNotification("Error", err, 5000);
-			} else {
+			socket.emit('user_discussion_search', getFormData($(this)), function (err, data) {
 				
-				if ($("#user_discussion_search_form input[name=liveresults]").is(':checked')) {
-					// Streaming
-					
-					$("#user_discussion_search_form").addClass("live_steaming");
-					
-					addNotification("User discussion search", "Search stream started", 5000);
 				
+				loadingOverlay(false);
+				
+				if (err != null) {				
+					addNotification("Error", err, 5000);
+				} else {
 					
-					$("#user_discussion_search_form tr.stop_streaming .button").click(function () {
-						$("#user_discussion_search_form").removeClass("live_steaming");
+					if ($("#user_discussion_search_form input[name=liveresults]").is(':checked')) {
+						// Streaming
 						
-						// Stop the streaming here
-						socket.emit('user_discussion_search_stop_stream', function() {
-							$("#discussion_search_form").removeClass("live_steaming");
+						$("#user_discussion_search_form").addClass("live_steaming");
+						
+						addNotification("User discussion search", "Search stream started", 5000);
+					
+						
+						$("#user_discussion_search_form tr.stop_streaming .button").click(function () {
+							$("#user_discussion_search_form").removeClass("live_steaming");
+							
+							// Stop the streaming here
+							socket.emit('user_discussion_search_stop_stream', function() {
+								$("#discussion_search_form").removeClass("live_steaming");
+							});
+							
+							e.preventDefault();
+							return false;
 						});
 						
-						e.preventDefault();
-						return false;
-					});
-					
-					
-					var map = appendLocation($("#user_discussion_location_return"), []);
-					
-					var newBounds = true;
-					socket.on('stream_user_discussion_search', function (data) {
-					
 						
+						var map = appendLocation($("#user_discussion_location_return"), []);
+						
+						var newBounds = true;
+						socket.on('stream_user_discussion_search', function (data) {
+						
+							
+						
+							$('.tweet_results_table').remove();
+						
+							mostUsedWordsTable($("#user_discussion_table_return"), data.userdiscussiontable);
+							
+							console.log(data.marker);
+						
+							if (data.marker) {
+								addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, false);
+								newBounds = false;
+							}
+							
+							
+							
+							
+						});
+						
+					} else {
+						// Not streaming
+						
+						addNotification("User discussion search", "Search successful", 5000);
 					
-						$('.tweet_results_table').remove();
+						$("#user_discussion_table_return").append("<hr><h1>Tweets</h1>");
 					
 						mostUsedWordsTable($("#user_discussion_table_return"), data.userdiscussiontable);
+		
+						appendLocation($("#user_discussion_location_return"), data.markers);
 						
-						console.log(data.marker);
-					
-						if (data.marker) {
-							addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, false);
-							newBounds = false;
-						}
+						scrollToElement($("#user_discussion_table_return"));
 						
+					}
 						
-						
-						
-					});
-					
-				} else {
-					// Not streaming
-					
-					addNotification("User discussion search", "Search successful", 5000);
-				
-					$("#user_discussion_table_return").append("<hr><h1>Tweets</h1>");
-				
-					mostUsedWordsTable($("#user_discussion_table_return"), data.userdiscussiontable);
-	
-					appendLocation($("#user_discussion_location_return"), data.markers);
-					
-					scrollToElement($("#user_discussion_table_return"));
-					
 				}
-					
-			}
-			
-		});
+				
+			});
+		
+		}
 		
 		e.preventDefault();
 	    return false;
@@ -220,50 +228,54 @@ $(function(){
 		
 		loadingOverlay(true);
 		
-		$("#user_venues_return, #user_venues_location_return").html("");
+		if (ValidateForm($(this))) {
 		
-		socket.emit('user_venues_search', getFormData($(this)), function (err, data) {
+			$("#user_venues_return, #user_venues_location_return").html("");
 			
-			
-			loadingOverlay(false);
-			
-			if (err != null) {				
-				addNotification("Error", err, 5000);
-			} else {
+			socket.emit('user_venues_search', getFormData($(this)), function (err, data) {
 				
-				if ($("#user_venues_search_form input[name=liveresults]").is(':checked')) {
-					// Streaming
-					
-					$("#user_venues_search_form").addClass("live_steaming");
-					
-					$("#user_venues_search_form tr.stop_streaming .button").click(function () {
-						$("#user_venues_search_form").removeClass("live_steaming");
-						
-						// Stop the streaming here
-						
-						e.preventDefault();
-						return false;
-					});
-					
+				
+				loadingOverlay(false);
+				
+				if (err != null) {				
+					addNotification("Error", err, 5000);
 				} else {
-					// Not streaming
 					
-					addNotification("User venues search", "Search successful", 5000);
-				
-				
-					$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.screen_name + "\">@" + data.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.id + "')\">View user's profile and Tweets</a>");
-				
-					visitedVenues($("#user_venues_return"), data.visitedvenuestable);
+					if ($("#user_venues_search_form input[name=liveresults]").is(':checked')) {
+						// Streaming
+						
+						$("#user_venues_search_form").addClass("live_steaming");
+						
+						$("#user_venues_search_form tr.stop_streaming .button").click(function () {
+							$("#user_venues_search_form").removeClass("live_steaming");
+							
+							// Stop the streaming here
+							
+							e.preventDefault();
+							return false;
+						});
+						
+					} else {
+						// Not streaming
+						
+						addNotification("User venues search", "Search successful", 5000);
 					
-					appendLocation($("#user_venues_location_return"), data.markers);
 					
-					scrollToElement($("#user_venues_location_return"));
+						$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.screen_name + "\">@" + data.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.id + "')\">View user's profile and Tweets</a>");
 					
+						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
+						
+						appendLocation($("#user_venues_location_return"), data.markers);
+						
+						scrollToElement($("#user_venues_location_return"));
+						
+					}
+	
 				}
-
-			}
+				
+			});
 			
-		});
+		}
 		
 		e.preventDefault();
 	    return false;
@@ -277,49 +289,53 @@ $(function(){
 		
 		loadingOverlay(true);
 		
-		$("#venue_return, #venue_return_location_return").html("");
+		if (ValidateForm($(this))) {
 		
-		socket.emit('venue_search', getFormData($(this)), function (err, data) {
+			$("#venue_return, #venue_return_location_return").html("");
 			
-			
-			loadingOverlay(false);
-			
-			if (err != null) {				
-				addNotification("Error", err, 5000);
-			} else {
+			socket.emit('venue_search', getFormData($(this)), function (err, data) {
 				
-				if ($("#venue_search_form input[name=liveresults]").is(':checked')) {
-					// Streaming
-					
-					$("#venue_search_form").addClass("live_steaming");
-					
-					$("#venue_search_form tr.stop_streaming .button").click(function () {
-						$("#venue_search_form").removeClass("live_steaming");
-						
-						// Stop the streaming here
-						
-						e.preventDefault();
-						return false;
-					});
-					
+				
+				loadingOverlay(false);
+				
+				if (err != null) {				
+					addNotification("Error", err, 5000);
 				} else {
-					// Not streaming
 					
-					addNotification("Venue search", "Search successful", 5000);
-				
-					$("#venue_return").append("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
-				
-					mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
-					
-					appendLocation($("#venue_return_location_return"), data.markers);
-					
-					scrollToElement($("#venue_return_location_return"));
+					if ($("#venue_search_form input[name=liveresults]").is(':checked')) {
+						// Streaming
 						
+						$("#venue_search_form").addClass("live_steaming");
+						
+						$("#venue_search_form tr.stop_streaming .button").click(function () {
+							$("#venue_search_form").removeClass("live_steaming");
+							
+							// Stop the streaming here
+							
+							e.preventDefault();
+							return false;
+						});
+						
+					} else {
+						// Not streaming
+						
+						addNotification("Venue search", "Search successful", 5000);
+					
+						$("#venue_return").append("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
+					
+						mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
+						
+						appendLocation($("#venue_return_location_return"), data.markers);
+						
+						scrollToElement($("#venue_return_location_return"));
+							
+					}
+					
 				}
 				
-			}
-			
-		});
+			});
+		
+		}
 		
 		e.preventDefault();
 	    return false;
@@ -337,25 +353,29 @@ $(function(){
 		
 		loadingOverlay(true);
 		
-		$("#database_user_table_return").html("");
+		if (ValidateForm($(this))) {
 		
-		socket.emit('database_user_search', getFormData($(this)), function (err, data) {
+			$("#database_user_table_return").html("");
 			
-			
-			loadingOverlay(false);
-			
-			if (err != null) {				
-				addNotification("Error", err, 5000);
-			} else {
-				addNotification("Database user search", "Search successful", 5000);
+			socket.emit('database_user_search', getFormData($(this)), function (err, data) {
 				
-				databaseUserTable($("#database_user_table_return"), data.databaseusertable);
 				
-				scrollToElement($("#database_user_table_return"));
+				loadingOverlay(false);
 				
-			}
-			
-		});
+				if (err != null) {				
+					addNotification("Error", err, 5000);
+				} else {
+					addNotification("Database user search", "Search successful", 5000);
+					
+					databaseUserTable($("#database_user_table_return"), data.databaseusertable);
+					
+					scrollToElement($("#database_user_table_return"));
+					
+				}
+				
+			});
+		
+		}
 		
 		e.preventDefault();
 	    return false;
@@ -373,25 +393,29 @@ $(function(){
 		
 		loadingOverlay(true);
 		
-		$("#database_venue_table_return").html("");
+		if (ValidateForm($(this))) {
 		
-		socket.emit('database_venue_search', getFormData($(this)), function (err, data) {
+			$("#database_venue_table_return").html("");
 			
-			
-			loadingOverlay(false);
-			
-			if (err != null) {				
-				addNotification("Error", err, 5000);
-			} else {
-				addNotification("Database venue search", "Search successful", 5000);
+			socket.emit('database_venue_search', getFormData($(this)), function (err, data) {
 				
-				databaseVenueTable($("#database_venue_table_return"), data.databasevenuetable);
-			
-				scrollToElement($("#database_venue_table_return"));
 				
-			}
+				loadingOverlay(false);
+				
+				if (err != null) {				
+					addNotification("Error", err, 5000);
+				} else {
+					addNotification("Database venue search", "Search successful", 5000);
+					
+					databaseVenueTable($("#database_venue_table_return"), data.databasevenuetable);
+				
+					scrollToElement($("#database_venue_table_return"));
+					
+				}
+				
+			});
 			
-		});
+		}
 		
 		e.preventDefault();
 	    return false;

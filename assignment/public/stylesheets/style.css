@@ -615,3 +615,7 @@ tr.stop_streaming {
 .live_steaming tr.stop_streaming {
 	display: inherit !important;
 }
+
+input.validation_fail {
+	box-shadow: 0 0 5px rgba(255,0,0,0.6);
+}
