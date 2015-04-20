@@ -185,7 +185,7 @@ $(function(){
 							console.log(data.marker);
 						
 							if (data.marker) {
-								addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, false);
+								addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, newBounds);
 								newBounds = false;
 							}
 							
