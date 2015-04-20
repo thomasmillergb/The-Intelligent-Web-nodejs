@@ -87,13 +87,17 @@ $(function(){
 						return false;
 					});
 					
-					map = appendLocation($("#discussion_location_return"), []);
+					var map = appendLocation($("#discussion_location_return"), []);
 					
 					var newBounds = true;
 					
 					socket.on('stream_discussion_search', function (data) {
 						if (data.marker) {
-							addMarkerToMap(map, data.marker.latitude, data.marker.longitude, data.marker.label, newBounds);
+							
+							addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, newBounds);
+							
+							
+							
 							newBounds = false;
 						}
 						appendTweetWithAccount($("#discussion_tweet_return"), data.tweet);
@@ -145,13 +149,43 @@ $(function(){
 					
 					$("#user_discussion_search_form").addClass("live_steaming");
 					
+					addNotification("User discussion search", "Search stream started", 5000);
+				
+					
 					$("#user_discussion_search_form tr.stop_streaming .button").click(function () {
 						$("#user_discussion_search_form").removeClass("live_steaming");
 						
 						// Stop the streaming here
+						socket.emit('user_discussion_search_stop_stream', function() {
+							$("#discussion_search_form").removeClass("live_steaming");
+						});
 						
 						e.preventDefault();
 						return false;
+					});
+					
+					
+					var map = appendLocation($("#user_discussion_location_return"), []);
+					
+					var newBounds = true;
+					socket.on('stream_user_discussion_search', function (data) {
+					
+						
+					
+						$('.tweet_results_table').remove();
+					
+						mostUsedWordsTable($("#user_discussion_table_return"), data.userdiscussiontable);
+						
+						console.log(data.marker);
+					
+						if (data.marker) {
+							addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, false);
+							newBounds = false;
+						}
+						
+						
+						
+						
 					});
 					
 				} else {

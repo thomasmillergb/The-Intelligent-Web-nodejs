@@ -75,7 +75,7 @@ io.on('connection', function(socket){
 		}
 		
 		if (params.liveresults) {		
-			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
+			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams, function (stream) {
 				
                 
 
@@ -144,20 +144,21 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('user_discussion_search', function(params, fn) {
-
+		console.log("sad");
 		console.log("user_discussion_search params:");
 		
-		// params.search
-		// params.liveresults
-		// params.uselocation
-		// params.radius
-		// params.lat
-		// params.long
+		// params.screennames
+	    // params.keywords
+	    // params.days
+	    // params.liveresults
+	    // params.uselocation
+	    // params.radius
+	    // params.lat
+	    // params.long
 		
-		for (var index in params) {
+		for (var index in params)
 			console.log("    params." + index + ": \"" + params[index] + "\"");
-		}
-		//console.log("amount of key workds : "+ params.keywords);
+
 		var data1 = {};
 		
 		// Use streaming API
@@ -165,92 +166,154 @@ io.on('connection', function(socket){
 		filterParams = {};
 		
 		if (params.search != '')
-		  
+	
 		
 		if (params.uselocation) {
-		  var bounds = getBoundingBox([params.lat, params.long], params.radius);
-		  filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
-		  console.log(bounds);
+			var bounds = getBoundingBox([params.lat, params.long], params.radius);
+			filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
+			console.log(bounds);
 		}
 		
 		if (params.liveresults) {	
-            var screennames = [];
-            var tempData = {};
-            var userDiscussionJsonData = {};
+			var screennames = [];
+			var tempData = {};
+			var userDiscussionJsonData = {};
 			userDiscussionJsonData.users = [];	
 			var countOfUsers = 0;
 			var venues =[];
 			var userIDString = "";
 			var users = params.screennames.replace(/\s/g, '').split(",");
 			
-			getUserIDs(users,function(callback){
+			
+			getUserIDs(users, function(callback) {
+				
 				console.log(callback);
-				filterParams['follow'] = callback;
-				////////////////
+				
+				
+				filterParams['follow'] = [];
+				
+				for (var i = 0; i < callback.length; i++)
+					filterParams['follow'].push(callback[i].user_id);
+	
+				currentTwitStream = twitterAPI.stream('statuses/filter', filterParams, function (stream) {
+	
+					var keywordsTable = {};
+					keywordsTable['users'] = [];
+				  
+					for (var i = 0; i < callback.length; i++)
+						keywordsTable['users'].push(callback[i])
+				  	
+				  
+				    keywordsTable['words'] = [];
+	
+					stream.on('data', function (data) {
 
-				//var newString = userIDString.substr(0, userIDString.length-1);
+						var userid = data.user.id;
+						var words = data.text.split(" ");
+				
+						var userindex = -1;
+				
+						for (var i = 0; i < keywordsTable['users'].length; i++)
+							if (keywordsTable['users'][i].user_id == userid)
+								userindex = i;
+				
+						words.forEach(function(tweetword)
+						{
+							var wordindex = -1;
+	
+							for (var i = 0; i < keywordsTable['words'].length; i++)
+								if (keywordsTable['words'][i].word == tweetword)
+									wordindex = i;
+		
+							if (wordindex == -1)
+							{
+								var tempword = {}
+								tempword.word = tweetword
+								tempword.occurences = []
+								
+								for (user in keywordsTable['users'])
+									tempword.occurences.push(0);
+									
+								tempword.occurences[userindex] =+ 1;
+										
+								keywordsTable['words'].push(tempword);//{"word": tweetword, "occurences" : emptywords});
+							}
+							else
+								keywordsTable.words[wordindex].occurences[userindex] = keywordsTable.words[wordindex].occurences[userindex] + 1;
+								
+						});
+			
+						keywordsTable['words'].sort(function(x, y){
+				
+							xtotal = eval(x.occurences.join('+'));
+							ytotal = eval(y.occurences.join('+'));
+					
+							if (xtotal < ytotal)
+								return 1;
+							if (xtotal > ytotal)
+								return -1;
+							return 0;
+						});
+						
+						console.log(keywordsTable['words']);
+					
+						////tempData.tweet = data;
+						// Its geotaggggeddd! Yaaaay
+						////venues = twitterFunctions.venues(data,venues);
+		
+						////keyWords.addWords(data.user.screen_name, data.text);
+						
+						////userDiscussionJsonData = keyWords.topKeyWords(params.keywords,screennames);
+						//console.log(data);
+						////data1.markers = venues;
+						
+						var tempdata = {};
+						
+						var maxindex = params.keywords;
+						
+						if (maxindex > keywordsTable.length)
+							maxindex = keywordsTable.length;
+						
+						tempdata.userdiscussiontable = {};
+						tempdata.userdiscussiontable.users = keywordsTable.users;
+						tempdata.userdiscussiontable.words = keywordsTable.words.slice(0, maxindex);
 
-        		
-					currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
+						if(data.coordinates){
+							tempdata.marker = {};
+					        tempdata.marker.lat = data.coordinates.coordinates[1];
+					        tempdata.marker.long = data.coordinates.coordinates[0];
+					        tempdata.marker.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
+				    	}
+						
 
-						//var keywordsTable =[];
-						//keywordsTable['users'] = [];
-						//
-						//for (var i = 0; i < users.length; i++) {
-						//    keywordsTable['users'].push({"username":users[i], "user_id":filterParams['follow'][i]});
-						//}
-						//	
-						//keywordsTable['words'] = [];
-						//
-						//
-						//var userDiscussionJson = {"users":[{"username":"jtmcilveen", "user_id":"839249234"},{"username":"fabcirca", "user_id":"839249235"},{"username":"stephenfry", "user_id":"839249236"}],"words":[{"word":"London","occurences":[5,2,6]},{"word":"Music","occurences":[3,4,1]}]};
-
-
-		                stream.on('data', function (data) {
-		       
-		                    tempData.tweet = data;
-		                    // Its geotaggggeddd! Yaaaay
-		              		venues = twitterFunctions.venues(data,venues);
-
-		                    keyWords.addWords(data.user.screen_name, data.text);
-		          			
-							userDiscussionJsonData = keyWords.topKeyWords(params.keywords,screennames);
-					        console.log(data);
-				            data1.markers = venues;
-							data1.userdiscussiontable = userDiscussionJsonData;
-		                  	console.log(data1.userdiscussiontable);
-
-		                    io.sockets.emit('stream_user_discussion_search', data1);
-		                });
-		                
-		                twitterAPI.currentDiscussionStream = stream;
-		            });
+						console.log(tempdata);
+		
+						io.sockets.emit('stream_user_discussion_search', tempdata);
+					});
+					
+					twitterAPI.currentDiscussionStream = stream;
+					
+				});
 				
 
-            socket.on('user_discussion_search_stop_stream', function(fn) {
-	            
-	            if (twitterAPI.currentDiscussionStream != undefined) {
-					twitterAPI.currentDiscussionStream.destroy();
-					twitterAPI.currentDiscussionStream = undefined;
-					keyWords.reset();
-	            }
-	            
-	            return fn();
-	      
-	        });
-	        
-	        fn();
+				socket.on('user_discussion_search_stop_stream', function(fn) {
+	
+					if (twitterAPI.currentDiscussionStream != undefined) {
+						twitterAPI.currentDiscussionStream.destroy();
+						twitterAPI.currentDiscussionStream = undefined;
+						keyWords.reset();
+					}
+	
+					return fn();
+	
+				});
+	
+				fn();
 
-
-
-
-
-
-////////////////
 			});
 		} 
-
-		else {
+		else
+		{
 			// params.screennames
 			// params.keywords
 			// params.days
@@ -635,4 +698,15 @@ function asyncGetUserID(user, callback){
 		callback(data.id);
 
 	});
+}
+
+function getBoundingBox(centerPoint, distance) {
+	
+	var GeoPoint = require('geopoint'),
+    point = new GeoPoint(parseFloat(centerPoint[0]), parseFloat(centerPoint[1]));
+	
+	coordinates = point.boundingCoordinates(distance* 1.60934, true);
+	
+	return [coordinates[0]["_degLat"], coordinates[0]["_degLon"], coordinates[1]["_degLat"], coordinates[1]["_degLon"]];
+	
 }

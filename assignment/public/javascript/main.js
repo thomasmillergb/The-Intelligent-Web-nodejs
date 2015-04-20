@@ -398,7 +398,6 @@ function addMarkerToMap(map, latitude, longitude, label, newBounds) {
 	}
 }
 
-
 // Adds the information to the user page before it is dispalyed based on the user's json
 // Returns the created object
 function setupUserPage(userJson) {
