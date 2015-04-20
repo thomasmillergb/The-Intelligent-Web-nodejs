@@ -261,7 +261,7 @@ $(function(){
 						addNotification("User venues search", "Search successful", 5000);
 					
 					
-						$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.screen_name + "\">@" + data.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.id + "')\">View user's profile and Tweets</a>");
+						$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
 					
 						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						
