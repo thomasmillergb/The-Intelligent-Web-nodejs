@@ -39,7 +39,7 @@ exports.addWords = function(user, text){
                                                                 language:"english",
                                                                 remove_digits: true,
                                                                 return_changed_case:true,
-                                                                remove_duplicates: true
+                                                                remove_duplicates: false
  
                                                            });
 	extraction_result.forEach(function(currentWords){

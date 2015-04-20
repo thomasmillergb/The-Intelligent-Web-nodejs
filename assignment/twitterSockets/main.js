@@ -193,6 +193,19 @@ io.on('connection', function(socket){
         		
 					currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
 
+						//var keywordsTable =[];
+						//keywordsTable['users'] = [];
+						//
+						//for (var i = 0; i < users.length; i++) {
+						//    keywordsTable['users'].push({"username":users[i], "user_id":filterParams['follow'][i]});
+						//}
+						//	
+						//keywordsTable['words'] = [];
+						//
+						//
+						//var userDiscussionJson = {"users":[{"username":"jtmcilveen", "user_id":"839249234"},{"username":"fabcirca", "user_id":"839249235"},{"username":"stephenfry", "user_id":"839249236"}],"words":[{"word":"London","occurences":[5,2,6]},{"word":"Music","occurences":[3,4,1]}]};
+
+
 		                stream.on('data', function (data) {
 		       
 		                    tempData.tweet = data;
@@ -603,8 +616,9 @@ var getUserIDs = function(users, callback){
 	var userIDs = [];
 	users.forEach(function(user,next){
 				console.log(user);
+				var tempuser = user;
 				 asyncGetUserID(user, function(userID){
-					userIDs.push(userID);
+					userIDs.push({"username": tempuser, "user_id": userID});
 					if(users.length == userIDs.length) {
      			 		callback(userIDs);
      			 		//console.log(userIDs);
