@@ -163,7 +163,7 @@ $(function(){
 							
 							// Stop the streaming here
 							socket.emit('user_discussion_search_stop_stream', function() {
-								$("#discussion_search_form").removeClass("live_steaming");
+								$("#user_discussion_search_form").removeClass("live_steaming");
 							});
 							
 							e.preventDefault();
@@ -250,10 +250,47 @@ $(function(){
 							$("#user_venues_search_form").removeClass("live_steaming");
 							
 							// Stop the streaming here
+							socket.emit('user_venues_search_stop_stream', function() {
+								$("#user_venues_search_form").removeClass("live_steaming");
+							});
 							
 							e.preventDefault();
 							return false;
 						});
+						
+						
+						
+						
+						var map = appendLocation($("#user_venues_location_return"), []);
+						var newBounds = true;
+						
+						
+						
+						
+						socket.on('stream_user_venues_search', function (data) {
+						
+							console.log(data);
+							
+							$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
+					
+						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
+						
+							//$('.tweet_results_table').remove();
+							//
+							//mostUsedWordsTable($("#user_discussion_table_return"), data.userdiscussiontable);
+							//
+							//console.log(data.marker);
+							//
+							if (data.markers) {
+								addMarkerToMap(map, data.markers.lat, data.markers.long, data.markers.label, newBounds);
+								newBounds = false;
+							}
+							
+							
+							
+							
+						});
+						
 						
 					} else {
 						// Not streaming
@@ -261,13 +298,13 @@ $(function(){
 						addNotification("User venues search", "Search successful", 5000);
 					
 					
-						$("#user_venues_return").append("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
+						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
 					
 						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						
 						appendLocation($("#user_venues_location_return"), data.markers);
 						
-						scrollToElement($("#user_venues_location_return"));
+						scrollToElement($("#user_venues_return"));
 						
 					}
 	

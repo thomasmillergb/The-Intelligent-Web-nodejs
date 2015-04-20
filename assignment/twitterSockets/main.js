@@ -432,7 +432,7 @@ io.on('connection', function(socket){
     			}
 			});
             
-            socket.on('discussion_search_stop_stream', function(fn) {
+            socket.on('user_venues_search_stop_stream', function(fn) {
 	            
 	            if (twitterAPI.currentUserVenuesStream != undefined) {
 					twitterAPI.currentUserVenuesStream.destroy();
@@ -460,18 +460,28 @@ io.on('connection', function(socket){
 		                	var currentData = data[indx];			
 
 							var found;
-							user= currentData.user;
+							user = currentData.user;
 							venues = twitterFunctions.venues(currentData,venues);
                 		}
-                		var data = {};
 
-                		console.log(venues);
+                		//console.log(venues);
 						
                 		var venuemarkers = [];
-                		for (var indx in venues)
-		                	if (venues[indx].lat && venues[indx].long)
-		                		venuemarkers.push(venues[indx]);
-
+	                	
+	                	for (var indx in data)
+			                if (data[indx].coordinates && data[indx].coordinates.coordinates)
+			                {
+				                var tempmarker = {};
+				                tempmarker.lat = data[indx].coordinates.coordinates[1];
+						        tempmarker.long = data[indx].coordinates.coordinates[0];
+						        tempmarker.label = "<h3>@" + data[indx].user.screen_name + "</h3>" + data[indx].text + "";
+				                venuemarkers.push(tempmarker);
+			                }
+			                
+			            console.log(venuemarkers);
+			                	
+						var data = {};
+						
 						data.user = user;
 						data.markers = venuemarkers;
 						data.visitedvenuestable = venues;
@@ -517,6 +527,8 @@ io.on('connection', function(socket){
 			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
 
 				var venues =[];
+				
+				
                 stream.on('data', function (data) {
                 	console.log(data);
 					user= data.user;
@@ -528,8 +540,7 @@ io.on('connection', function(socket){
 					data.visitedvenuestable = venues;
 
                     io.sockets.emit('stream_venues_search', data);
-                    //fn(null, data);
-                    // throw  new Exception('end');
+
                 });
                 
                 twitterAPI.currentVenuesStream = stream;
