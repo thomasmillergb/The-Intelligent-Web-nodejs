@@ -12,6 +12,7 @@
 		<script src="/javascript/main.js"></script>
 		<script src="/javascript/searches.js"></script>
 		<script src="/javascript/mapinit.js"></script>
+		<script src="/javascript/validate.js"></script>
 	</head>
 	<body class="no_twitter no_four">
 		<header>
@@ -81,7 +82,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="search" placeholder="e.g. iPhone" />
+									<input type="text" name="search" attr-validate="alphanumeric" attr-nonEmpty="true" placeholder="e.g. iPhone" />
 								</td>
 							</tr>
 							<tr>
@@ -139,7 +140,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="radius" name="radius" placeholder="e.g. 1" value="1000" />
+												<input type="text" class="radius" name="radius" placeholder="e.g. 1" value="1000" attr-validate="numeric" attr-nonempty="true"/>
 											</td>
 										</tr>
 									</table>
@@ -157,7 +158,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="lat" name="lat" placeholder="e.g. 51.50722" value="53.381796" />
+												<input type="text" class="lat" name="lat" placeholder="e.g. 51.50722" attr-validate="latlong" attr-nonEmpty="true" value="53.381796" />
 											</td>
 										</tr>
 										<tr>
@@ -171,7 +172,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="long" name="long" placeholder="e.g. -0.12750" value="-1.480719" />
+												<input type="text" class="long" name="long" placeholder="e.g. -0.12750" value="-1.480719" attr-validate="latlong" attr-nonEmpty="true" />
 											</td>
 										</tr>
 									</table>
@@ -243,7 +244,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="screennames" placeholder="e.g. jtmcilven, fabcira, stephenfry" />
+									<input type="text" name="screennames" attr-validate="alphanumeric" attr-nonempty="true" placeholder="e.g. jtmcilven, fabcira, stephenfry" />
 								</td>
 							</tr>
 							<tr>
@@ -257,7 +258,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="keywords" placeholder="e.g. 2" value="2" />
+									<input type="text" name="keywords" placeholder="e.g. 2" attr-validate="numeric" attr-nonempty="true" value="2" />
 								</td>
 							</tr>
 							<tr>
@@ -271,7 +272,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="days" placeholder="e.g. 5 - 0 or less enables live results" value="5" />
+									<input type="text" name="days" placeholder="e.g. 5 - 0 or less enables live results" value="5" attr-validate="numeric" attr-nonempty="true" />
 								</td>
 							</tr>
 							<tr>
@@ -329,7 +330,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="radius" name="radius" placeholder="e.g. 1" value="1000" />
+												<input type="text" class="radius" name="radius" placeholder="e.g. 1" attr-nonempty="true" attr-validate="numeric" value="1000" />
 											</td>
 										</tr>
 									</table>
@@ -347,7 +348,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="lat" name="lat" placeholder="e.g. 51.50722" value="53.381796" />
+												<input type="text" class="lat" name="lat" placeholder="e.g. 51.50722" value="53.381796" attr-validate="latlong" attr-nonempty="true" />
 											</td>
 										</tr>
 										<tr>
@@ -361,7 +362,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="long" name="long" placeholder="e.g. -0.12750" value="-1.480719" />
+												<input type="text" class="long" name="long" placeholder="e.g. -0.12750" value="-1.480719" attr-validate="latlong" attr-nonempty="true" />
 											</td>
 										</tr>
 									</table>
@@ -432,7 +433,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="screenname" placeholder="e.g. jtmcilven, 234239238499" />
+									<input type="text" name="screenname" placeholder="e.g. jtmcilven, 234239238499" attr-validate="alphanumeric" attr-nonempty="true" />
 								</td>
 							</tr>
 							<tr>
@@ -446,7 +447,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="days" placeholder="e.g. 5 - 0 or less enables live results" value="5" />
+									<input type="text" name="days" placeholder="e.g. 5 - 0 or less enables live results" value="5" attr-validate="numeric" attr-nonempty="true" />
 								</td>
 							</tr>
 							<tr>
@@ -515,21 +516,6 @@
 						<table class="req_twitter_api">
 							<tr>
 								<td>
-									Search:
-									<div class="infoicon">
-										<div class="popupinfo">
-											<h2>Search</h2>
-											Search for users who are doing stuff.
-										</div>
-									</div>
-								</td>
-								<td>
-									<input type="text" name="search" placeholder="e.g. drones, iPhone and node" />
-								</td>
-
-							</tr>
-							<tr>
-								<td>
 									Number of Days:
 									<div class="infoicon">
 										<div class="popupinfo">
@@ -539,9 +525,8 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="days" placeholder="e.g. 5 - 0 or less enables live results" value="5" />
+									<input type="text" name="days" placeholder="e.g. 5 - 0 or less enables live results" value="5" attr-validate="numeric" attr-nonempty="true" />
 								</td>
-								
 							</tr>
 							<tr>
 								<td>
@@ -577,7 +562,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="radius" name="radius" placeholder="e.g. 1" value="1000" />
+												<input type="text" class="radius" name="radius" placeholder="e.g. 1" value="1000" attr-validate="numeric" attr-nonempty="true" />
 											</td>
 										</tr>
 									</table>
@@ -595,7 +580,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="lat" name="lat" placeholder="e.g. 51.50722" value="53.381796" />
+												<input type="text" class="lat" name="lat" placeholder="e.g. 51.50722" value="53.381796" attr-validate="latlong" attr-nonempty="true"/>
 											</td>
 										</tr>
 										<tr>
@@ -609,7 +594,7 @@
 												</div>
 											</td>
 											<td>
-												<input type="text" class="long" name="long" placeholder="e.g. -0.12750" value="-1.480719" />
+												<input type="text" class="long" name="long" placeholder="e.g. -0.12750" value="-1.480719" attr-validate="latlong" attr-nonempty="true"/>
 											</td>
 										</tr>
 									</table>
@@ -679,7 +664,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="username" placeholder="e.g. jtmcilvee, 29932932923" />
+									<input type="text" name="username" placeholder="e.g. jtmcilvee, 29932932923" attr-validate="alphanumeric" attr-nonempty="true" />
 								</td>
 							</tr>
 							<tr>
@@ -722,7 +707,7 @@
 									</div>
 								</td>
 								<td>
-									<input type="text" name="venue_name_coordinates" placeholder="e.g. St Georges Church, 53.3816232,-1.4817597" />
+									<input type="text" name="venue_name_coordinates" placeholder="e.g. St Georges Church, 53.3816232,-1.4817597" attr-validate="alphanumeric" attr-nonempty="true"/>
 								</td>
 							</tr>
 							<tr>
