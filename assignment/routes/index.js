@@ -185,26 +185,15 @@ io.on('connection', function(socket){
 			var venues =[];
 			var userIDString = "";
 			var users = params.screennames.replace(/\s/g, '').split(",");
+			
+			getUserIDs(users,function(callback){
+				console.log(callback);
+				filterParams['follow'] = callback;
+				////////////////
 
-/*
-			users.forEach(function(user,next){
-				 
-				//needs to get userID before the stream can start
-				twitterRestAPI.get('users/show', {screen_name: user}, function(err, data, response ) {
-					
-					userIDString = data.id;
-					next();
-
-				});
-			});
-*/
 				//var newString = userIDString.substr(0, userIDString.length-1);
-				console.log(userIDString);
-        	
-        			//	var userid = data.id;
-        		//	console.log(userid);
-        		//	filterParams['follow'] =  userid;
-        		/*
+
+        		
 					currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
 
 		                stream.on('data', function (data) {
@@ -226,7 +215,8 @@ io.on('connection', function(socket){
 		                
 		                twitterAPI.currentDiscussionStream = stream;
 		            });
-				*/
+				
+
             socket.on('user_discussion_search_stop_stream', function(fn) {
 	            
 	            if (twitterAPI.currentDiscussionStream != undefined) {
@@ -239,7 +229,15 @@ io.on('connection', function(socket){
 	      
 	        });
 	        
-	        fn();	        
+	        fn();
+
+
+
+
+
+
+////////////////
+			});
 		} 
 
 		else {
@@ -580,7 +578,29 @@ io.on('connection', function(socket){
 	});
 	
 });
+var getUserIDs = function(users, callback){
+	var userIDs = [];
+	users.forEach(function(user,next){
+				console.log(user);
+				 asyncGetUserID(user, function(userID){
+					userIDs.push(userID);
+					if(users.length == userIDs.length) {
+     			 		callback(userIDs);
+     			 		//console.log(userIDs);
 
+     				}
+				});
+				
+	});
+}
+function asyncGetUserID(user, callback){
+
+	twitterRestAPI.get('users/show', {screen_name: user}, function(err, data, response ) {
+		
+		callback(data.id);
+
+	});
+}
 
 
 
