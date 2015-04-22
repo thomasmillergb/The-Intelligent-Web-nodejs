@@ -207,7 +207,7 @@ io.on('connection', function(socket){
 					stream.on('data', function (data) {
 
 						var userid = data.user.id;
-						var words = data.text.split(" ");
+						var words = data.text.toLowerCase().split(" ");
 				
 						var userindex = -1;
 				
@@ -367,7 +367,28 @@ io.on('connection', function(socket){
 								userDiscussionJsonData = keyWords.topKeyWords(params.keywords,users);
 								//var venuemarkers = [];
 			                	
+			                	console.log(userDiscussionJsonData.words);
 			                	
+			                	userDiscussionJsonData.words.sort(function(x, y) {
+								
+								  xtotal = eval(x.occurences.join('+'));
+								  ytotal = eval(y.occurences.join('+'));
+								
+								  if (xtotal < ytotal)
+								  	return 1;
+								  if (xtotal > ytotal)
+								  	return -1;
+								  return 0;
+								});
+								
+								var maxindex = params.keywords;
+						
+								if (maxindex > userDiscussionJsonData.words.length)
+									maxindex = userDiscussionJsonData.words.length;
+								
+								console.log(userDiscussionJsonData.words.slice(0, maxindex));
+								
+								userDiscussionJsonData.words = userDiscussionJsonData.words.slice(0, maxindex);
 
 						        //data1.markers = venuemarkers;
 								data1.userdiscussiontable = userDiscussionJsonData;
