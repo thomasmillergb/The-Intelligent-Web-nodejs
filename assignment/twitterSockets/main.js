@@ -86,7 +86,7 @@ io.on('connection', function(socket){
                     tempData.marker = [];
                     // Its geotaggggeddd! Yaaaay
                    
-		     		tempData.marker = twitterFunctions.venues(data,tempData.marker)[0];
+		    		tempData.marker = twitterFunctions.venues(data,tempData.marker)[0];
 
                     //console.log(data.user.screen_name + " : " + data.text);
                     io.sockets.emit('stream_discussion_search', tempData);
@@ -117,34 +117,32 @@ io.on('connection', function(socket){
 			else
 				searchParams = { q: params.search, count: 200 };
 
-			    twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
-	                if(!err){
-	                	var venues =[];
-		                for (var indx in data.statuses) {
-		                	var currentData = data.statuses[indx];
-		     				venues = twitterFunctions.venues(currentData,venues);
-		                }
-	            
+		    twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
+                if(!err) {
+                	var venues = [];
+	                for (var indx in data.statuses) {
+	                	var currentData = data.statuses[indx];
+	    				venues = twitterFunctions.venues(currentData,venues);
+	                }
+            
 					var venuemarkers = [];
-	        		for (var indx in venues)
-	                	if (venues[indx].lat && venues[indx].long)
-	                		venuemarkers.push(venues[indx]);
+					for (var indx in venues)
+                		if (venues[indx].lat && venues[indx].long)
+                			venuemarkers.push(venues[indx]);
 
-		            data.markers = venuemarkers;
-					data.tweets = data.statuses;
-					fn(null, data);
-				}
-				else{
+							data.markers = venuemarkers;
+							data.tweets = data.statuses;
+							fn(null, data);
+				} else {
 					fn(null,null);
 					console.log(err);
 				}
-            })
+			});
 		}
 		
 	});
 	
 	socket.on('user_discussion_search', function(params, fn) {
-		console.log("sad");
 		console.log("user_discussion_search params:");
 		
 		// params.screennames
@@ -326,6 +324,7 @@ io.on('connection', function(socket){
 			
 
 			var data1 = {};
+			data1.markers = []
 			keyWords.reset();
 			var counter = 0;
 			users.forEach(function(userMan){
@@ -347,28 +346,32 @@ io.on('connection', function(socket){
 					
 		                if(!err){
 				        	var venues =[];
+				        	
 			                for (var indx in data) {
 			                	var currentData = data[indx];
 
 								keyWords.addWords(currentData.user.screen_name, currentData.text);
 						
-			                	venues = twitterFunctions.venues(currentData,venues);
+			                	venues = twitterFunctions.venues(currentData, venues);
 			             
                     		}
+                    		
+                    		for (var indx in venues)
+					            if (venues[indx].lat && venues[indx].long)
+					            	data1.markers.push(venues[indx]);
+                    		
                     		counter += 1;
                     		
-						//A Node walkaround to return data only when finished
 							if(counter == users.length){
 									
-									userDiscussionJsonData = keyWords.topKeyWords(params.keywords,users);
-									var venuemarkers = [];
-			                		for (var indx in venues)
-					                	if (venues[indx].lat && venues[indx].long)
-					                		venuemarkers.push(venues[indx]);
+								userDiscussionJsonData = keyWords.topKeyWords(params.keywords,users);
+								//var venuemarkers = [];
+			                	
+			                	
 
-						            data1.markers = venuemarkers;
-									data1.userdiscussiontable = userDiscussionJsonData;
-									fn(null, data1);
+						        //data1.markers = venuemarkers;
+								data1.userdiscussiontable = userDiscussionJsonData;
+								fn(null, data1);
 							}
 						}
 						else{
