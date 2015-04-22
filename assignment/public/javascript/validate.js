@@ -3,8 +3,9 @@
 //attr-nonEmpty = boolean
 //attr-latlong
 
-var alphanumericRegex = new RegExp("^[A-Za-z0-9]*$"); //regex to check for alphanumeric characters
-var testRegex = new RegExp("[ab]");
+var alphanumericRegex = /^[-\w\s]+$/; //regex to check for alphanumeric characters
+var usernameRegex = /^[A-Za-z0-9_]{1,15}$/; //regex to check twitter usernames
+var multiUsernameRegex = /^([A-Za-z0-9_]{1,15}[,\s]*)+$/; //regex to check twitter usernames
 
 	
 function ValidateForm(form) {
@@ -12,6 +13,8 @@ function ValidateForm(form) {
 	$("*").removeClass("validation_fail");
 	
 	var alphanumericelements = form.find("input[attr-validate=alphanumeric]");
+	var usernameelements = form.find("input[attr-validate=username]");
+	var multiusernameelements = form.find("input[attr-validate=multipleusername]");
 	var numericelements = form.find("input[attr-validate=numeric]");
 	var nonempty = form.find("input[attr-nonEmpty=true]");
 	var latlong = form.find("input[attr-validate=latlong]");
@@ -19,10 +22,35 @@ function ValidateForm(form) {
 	//Alphanumeric Check
 	for (var i = 0; i < alphanumericelements.length; i++)
 	{
-		
-		
 		if (alphanumericRegex.test($(alphanumericelements[i]).val()) == false) { 
-			addNotification("Invalid input!", "Please use alphanumeric characters in " + $(alphanumericelements[i]).attr("name"), 5000);
+			addNotification("Invalid input!", "Please enter a valid search term in " + $(alphanumericelements[i]).attr("name"), 5000);
+			loadingOverlay(false);
+			$(alphanumericelements[i]).addClass("validation_fail");
+			$("html, body").animate({scrollTop: 0});
+			return false; //if it doesn't, fail the form
+		}
+	}
+	
+	//Username Check
+	for (var i = 0; i < usernameelements.length; i++)
+	{
+		
+		
+		if (usernameRegex.test($(usernameelements[i]).val()) == false) { 
+			addNotification("Invalid input!", "Please enter a valid Twitter username in " + $(alphanumericelements[i]).attr("name"), 5000);
+			loadingOverlay(false);
+			$(alphanumericelements[i]).addClass("validation_fail");
+			$("html, body").animate({scrollTop: 0});
+			return false; //if it doesn't, fail the form
+		}
+	}
+	
+	//Multiple Username Check
+	for (var i = 0; i < multiusernameelements.length; i++)
+	{
+
+		if (multiUsernameRegex.test($(multiusernameelements[i]).val()) == false) { 
+			addNotification("Invalid input!", "Please enter a valid list of Twitter usernames in " + $(alphanumericelements[i]).attr("name"), 5000);
 			loadingOverlay(false);
 			$(alphanumericelements[i]).addClass("validation_fail");
 			$("html, body").animate({scrollTop: 0});

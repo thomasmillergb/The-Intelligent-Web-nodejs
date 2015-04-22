@@ -41,6 +41,10 @@ http.createServer(app).listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+app.get('/queryInterface.html', function (req, res) {
+	res.render('index', { title: 'Group N+1' });
+});
+
 var util = require('util');
 var OAuthTwitter = require('./oAuth/twitter.js');
 OAuthTwitter(app);

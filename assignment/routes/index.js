@@ -5,14 +5,9 @@
 
 var socket = require('../twitterSockets/main.js');
 
-
-
 exports.index = function (req, res, callbacks) {
     res.render('index', { title: 'Group N+1' });
 };
-
-
-
 
 
 //router.get('/auth/twitter/callback'
