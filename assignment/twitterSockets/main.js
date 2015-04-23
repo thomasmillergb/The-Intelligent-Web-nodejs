@@ -1,6 +1,6 @@
 var Twit = require('twit');
 var twitter = require('ntwitter');
-var keyWords = require('./keywords.js');
+//var keyWords = require('./keywords.js');
 var twitterFunctions = require('./twitterFunction.js');
 var twitterAPI;
 var twitterRestAPI;
@@ -274,7 +274,7 @@ io.on('connection', function(socket){
 				
 				var data1 = {};
 				data1.markers = []
-				keyWords.reset();
+	
 				var counter = 0;
 				userscreennames.forEach(function(userMan){
 	
