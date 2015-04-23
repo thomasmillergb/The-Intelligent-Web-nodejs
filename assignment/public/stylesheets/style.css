@@ -67,6 +67,10 @@ header {
 	position: relative;
 }
 
+#notification_wrapper .notification:first-child {
+	margin-top: 0;	
+}
+
 #notification_wrapper .notification:after {
 	content: "Click to close";
 	display: block;

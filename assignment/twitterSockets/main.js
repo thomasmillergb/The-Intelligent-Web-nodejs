@@ -617,29 +617,42 @@ io.on('connection', function(socket){
 			            //There is no way to use the api to do this, so manual clipping 
 			            //is needed
 			            if (params.days > 0)
-			             data = sliceOlderTweets(data, params.days);
+			            	data = sliceOlderTweets(data, params.days);
 		             
-	                	var venues =[];
-	                    var usersList =[];
-	                    //console.log("data:" +data[0]);
-		        			for (var indx in data.statuses) {
-		        				var currentData = data.statuses[indx];
-								usersList = twitterFunctions.users(currentData.user, usersList);
-				                venues = twitterFunctions.venues(currentData,venues);
-                    		}
-                    		var data = {};
-                    		data.visitedvenuestable = usersList;
+		             
+						var returndata = {};
+						returndata.visitedvenuestable = [];
+
+		        		for (var indx in data.statuses)
+		        			returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx].user, returndata.visitedvenuestable);
+                    	
+                    	
 
 
-		                    var venuemarkers = [];
-			        		for (var indx in venues)
-			                	if (venues[indx].lat && venues[indx].long)
-			                		venuemarkers.push(venues[indx]);
+		                //var venuemarkers = [];
+			        	//for (var indx in venues)
+			            //	if (venues[indx].lat && venues[indx].long)
+			            //		venuemarkers.push(venues[indx]);
 
 
+						returndata.markers = [];
+						
+						//console.log(data[0]);
+						
+						for (var i = 0; i < data.statuses.length; i++) {
+							if (data.statuses[i].coordinates) {
+								
+								var tempMarker = {};
+						        tempMarker.lat  = data.statuses[i].coordinates.coordinates[1];
+						        tempMarker.long = data.statuses[i].coordinates.coordinates[0];
+						        tempMarker.label  = "<h3>@" + data.statuses[i].user.screen_name + "</h3>" + data.statuses[i].text + "";
+								returndata.markers.push(tempMarker);	
+							}
+						}
 
-                    		data.markers = venuemarkers;
-                    		fn(null, data);
+
+                    	//data.markers = venuemarkers;
+                    	fn(null, returndata);
                     		
 					}
 					else{
