@@ -123,9 +123,9 @@ var reformatToJamesJson = function(topList, users){
     				//console.log(tableWord.word);
     				//console.log(currentWord.word);
     				if(tableWord.word == currentWord.word){
-    					console.log(currentWord.amount);
-    					console.log(userCount);
-    					console.log(tableWord.occurences);
+    					//console.log(currentWord.amount);
+    					//console.log(userCount);
+    					//console.log(tableWord.occurences);
     					tableWord.occurences[userCount] = currentWord.amount;
     					found = true;
     					return true;
@@ -144,7 +144,7 @@ var reformatToJamesJson = function(topList, users){
 		});
 		userCount += 1;
 	});
-	console.log(tableJson);
+	//console.log(tableJson);
 	return tableJson;
 
 }

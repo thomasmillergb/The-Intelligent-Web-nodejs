@@ -169,7 +169,6 @@ io.on('connection', function(socket){
 		if (params.uselocation) {
 			var bounds = getBoundingBox([params.lat, params.long], params.radius);
 			filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
-			console.log(bounds);
 		}
 		
 		if (params.liveresults) {	
@@ -184,9 +183,6 @@ io.on('connection', function(socket){
 			
 			
 			getUserIDs(users, function(callback) {
-				
-				console.log(callback);
-				
 				
 				filterParams['follow'] = [];
 				
@@ -253,18 +249,6 @@ io.on('connection', function(socket){
 							return 0;
 						});
 						
-						console.log(keywordsTable['words']);
-					
-						////tempData.tweet = data;
-						// Its geotaggggeddd! Yaaaay
-						////venues = twitterFunctions.venues(data,venues);
-		
-						////keyWords.addWords(data.user.screen_name, data.text);
-						
-						////userDiscussionJsonData = keyWords.topKeyWords(params.keywords,screennames);
-						//console.log(data);
-						////data1.markers = venues;
-						
 						var tempdata = {};
 						
 						var maxindex = params.keywords;
@@ -282,9 +266,6 @@ io.on('connection', function(socket){
 					        tempdata.marker.long = data.coordinates.coordinates[0];
 					        tempdata.marker.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
 				    	}
-						
-
-						console.log(tempdata);
 		
 						io.sockets.emit('stream_user_discussion_search', tempdata);
 					});
@@ -330,13 +311,13 @@ io.on('connection', function(socket){
 			users.forEach(function(userMan){
 
 				var searchParams;
-				//console.log(userMan);
+
 				if(params.uselocation){
-					searchParams = { screen_name: userMan, geocode: [params.lat, params.long, params.radius + "mi"],since_id:params.days, count: 200 };
+					searchParams = { screen_name: userMan, geocode: [params.lat, params.long, params.radius + "mi"], count: 200 };
 
 				}
 				else{
-					searchParams = { screen_name: userMan,since_id:params.days, count: 200 };
+					searchParams = { screen_name: userMan, count: 200 };
 					
 				}
 				if(searchParams){
@@ -345,6 +326,15 @@ io.on('connection', function(socket){
 
 					
 		                if(!err){
+			                
+			                //Remove any tweets that are before the specified number of days
+			                //There is no way to use the api to do this, so manual clipping 
+			                //is needed
+			                if (params.days > 0)
+			                	data = sliceOlderTweets(data, params.days);
+				                
+			                
+			                
 				        	var venues =[];
 				        	
 			                for (var indx in data) {
@@ -367,7 +357,6 @@ io.on('connection', function(socket){
 								userDiscussionJsonData = keyWords.topKeyWords(params.keywords,users);
 								//var venuemarkers = [];
 			                	
-			                	console.log(userDiscussionJsonData.words);
 			                	
 			                	userDiscussionJsonData.words.sort(function(x, y) {
 								
@@ -385,8 +374,6 @@ io.on('connection', function(socket){
 						
 								if (maxindex > userDiscussionJsonData.words.length)
 									maxindex = userDiscussionJsonData.words.length;
-								
-								console.log(userDiscussionJsonData.words.slice(0, maxindex));
 								
 								userDiscussionJsonData.words = userDiscussionJsonData.words.slice(0, maxindex);
 
@@ -485,7 +472,15 @@ io.on('connection', function(socket){
 			if(searchParams){
 				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 	                if(!err){
-		               var user;
+		                
+		                
+		                //Remove any tweets that are before the specified number of days
+			            //There is no way to use the api to do this, so manual clipping 
+			            //is needed
+			            if (params.days > 0)
+			            	data = sliceOlderTweets(data, params.days);
+		                
+		            	var user;
 	                	
 	                	
 						var venues =[];
@@ -610,7 +605,12 @@ io.on('connection', function(socket){
 
 			    twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
 	                if(!err){
-		               
+
+		            	//Remove any tweets that are before the specified number of days
+			            //There is no way to use the api to do this, so manual clipping 
+			            //is needed
+			            if (params.days > 0)
+			             data = sliceOlderTweets(data, params.days);
 		             
 	                	var venues =[];
 	                    var usersList =[];
@@ -763,6 +763,23 @@ function getBoundingBox(centerPoint, distance) {
 	
 }
 
+function parseTwitterDate(aDate) {   
+	return new Date(Date.parse(aDate.replace(/( \+)/, ' UTC$1')));
+}
+
+function sliceOlderTweets(data, days) {
+	var xdaysago = new Date();
+	xdaysago.setDate(xdaysago.getDate() - days);
+	
+	for (var i = data.length - 1; i >= 0; i--){
+		var creationDate = parseTwitterDate(data[i].created_at);
+		
+		if (creationDate < xdaysago)
+			data = data.slice(0, i);
+	}
+	
+	return data;
+}
 
 var exampleUserJson = {"id":308358479,"id_str":"308358479","name":"James McIlveen","screen_name":"jtmcilveen","location":"Whaley Bridge","profile_location":null,"description":"Rock climber (bouldering) and computer scientist doing my Masters at Sheffield University","url":"http://t.co/BiYvW71Wux","entities":{"url":{"urls":[{"url":"http://t.co/BiYvW71Wux","expanded_url":"http://www.jamesmcilveen.com","display_url":"jamesmcilveen.com","indices":[0,22]}]},"description":{"urls":[]}},"protected":true,"followers_count":58,"friends_count":31,"listed_count":0,"created_at":"Tue May 31 08:22:02 +0000 2011","favourites_count":9,"utc_offset":0,"time_zone":"London","geo_enabled":false,"verified":false,"statuses_count":53,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"C0DEED","profile_background_image_url":"http://abs.twimg.com/images/themes/theme1/bg.png","profile_background_image_url_https":"https://abs.twimg.com/images/themes/theme1/bg.png","profile_background_tile":false,"profile_image_url":"http://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_image_url_https":"https://pbs.twimg.com/profile_images/490139247945719809/GHt2iObY_normal.jpeg","profile_banner_url":"https://pbs.twimg.com/profile_banners/308358479/1405693222","profile_link_color":"0084B4","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"default_profile":true,"default_profile_image":false,"following":false,"follow_request_sent":false,"notifications":false,"suspended":false,"needs_phone_verification":false};
 
