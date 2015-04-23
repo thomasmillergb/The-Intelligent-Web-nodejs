@@ -181,21 +181,20 @@ io.on('connection', function(socket){
 			var userIDString = "";
 			var users = params.screennames.replace(/\s/g, '').split(",");
 			
-			
-			getUserIDs(users, function(callback) {
+			getUserIDsAndScreenNames(users, function(screennamesandids) {
 				
 				filterParams['follow'] = [];
 				
-				for (var i = 0; i < callback.length; i++)
-					filterParams['follow'].push(callback[i].user_id);
+				for (var i = 0; i < screennamesandids.length; i++)
+					filterParams['follow'].push(screennamesandids[i].user_id);
 	
 				currentTwitStream = twitterAPI.stream('statuses/filter', filterParams, function (stream) {
 	
 					var keywordsTable = {};
 					keywordsTable['users'] = [];
 				  
-					for (var i = 0; i < callback.length; i++)
-						keywordsTable['users'].push(callback[i])
+					for (var i = 0; i < screennamesandids.length; i++)
+						keywordsTable['users'].push(screennamesandids[i]);
 				  	
 				  
 				    keywordsTable['words'] = [];
@@ -303,93 +302,103 @@ io.on('connection', function(socket){
 			// params.long
 			var users = params.screennames.replace(/\s/g, '').split(",");
 			
-
-			var data1 = {};
-			data1.markers = []
-			keyWords.reset();
-			var counter = 0;
-			users.forEach(function(userMan){
-
-				var searchParams;
-
-				if(params.uselocation){
-					searchParams = { screen_name: userMan, geocode: [params.lat, params.long, params.radius + "mi"], count: 200 };
-
-				}
-				else{
-					searchParams = { screen_name: userMan, count: 200 };
-					
-				}
-				if(searchParams){
+			getUserIDsAndScreenNames(users, function(screennamesandids) {
+				userscreennames = [];
 				
-					twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
-
+				for (var i = 0; i < screennamesandids.length; i++)
+					userscreennames.push(screennamesandids[i].username);
+				
+				var data1 = {};
+				data1.markers = []
+				keyWords.reset();
+				var counter = 0;
+				userscreennames.forEach(function(userMan){
+	
+					var searchParams;
+	
+					if(params.uselocation){
+						searchParams = { screen_name: userMan, geocode: [params.lat, params.long, params.radius + "mi"], count: 200 };
+	
+					}
+					else{
+						searchParams = { screen_name: userMan, count: 200 };
+						
+					}
+					if(searchParams){
 					
-		                if(!err){
-			                
-			                //Remove any tweets that are before the specified number of days
-			                //There is no way to use the api to do this, so manual clipping 
-			                //is needed
-			                if (params.days > 0)
-			                	data = sliceOlderTweets(data, params.days);
+						twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
+	
+						
+			                if(!err){
 				                
-			                
-			                
-				        	var venues =[];
-				        	
-			                for (var indx in data) {
-			                	var currentData = data[indx];
-
-								keyWords.addWords(currentData.user.screen_name, currentData.text);
-						
-			                	venues = twitterFunctions.venues(currentData, venues);
-			             
-                    		}
-                    		
-                    		for (var indx in venues)
-					            if (venues[indx].lat && venues[indx].long)
-					            	data1.markers.push(venues[indx]);
-                    		
-                    		counter += 1;
-                    		
-							if(counter == users.length){
+				                //Remove any tweets that are before the specified number of days
+				                //There is no way to use the api to do this, so manual clipping 
+				                //is needed
+				                if (params.days > 0)
+				                	data = sliceOlderTweets(data, params.days);
+					                
+				                
+				                
+					        	var venues =[];
+					        	
+				                for (var indx in data) {
+				                	var currentData = data[indx];
+	
+									keyWords.addWords(currentData.user.screen_name, currentData.text);
+							
+				                	venues = twitterFunctions.venues(currentData, venues);
+				             
+	                    		}
+	                    		
+	                    		for (var indx in venues)
+						            if (venues[indx].lat && venues[indx].long)
+						            	data1.markers.push(venues[indx]);
+	                    		
+	                    		counter += 1;
+	                    		
+								if(counter == users.length){
+										
+									userDiscussionJsonData = keyWords.topKeyWords(params.keywords,users);
+									//var venuemarkers = [];
+				                	
+				                	
+				                	userDiscussionJsonData.words.sort(function(x, y) {
 									
-								userDiscussionJsonData = keyWords.topKeyWords(params.keywords,users);
-								//var venuemarkers = [];
-			                	
-			                	
-			                	userDiscussionJsonData.words.sort(function(x, y) {
-								
-								  xtotal = eval(x.occurences.join('+'));
-								  ytotal = eval(y.occurences.join('+'));
-								
-								  if (xtotal < ytotal)
-								  	return 1;
-								  if (xtotal > ytotal)
-								  	return -1;
-								  return 0;
-								});
-								
-								var maxindex = params.keywords;
-						
-								if (maxindex > userDiscussionJsonData.words.length)
-									maxindex = userDiscussionJsonData.words.length;
-								
-								userDiscussionJsonData.words = userDiscussionJsonData.words.slice(0, maxindex);
-
-						        //data1.markers = venuemarkers;
-								data1.userdiscussiontable = userDiscussionJsonData;
-								fn(null, data1);
+									  xtotal = eval(x.occurences.join('+'));
+									  ytotal = eval(y.occurences.join('+'));
+									
+									  if (xtotal < ytotal)
+									  	return 1;
+									  if (xtotal > ytotal)
+									  	return -1;
+									  return 0;
+									});
+									
+									var maxindex = params.keywords;
+							
+									if (maxindex > userDiscussionJsonData.words.length)
+										maxindex = userDiscussionJsonData.words.length;
+									
+									userDiscussionJsonData.words = userDiscussionJsonData.words.slice(0, maxindex);
+	
+							        //data1.markers = venuemarkers;
+									data1.userdiscussiontable = userDiscussionJsonData;
+									fn(null, data1);
+								}
 							}
-						}
-						else{
-							fn(null,null);
-							console.log(err);
-						
-						}
-		            });
-				}
+							else{
+								fn(null,null);
+								console.log(err);
+							
+							}
+			            });
+					}
+				});
+				
+				
 			});
+
+			
 		}	
 
 	});
@@ -397,79 +406,74 @@ io.on('connection', function(socket){
 	socket.on('user_venues_search', function(params, fn) {
 
 		console.log("user_venues_search params:");
+		for (var index in params)
+			console.log("    params." + index + ": \"" + params[index] + "\"");
 		
 		// params.screenname
 		// params.days
 		// params.liveresults
 		
-		for (var index in params) {
-			console.log("    params." + index + ": \"" + params[index] + "\"");
-		}
-		if(params.liveresults){
-			//var	filterParams = {track:params.screenname};
-			var	filterParams = {screen_name :params.screenname};
-			console.log(filterParams);
+		
+		
+		getUserIDAndScreenName(params.screenname, function(screennamesandids) {
 			
-        	twitterRestAPI.get('users/show', filterParams, function(err, data, response) {
-        		if(!err){
-        		var userid = data.id;
-        			currentTwitStream = twitterAPI.stream('statuses/filter', { follow: userid },function (stream) {
-						var venues =[];
-		                stream.on('data', function (data) {
-		              
-		                	console.log(data);
-							user= data.user;
-							
-							venues = twitterFunctions.venues(data,venues);
-		            		var returndata = {};
-			
-							returndata.user = user;
-							returndata.markers = venues[0];
+			if(params.liveresults){
 
-							if (data.coordinates)
-					        {
-						        returndata.markers = {};
-						        returndata.markers.lat = data.coordinates.coordinates[1];
-							    returndata.markers.long = data.coordinates.coordinates[0];
-							    returndata.markers.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
-					        }
-							
-							returndata.visitedvenuestable = venues;
-							//console.log(data);
-
-		                    //console.log(data.user.screen_name + " : " + data.text);
-		                    io.sockets.emit('stream_user_venues_search', returndata);
-		                    // throw  new Exception('end');
-		                
-
-		                });
-		                
-		                twitterAPI.currentUserVenuesStream = stream;
-		            });
-    			}
-    			else{
-    				console.log(err);
-    			}
-			});
-            
-            socket.on('user_venues_search_stop_stream', function(fn) {
+				currentTwitStream = twitterAPI.stream('statuses/filter', { follow: screennamesandids.user_id },function (stream) {
+					var venues =[];
+	                stream.on('data', function (data) {
+	              
+	                	console.log(data);
+						user= data.user;
+						
+						venues = twitterFunctions.venues(data,venues);
+	            		var returndata = {};
+		
+						returndata.user = user;
+						returndata.markers = venues[0];
+	
+						if (data.coordinates)
+				        {
+					        returndata.markers = {};
+					        returndata.markers.lat = data.coordinates.coordinates[1];
+						    returndata.markers.long = data.coordinates.coordinates[0];
+						    returndata.markers.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
+				        }
+						
+						returndata.visitedvenuestable = venues;
+						//console.log(data);
+	
+	                    //console.log(data.user.screen_name + " : " + data.text);
+	                    io.sockets.emit('stream_user_venues_search', returndata);
+	                    // throw  new Exception('end');
+	                
+	
+	                });
+	                
+	                twitterAPI.currentUserVenuesStream = stream;
+	            });
+				
+				
+				
 	            
-	            if (twitterAPI.currentUserVenuesStream != undefined) {
-					twitterAPI.currentUserVenuesStream.destroy();
-					twitterAPI.currentUserVenuesStream = undefined;
-	            }
-	            
-	            return fn();
-	      
-	        });
-	        
-	        fn();
-
-
-		}
-		else{
-			var	searchParams = { screen_name: params.screenname,since_id:params.days, count: 200 };
-			if(searchParams){
+	            socket.on('user_venues_search_stop_stream', function(fn) {
+		            
+		            if (twitterAPI.currentUserVenuesStream != undefined) {
+						twitterAPI.currentUserVenuesStream.destroy();
+						twitterAPI.currentUserVenuesStream = undefined;
+		            }
+		            
+		            return fn();
+		      
+		        });
+		        
+		        fn();
+	
+	
+			}
+			else{
+				var	searchParams = { screen_name: screennamesandids.username, count: 200 };
+				
 				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 	                if(!err){
 		                
@@ -492,13 +496,11 @@ io.on('connection', function(socket){
 							venues = twitterFunctions.venues(currentData,venues);
                 		}
 
-                		//console.log(venues);
-						
+	
                 		var venuemarkers = [];
 	                	
 	                	for (var indx in data)
-			                if (data[indx].coordinates && data[indx].coordinates.coordinates)
-			                {
+			                if (data[indx].coordinates && data[indx].coordinates.coordinates) {
 				                var tempmarker = {};
 				                tempmarker.lat = data[indx].coordinates.coordinates[1];
 						        tempmarker.long = data[indx].coordinates.coordinates[0];
@@ -506,17 +508,14 @@ io.on('connection', function(socket){
 				                venuemarkers.push(tempmarker);
 			                }
 			                
-			            console.log(venuemarkers);
 			                	
 						var data = {};
 						
 						data.user = user;
 						data.markers = venuemarkers;
 						data.visitedvenuestable = venues;
-						//console.log(data);
+
 						fn(null, data);
-                		
-					//A Node walkaround to return data only when finished
 
 					}
 					else{
@@ -526,8 +525,16 @@ io.on('connection', function(socket){
 					
 					}
 	            });
+	
 			}
-		}
+				
+				
+				
+					
+		});
+		
+		
+		
 	});
 	
 	socket.on('venue_search', function(params, fn) {
@@ -727,28 +734,77 @@ io.on('connection', function(socket){
 	});
 	
 });
-var getUserIDs = function(users, callback){
+
+function getUserIDsAndScreenNames(users, callback){
 	var userIDs = [];
 	users.forEach(function(user,next){
-				console.log(user);
-				var tempuser = user;
-				 asyncGetUserID(user, function(userID){
-					userIDs.push({"username": tempuser, "user_id": userID});
-					if(users.length == userIDs.length) {
-     			 		callback(userIDs);
-     			 		//console.log(userIDs);
-
-     				}
-				});
+		var tempuser = user;
+		
+		// Check to see if we already have a an id
+		if (!isNaN(parseFloat(tempuser)) && isFinite(tempuser)) {
+			
+			asyncGetUserScreenName(tempuser, function(screenName){
+				userIDs.push({"username": screenName, "user_id": tempuser});
+				
+				if(users.length == userIDs.length) {
+					callback(userIDs);
+				}
+			});
+			
+		} else {
+			
+			asyncGetUserID(user, function(userID){
+				userIDs.push({"username": tempuser, "user_id": userID});
+				
+				if(users.length == userIDs.length) {
+					callback(userIDs);
+				}
+			});
+			
+		}		 
 				
 	});
 }
+
+function getUserIDAndScreenName(user, callback){
+	// Check to see if we already have a an id
+	if (!isNaN(parseFloat(user)) && isFinite(user)) {
+		
+		asyncGetUserScreenName(user, function(screenName){
+			callback({"username": screenName, "user_id": user});
+		});
+		
+	} else {
+		
+		asyncGetUserID(user, function(userID){
+			
+			callback({"username": user, "user_id": userID});
+		});
+		
+	}
+}
+
 function asyncGetUserID(user, callback){
 
 	twitterRestAPI.get('users/show', {screen_name: user}, function(err, data, response ) {
 		
-		callback(data.id);
+		if(!err)
+	    	callback(data.id);
+	    else
+			console.log(err);
 
+	});
+}
+
+function asyncGetUserScreenName(id, callback){
+
+	twitterRestAPI.get('users/show', {user_id: id}, function(err, data, response ) {
+		
+		if(!err)
+	    	callback(data.screen_name);
+	    else
+			console.log(err);
+		
 	});
 }
 
