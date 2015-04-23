@@ -3,7 +3,7 @@
 //attr-nonEmpty = boolean
 //attr-latlong
 
-var alphanumericRegex = /^[-\w\s]+$/; //regex to check for alphanumeric characters
+var alphanumericRegex = /^[-\w\s#]+$/; //regex to check for alphanumeric characters
 var usernameRegex = /^[A-Za-z0-9_]{1,15}$/; //regex to check twitter usernames
 var multiUsernameRegex = /^([A-Za-z0-9_]{1,15}[,\s]*)+$/; //regex to check twitter usernames
 

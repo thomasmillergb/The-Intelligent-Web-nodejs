@@ -653,6 +653,53 @@ io.on('connection', function(socket){
 		
 	});
 	
+	
+	socket.on('get_tweet_replies', function(tweet_id, fn) {
+
+		console.log("get_tweet_replies id: " + tweet_id);
+		
+		var data = {};
+		
+		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
+
+		fn(null, data);
+	});
+	
+	socket.on('get_user_and_tweets', function(user_id, fn) {
+
+		console.log("get_user_and_tweets id: " + user_id);
+		
+		var data = {};
+		data.user = exampleUserJson;
+		data.markers = exampleMarkerJson;
+		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
+
+		fn(null, data);
+	});
+	
+	socket.on('database_get_user_and_tweets', function(user_id, fn) {
+
+		console.log("database_get_user_and_tweets id: " + user_id);
+		
+		var data = {};
+		data.user = exampleUserJson;
+		data.markers = exampleMarkerJson;
+		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
+
+		fn(null, data);
+	});
+	
+	socket.on('database_get_users_at_venue', function(tweet_id, fn) {
+
+		console.log("get_tweet_replies id: " + tweet_id);
+		
+		var data = {};
+		data.location_name = "TODO: Location name goes here";
+		data.databaseusertable = databaseUserJson;
+
+		fn(null, data);
+	});
+	
 	socket.on('database_user_search', function(params, fn) {
 
 		console.log("database_user_search params:");
@@ -683,52 +730,6 @@ io.on('connection', function(socket){
 		var data = {};
 		
 		data.databasevenuetable = databaseVenueJson;
-
-		fn(null, data);
-	});
-	
-	socket.on('get_tweet_replies', function(tweet_id, fn) {
-
-		console.log("get_tweet_replies id: " + tweet_id);
-		
-		var data = {};
-		
-		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
-
-		fn(null, data);
-	});
-	
-	socket.on('database_get_users_at_venue', function(tweet_id, fn) {
-
-		console.log("get_tweet_replies id: " + tweet_id);
-		
-		var data = {};
-		data.location_name = "TODO: Location name goes here";
-		data.databaseusertable = databaseUserJson;
-
-		fn(null, data);
-	});
-	
-	socket.on('database_get_user_and_tweets', function(user_id, fn) {
-
-		console.log("database_get_user_and_tweets id: " + user_id);
-		
-		var data = {};
-		data.user = exampleUserJson;
-		data.markers = exampleMarkerJson;
-		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
-
-		fn(null, data);
-	});
-	
-	socket.on('get_user_and_tweets', function(user_id, fn) {
-
-		console.log("get_user_and_tweets id: " + user_id);
-		
-		var data = {};
-		data.user = exampleUserJson;
-		data.markers = exampleMarkerJson;
-		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
 
 		fn(null, data);
 	});
