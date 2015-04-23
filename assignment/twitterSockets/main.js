@@ -47,6 +47,7 @@ io.on('connection', function(socket){
 	socket.on('discussion_search', function(params, fn) {
 
 		console.log("discussion_search params:");
+		console.log(params);
 		
 		// params.search
 		// params.liveresults
@@ -54,11 +55,7 @@ io.on('connection', function(socket){
 		// params.radius
 		// params.lat
 		// params.long
-		
-		for (var index in params) {
-			console.log("    params." + index + ": \"" + params[index] + "\"");
-		}
-		
+
 		var data = {};
 		
 		// Use streaming API
@@ -144,6 +141,7 @@ io.on('connection', function(socket){
 	
 	socket.on('user_discussion_search', function(params, fn) {
 		console.log("user_discussion_search params:");
+		console.log(params);
 		
 		// params.screennames
 	    // params.keywords
@@ -153,24 +151,10 @@ io.on('connection', function(socket){
 	    // params.radius
 	    // params.lat
 	    // params.long
-		
-		for (var index in params)
-			console.log("    params." + index + ": \"" + params[index] + "\"");
 
 		var data1 = {};
 		
 		// Use streaming API
-		
-		filterParams = {};
-		
-		if (params.search != '')
-	
-		
-		if (params.uselocation) {
-			var bounds = getBoundingBox([params.lat, params.long], params.radius);
-			filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
-		}
-		
 		if (params.liveresults) {	
 			var screennames = [];
 			var tempData = {};
@@ -180,6 +164,12 @@ io.on('connection', function(socket){
 			var venues =[];
 			var userIDString = "";
 			var users = params.screennames.replace(/\s/g, '').split(",");
+			var filterParams = {};
+			
+			if (params.uselocation) {
+				var bounds = getBoundingBox([params.lat, params.long], params.radius);
+				filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
+			}
 			
 			getUserIDsAndScreenNames(users, function(screennamesandids) {
 				
@@ -187,6 +177,8 @@ io.on('connection', function(socket){
 				
 				for (var i = 0; i < screennamesandids.length; i++)
 					filterParams['follow'].push(screennamesandids[i].user_id);
+					
+					
 	
 				currentTwitStream = twitterAPI.stream('statuses/filter', filterParams, function (stream) {
 	
@@ -199,57 +191,16 @@ io.on('connection', function(socket){
 				  
 				    keywordsTable['words'] = [];
 	
-					stream.on('data', function (data) {
-
-						var userid = data.user.id;
-						var words = data.text.toLowerCase().split(" ");
-				
-						var userindex = -1;
-				
-						for (var i = 0; i < keywordsTable['users'].length; i++)
-							if (keywordsTable['users'][i].user_id == userid)
-								userindex = i;
-				
-						words.forEach(function(tweetword)
-						{
-							var wordindex = -1;
 	
-							for (var i = 0; i < keywordsTable['words'].length; i++)
-								if (keywordsTable['words'][i].word == tweetword)
-									wordindex = i;
-		
-							if (wordindex == -1)
-							{
-								var tempword = {}
-								tempword.word = tweetword
-								tempword.occurences = []
-								
-								for (user in keywordsTable['users'])
-									tempword.occurences.push(0);
-									
-								tempword.occurences[userindex] =+ 1;
-										
-								keywordsTable['words'].push(tempword);//{"word": tweetword, "occurences" : emptywords});
-							}
-							else
-								keywordsTable.words[wordindex].occurences[userindex] = keywordsTable.words[wordindex].occurences[userindex] + 1;
-								
-						});
-			
-						keywordsTable['words'].sort(function(x, y){
-				
-							xtotal = eval(x.occurences.join('+'));
-							ytotal = eval(y.occurences.join('+'));
-					
-							if (xtotal < ytotal)
-								return 1;
-							if (xtotal > ytotal)
-								return -1;
-							return 0;
-						});
+					stream.on('data', function (data) {
+						
+						keywordsTable = addKeywordToTable(keywordsTable, data.user.id, data.text.toLowerCase().split(" "));
+						
+						
+						
 						
 						var tempdata = {};
-						
+		
 						var maxindex = params.keywords;
 						
 						if (maxindex > keywordsTable.length)
@@ -258,13 +209,16 @@ io.on('connection', function(socket){
 						tempdata.userdiscussiontable = {};
 						tempdata.userdiscussiontable.users = keywordsTable.users;
 						tempdata.userdiscussiontable.words = keywordsTable.words.slice(0, maxindex);
-
+				
 						if (data.coordinates){
 							tempdata.marker = {};
 					        tempdata.marker.lat = data.coordinates.coordinates[1];
 					        tempdata.marker.long = data.coordinates.coordinates[0];
 					        tempdata.marker.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
 				    	}
+						
+						
+						
 		
 						io.sockets.emit('stream_user_discussion_search', tempdata);
 					});
@@ -303,6 +257,16 @@ io.on('connection', function(socket){
 			var users = params.screennames.replace(/\s/g, '').split(",");
 			
 			getUserIDsAndScreenNames(users, function(screennamesandids) {
+				
+				var keywordsTable = {};
+				keywordsTable['users'] = [];
+				  
+				for (var i = 0; i < screennamesandids.length; i++)
+					keywordsTable['users'].push(screennamesandids[i]);
+				  	
+				  
+			    keywordsTable['words'] = [];
+
 				userscreennames = [];
 				
 				for (var i = 0; i < screennamesandids.length; i++)
@@ -338,51 +302,33 @@ io.on('connection', function(socket){
 				                	data = sliceOlderTweets(data, params.days);
 					                
 				                
-				                
-					        	var venues =[];
-					        	
-				                for (var indx in data) {
-				                	var currentData = data[indx];
-	
-									keyWords.addWords(currentData.user.screen_name, currentData.text);
-							
-				                	venues = twitterFunctions.venues(currentData, venues);
-				             
-	                    		}
-	                    		
-	                    		for (var indx in venues)
-						            if (venues[indx].lat && venues[indx].long)
-						            	data1.markers.push(venues[indx]);
+				                for (var i = 0; i < data.length; i++) {
+					                keywordsTable = addKeywordToTable(keywordsTable, data[i].user.id, data[i].text.toLowerCase().split(" "));
+					                
+					                if (data[i].coordinates){
+										var marker = {};
+								        marker.lat = data[i].coordinates.coordinates[1];
+								        marker.long = data[i].coordinates.coordinates[0];
+								        marker.label = "<h3>@" + data[i].user.screen_name + "</h3>" + data[i].text + "";
+								        data1.markers.push(marker);
+							    	}
+							    	
+							    	
+				                }
 	                    		
 	                    		counter += 1;
 	                    		
-								if(counter == userscreennames.length){
+								if (counter == userscreennames.length) {
 										
-									userDiscussionJsonData = keyWords.topKeyWords(params.keywords,userscreennames);
-									//var venuemarkers = [];
-				                	
-				                	
-				                	userDiscussionJsonData.words.sort(function(x, y) {
-									
-									  xtotal = eval(x.occurences.join('+'));
-									  ytotal = eval(y.occurences.join('+'));
-									
-									  if (xtotal < ytotal)
-									  	return 1;
-									  if (xtotal > ytotal)
-									  	return -1;
-									  return 0;
-									});
-									
 									var maxindex = params.keywords;
-							
-									if (maxindex > userDiscussionJsonData.words.length)
-										maxindex = userDiscussionJsonData.words.length;
-									
-									userDiscussionJsonData.words = userDiscussionJsonData.words.slice(0, maxindex);
+						
+									if (maxindex > keywordsTable.length)
+										maxindex = keywordsTable.length;
+
+									keywordsTable.words = keywordsTable.words.slice(0, maxindex);
 	
 							        //data1.markers = venuemarkers;
-									data1.userdiscussiontable = userDiscussionJsonData;
+									data1.userdiscussiontable = keywordsTable;//userDiscussionJsonData;
 									fn(null, data1);
 								}
 							}
@@ -403,11 +349,60 @@ io.on('connection', function(socket){
 
 	});
 	
+	
+	function addKeywordToTable(keywordsTable, userid, words) {
+		var userindex = -1;
+				
+		for (var i = 0; i < keywordsTable['users'].length; i++)
+			if (keywordsTable['users'][i].user_id == userid)
+				userindex = i;
+
+		words.forEach(function(tweetword)
+		{
+			var wordindex = -1;
+
+			for (var i = 0; i < keywordsTable['words'].length; i++)
+				if (keywordsTable['words'][i].word == tweetword)
+					wordindex = i;
+
+			if (wordindex == -1)
+			{
+				var tempword = {}
+				tempword.word = tweetword
+				tempword.occurences = []
+				
+				for (user in keywordsTable['users'])
+					tempword.occurences.push(0);
+					
+				tempword.occurences[userindex] =+ 1;
+						
+				keywordsTable['words'].push(tempword);//{"word": tweetword, "occurences" : emptywords});
+			}
+			else
+				keywordsTable.words[wordindex].occurences[userindex] = keywordsTable.words[wordindex].occurences[userindex] + 1;
+				
+		});
+
+		keywordsTable['words'].sort(function(x, y){
+
+			xtotal = eval(x.occurences.join('+'));
+			ytotal = eval(y.occurences.join('+'));
+	
+			if (xtotal < ytotal)
+				return 1;
+			if (xtotal > ytotal)
+				return -1;
+			return 0;
+		});
+		
+		return keywordsTable;
+		
+	}
+	
 	socket.on('user_venues_search', function(params, fn) {
 
 		console.log("user_venues_search params:");
-		for (var index in params)
-			console.log("    params." + index + ": \"" + params[index] + "\"");
+		console.log(params);
 		
 		// params.screenname
 		// params.days
@@ -540,18 +535,15 @@ io.on('connection', function(socket){
 	socket.on('venue_search', function(params, fn) {
 
 		console.log("venue_search params:");
+		console.log(params);
 		
 		// params.days
 		// params.liveresults
 		// params.radius
 		// params.lat
 		// params.long
-		
-		for (var index in params) {
-			console.log("    params." + index + ": \"" + params[index] + "\"");
-		}
 
-		if(params.liveresults){
+		if (params.liveresults){
 			
 			var	filterParams = { track: params.search };
 			var bounds = getBoundingBox([params.lat, params.long], (params.radius));
@@ -607,8 +599,7 @@ io.on('connection', function(socket){
 		else{
 			var searchParams;
 				searchParams = { q:params.search , geocode: [params.lat, params.long, params.radius + "mi"], count: 200 };
-				
-				//searchParams = { q: "iPhone", count: 200 };
+
 
 			    twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
 	                if(!err){
@@ -626,18 +617,9 @@ io.on('connection', function(socket){
 		        		for (var indx in data.statuses)
 		        			returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx].user, returndata.visitedvenuestable);
                     	
-                    	
-
-
-		                //var venuemarkers = [];
-			        	//for (var indx in venues)
-			            //	if (venues[indx].lat && venues[indx].long)
-			            //		venuemarkers.push(venues[indx]);
-
 
 						returndata.markers = [];
 						
-						//console.log(data[0]);
 						
 						for (var i = 0; i < data.statuses.length; i++) {
 							if (data.statuses[i].coordinates) {
