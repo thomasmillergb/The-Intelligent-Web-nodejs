@@ -227,13 +227,10 @@ function appendTweetWithAccount(element, tweetJson) {
 				tweethtml += 'This tweet was not geotagged';
 		}
 		
-		tweethtml +='<br><div class="tweet_replies_wrapper"><center><a class="tweet_replies_button" href="javascript:void(0)">See replies to tweet</a></center></div></td></tr></table><hr>';
+		tweethtml +='</td></tr></table><hr>';
 		
 	returnelement = $(tweethtml).prependTo(element);
-	
-	returnelement.find(".tweet_replies_button").click(function(){
-		getReplies($(this).closest(".tweet_replies_wrapper"), tweetJson['id_str']);
-	});
+
 		
 	return returnelement;
 }
@@ -251,28 +248,13 @@ function appendTweetWithoutAccount(element, tweetJson) {
 			tweethtml += 'This tweet was not geotagged';
 	}
 			
-	tweethtml += '<br><div class="tweet_replies_wrapper"><center><a href="javascript:void(0)" class="tweet_replies_button">See replies to tweet</a></center></div>';
+	
 		
 	returnelement = $(tweethtml).appendTo(element);
 	
-	returnelement.find(".tweet_replies_button").click(function(){
-		getReplies($(this).closest(".tweet_replies_wrapper"), tweetJson['id_str']);
-	});
-		
+	
 	return returnelement;
 		
-}
-
-// Appends a reply tweet to an element from the tweets json
-// Returns the created element
-function appendTweetReplies(element, tweetJson) {							
-	
-	var tweethtml = '';
-	
-	tweethtml = '<a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + ' - <a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['id_str'] + '\')">View user\'s profile and Tweets</a><br><div class="tweet">' + tweetJson['text'] + '</div>';
-		
-		
-	return $(tweethtml).appendTo(element);								
 }
 
 // A function that takes a list of location and labels in json and an DOM element, and appends

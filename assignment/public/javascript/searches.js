@@ -478,32 +478,6 @@ function scrollToElement(element) {
     }, 500);
 }
 
-// Adds reply tweets in place of the reply tweet button
-function getReplies(element, tweet_id) {
-	
-	element.html("<h3>Repies to Tweet</h3><br>");
-	
-	loadingOverlay(true);
-	
-	socket.emit('get_tweet_replies', tweet_id, function (err, data) {
-		
-		loadingOverlay(false);
-		
-		if (err != null) {				
-			addNotification("Error", err, 5000);
-		} else {
-			addNotification("Tweet replies", "Replies retrieved successfully", 5000);
-			
-			for (i=0;i<data.tweets.length;i++) {
-				appendTweetReplies(element, data.tweets[i]);
-			}
-			
-		}
-		
-	});
-	
-}
-
 // Gets a list of users from the database
 function getDatabaseUserAtVenue(venue) {
 	

@@ -653,18 +653,6 @@ io.on('connection', function(socket){
 		
 	});
 	
-	
-	socket.on('get_tweet_replies', function(tweet_id, fn) {
-
-		console.log("get_tweet_replies id: " + tweet_id);
-		
-		var data = {};
-		
-		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
-
-		fn(null, data);
-	});
-	
 	socket.on('get_user_and_tweets', function(user_id, fn) {
 
 		console.log("get_user_and_tweets id: " + user_id);
