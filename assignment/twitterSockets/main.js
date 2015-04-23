@@ -259,7 +259,7 @@ io.on('connection', function(socket){
 						tempdata.userdiscussiontable.users = keywordsTable.users;
 						tempdata.userdiscussiontable.words = keywordsTable.words.slice(0, maxindex);
 
-						if(data.coordinates){
+						if (data.coordinates){
 							tempdata.marker = {};
 					        tempdata.marker.lat = data.coordinates.coordinates[1];
 					        tempdata.marker.long = data.coordinates.coordinates[0];
@@ -356,9 +356,9 @@ io.on('connection', function(socket){
 	                    		
 	                    		counter += 1;
 	                    		
-								if(counter == users.length){
+								if(counter == userscreennames.length){
 										
-									userDiscussionJsonData = keyWords.topKeyWords(params.keywords,users);
+									userDiscussionJsonData = keyWords.topKeyWords(params.keywords,userscreennames);
 									//var venuemarkers = [];
 				                	
 				                	
@@ -641,28 +641,68 @@ io.on('connection', function(socket){
                     		data.markers = venuemarkers;
                     		fn(null, data);
                     		
-				}
-				else{
-
-					console.log(err);
-					fn(null,null);
-				}
-            });
+					}
+					else{
+	
+						console.log(err);
+						fn(null,null);
+					}
+	            });
 		}
 			
 		
 	});
 	
-	socket.on('get_user_and_tweets', function(user_id, fn) {
+	socket.on('get_user_and_tweets', function(screenname, fn) {
 
-		console.log("get_user_and_tweets id: " + user_id);
+		console.log("get_user_and_tweets screen_name: " + screenname);
 		
-		var data = {};
-		data.user = exampleUserJson;
-		data.markers = exampleMarkerJson;
-		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
+		searchParams = {screen_name: screenname};
+		
+		var returndata = {};
+		
+		twitterRestAPI.get('users/show', searchParams, function(err, data, response) {
+			if(!err){
 
-		fn(null, data);
+				returndata.user = data;
+				
+		
+				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
+					if(!err){
+						
+						returndata.markers = [];
+						
+						for (var i = 0; i < data.length; i++) {
+							if(data[i].coordinates){
+								var tempMarker = {};
+						        tempMarker.lat  = data[i].coordinates.coordinates[1];
+						        tempMarker.long = data[i].coordinates.coordinates[0];
+						        tempMarker.label  = "<h3>@" + data[i].user.screen_name + "</h3>" + data[i].text + "";
+								returndata.markers.push(tempMarker);	
+					    	}
+						}
+											
+						returndata.tweets = data;
+				
+						fn(null, returndata);
+					} else {
+			
+						console.log(err);
+						fn(null,null);
+					}
+			    });
+			} else {
+	
+				console.log(err);
+				fn(null,null);
+			}
+	    });
+		
+		
+		
+		
+		
+		
 	});
 	
 	socket.on('database_get_user_and_tweets', function(user_id, fn) {

@@ -38,6 +38,7 @@ function toggleAlternatePanel(show) {
 	if (show) {
 		$("#tab_container").addClass("hide");
 		$("#alternate_panel_container").removeClass("hide");
+		$("#alternate_panel_container").html("");
 	}
 	else {
 		$("#tab_container").removeClass("hide");
@@ -217,7 +218,7 @@ function appendTweetWithAccount(element, tweetJson) {
 			tweethtml +='<span class="dark">' + tweetJson['user']['description'] + '</span><br><br>';
 			
 			
-		tweethtml +='<a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['id_str'] + '\')">View user\'s profile and Tweets</a></td><td><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
+		tweethtml +='<a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['screen_name'] + '\')">View user\'s profile and Tweets</a></td><td><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
 
 
 		if (false) {
@@ -411,7 +412,7 @@ function mostUsedWordsTable(element, tableJson) {
 	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td></td>';
 	
 	for (i=0;i<tableJson['users'].length;i++)
-		tablehtml += '<td><a href="http://www.twitter.com/' + tableJson['users'][i]['username'] + '">@' + tableJson['users'][i]['username'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tableJson['users'][i]['user_id'] + '\')">View user\'s profile and Tweets</a></td>';
+		tablehtml += '<td><a href="http://www.twitter.com/' + tableJson['users'][i]['username'] + '">@' + tableJson['users'][i]['username'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tableJson['users'][i]['username'] + '\')">View user\'s profile and Tweets</a></td>';
 	
 	tablehtml += '<td>Total</td></tr>';
 	
@@ -463,7 +464,7 @@ function mostVisitedVenues(element, tableJson) {
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user_id'] + '\')">View profile and Tweets</a></td><td>' + row['visits'] + '</td></tr>';
+		tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user'] + '\')">View profile and Tweets</a></td><td>' + row['visits'] + '</td></tr>';
 	}
 	
 	tablehtml += '</table>';
@@ -481,7 +482,7 @@ function databaseUserTable(element, tableJson) {
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'308358479\')">Get live tweets</a></td></tr>';
+		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['user'] + '\')">Get live tweets</a></td></tr>';
 	}
 	
 	tablehtml += '</tbody></table></div>';
@@ -543,7 +544,7 @@ function setupVenueUsersDatabasePage(data) {
 	
 	for (i=0;i<data.databaseusertable.length;i++) {
 		row = data.databaseusertable[i];
-		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'308358479\')">Get live tweets</a></td></tr>';
+		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['user'] + '\')">Get live tweets</a></td></tr>';
 	}
 	
 	tablehtml += '</tbody></table></div>';
