@@ -1,6 +1,7 @@
 var Twit = require('twit');
 var twitter = require('ntwitter');
 //var keyWords = require('./keywords.js');
+var keyword_extractor = require("keyword-extractor");
 var twitterFunctions = require('./twitterFunction.js');
 var twitterAPI;
 var twitterRestAPI;
@@ -303,7 +304,7 @@ io.on('connection', function(socket){
 					                
 				                
 				                for (var i = 0; i < data.length; i++) {
-					                keywordsTable = addKeywordToTable(keywordsTable, data[i].user.id, data[i].text.toLowerCase().split(" "));
+					                keywordsTable = addKeywordToTable(keywordsTable, data[i].user.id, data[i].text);
 					                
 					                if (data[i].coordinates){
 										var marker = {};
@@ -351,6 +352,21 @@ io.on('connection', function(socket){
 	
 	
 	function addKeywordToTable(keywordsTable, userid, words) {
+		//words = words.toLowerCase().split(" ");
+		
+		
+		//Lemmalise apostrophies and get rid of non alphanum
+		var striped = words.replace(/('[a-zA-Z])/g,"");
+		striped = striped.replace(/[^a-zA-Z ]/g,"");
+		striped = striped.replace(/(http(\w)*)/g,"");
+
+		words = keyword_extractor.extract(striped,{
+					language:"english",
+					remove_digits: true,
+					return_changed_case:true,
+					remove_duplicates: false
+				});
+		
 		var userindex = -1;
 				
 		for (var i = 0; i < keywordsTable['users'].length; i++)
