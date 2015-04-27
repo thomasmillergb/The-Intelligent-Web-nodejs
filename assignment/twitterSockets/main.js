@@ -497,8 +497,7 @@ io.on('connection', function(socket){
 		        fn();
 	
 	
-			}
-			else{
+			} else {
 				var	searchParams = { screen_name: screennamesandids.username, count: 200 };
 				
 				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
@@ -520,7 +519,7 @@ io.on('connection', function(socket){
 
 							var found;
 							user = currentData.user;
-							venues = twitterFunctions.venues(currentData,venues);
+							venues = twitterFunctions.venues(currentData,venues,true);
                 		}
 
 	
@@ -628,8 +627,7 @@ io.on('connection', function(socket){
 	        
 	        fn();
 
-		}
-		else{
+		} else {
 			var searchParams;
 				searchParams = { q:params.search , geocode: [params.lat, params.long, params.radius + "mi"], count: 200 };
 
@@ -648,7 +646,7 @@ io.on('connection', function(socket){
 						returndata.visitedvenuestable = [];
 
 		        		for (var indx in data.statuses)
-		        			returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx].user, returndata.visitedvenuestable);
+		        			returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx], returndata.visitedvenuestable);
                     	
 
 						returndata.markers = [];

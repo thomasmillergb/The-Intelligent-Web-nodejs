@@ -12,17 +12,20 @@ var sort_by = function(field, reverse, primer){
 }
 
 
-exports.venues = function(currentData, venues){
+exports.venues = function(currentData, venues, sortbydate){
     if (currentData["coordinates"] || currentData.place) {
         
 		//console.log(currentData);
         marker = {};
+        
+        marker.date = parseTwitterDate(currentData.created_at);
+        console.log( marker.date );
 
         if(null != currentData.place)
         	marker.venue = currentData.place.full_name;
-        else{
+        else
         	marker.venue = "Unknowed";
-        	}
+
         //console.log(marker.venue);
         if(currentData["coordinates"] && currentData.coordinates.coordinates[1]){
 
@@ -41,14 +44,17 @@ exports.venues = function(currentData, venues){
         {
         	var found = false;
         	venues.forEach(function(venue){
-            	if(venue.venue == marker.venue){
+            	if(venue.venue == marker.venue) {
             		venue.visits += 1;
+            		if (marker.date > venue.date)
+            			venue.date = marker.date.toString();
             		found = true
             		return true
             	}
         	});
         	if(!found){
             		marker.visits = 1;
+            		marker.date = marker.date.toString();
         			venues.push(marker);
             }
 
@@ -58,7 +64,11 @@ exports.venues = function(currentData, venues){
 	}
 	
 	//var visitedVenuesJson = [{"venue":"Sheffield", "lat":"53.371143", "long":"-1.392339", "visits":"2"},{"venue":"Sheffield 2", "lat":"53.371143", "long":"-1.38", "visits":"1"}];
-	venues = venues.sort(sort_by('visits', true,parseInt));
+	
+	if (sortbydate !== undefined && sortbydate == true)
+	    venues = venues.sort(sort_by('date', true,parseInt));
+	else
+		venues = venues.sort(sort_by('visits', true,parseInt));
 	//console.log(venues);
 
 
@@ -68,22 +78,23 @@ exports.venues = function(currentData, venues){
 exports.users = function(currentUser, usersList){
 
 	user = {};
-	user.user = currentUser.screen_name;
-	user.user_id = currentUser.id;
+	user.user = currentUser.user.screen_name;
+	user.user_id = currentUser.user.id;
+	user.date = parseTwitterDate(currentUser.created_at);
 
 	if(usersList.length == 0){
 		user.visits = 1;
 		usersList.push(user);
-	}
-
-	else
-	{
+	} else {
 		var found = false;
 		usersList.forEach(function(person){
 			
 	    	if(person.user_id == user.user_id){
 	    		person.visits += 1;
-	    		//console.log(person.user_id);
+	    		
+	    		if (user.date > person.date)
+            			person.date = user.date.toString();
+	    		
 	    		found = true
 	    		return true;
 	   		}
@@ -91,6 +102,7 @@ exports.users = function(currentUser, usersList){
 		});
 		if(!found){
 			user.visits = 1;
+			user.date = user.date.toString();
 			usersList.push(user);
 
 		}
@@ -117,4 +129,8 @@ exports.users_discussion = function(currentData, currentUser){
 		}
 	}
 	return currentUser;
+}
+
+function parseTwitterDate(aDate) {   
+	return new Date(Date.parse(aDate.replace(/( \+)/, ' UTC$1')));
 }

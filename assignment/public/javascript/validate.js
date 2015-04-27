@@ -62,7 +62,6 @@ function ValidateForm(form) {
 	for (var i = 0; i < numericelements.length; i++)
 	{
 		if (isNaN($(numericelements[i]).val())) { 
-			console.log("did a numeric");
 			addNotification("Invalid input!", "Please use only numeric values in " + $(numericelements[i]).attr("name"), 5000);
 			loadingOverlay(false);
 			$(numericelements[i]).addClass("validation_fail");

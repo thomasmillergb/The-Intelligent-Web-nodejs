@@ -35,7 +35,6 @@ $(function(){
 	// When the number of days on a form is set to 0 or less, enable live results,
 	// otherwise, disable them
 	$("[name='days']").on("keyup", function () {
-		console.log(parseInt($(this).val()));
 		if (parseInt($(this).val()) <= 0 || parseInt($(this).val()) == NaN)
 			$(this).parent().parent().parent().parent().parent().find("[name='liveresults']").prop('checked', true);
 		else
@@ -181,8 +180,6 @@ $(function(){
 							$('.tweet_results_table').remove();
 						
 							mostUsedWordsTable($("#user_discussion_table_return"), data.userdiscussiontable);
-							
-							console.log(data.marker);
 						
 							if (data.marker) {
 								addMarkerToMap(map, data.marker.lat, data.marker.long, data.marker.label, newBounds);
@@ -196,6 +193,8 @@ $(function(){
 						
 					} else {
 						// Not streaming
+						
+						console.log(data);
 						
 						addNotification("User discussion search", "Search successful", 5000);
 					
@@ -286,6 +285,7 @@ $(function(){
 						
 						addNotification("User venues search", "Search successful", 5000);
 					
+						console.log(data);
 					
 						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
 					
@@ -371,7 +371,7 @@ $(function(){
 					
 						$("#venue_return").html("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
 						
-						console.log(data);
+						
 					
 						mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
 						

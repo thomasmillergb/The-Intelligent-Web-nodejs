@@ -442,11 +442,15 @@ function mostUsedWordsTable(element, tableJson) {
 // Appends an element with a table of a users most visited venues from json
 function visitedVenues(element, tableJson) {
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td></tr>';
-	
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td><td>Latest visit date</td></tr>';
+
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td></tr>';
+		
+		console.log(row['date']);
+		console.log(new Date(row['date']));
+		
+		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td></tr>';
 	}
 	
 	tablehtml += '</table>';
@@ -460,11 +464,11 @@ function visitedVenues(element, tableJson) {
 // Appends an element with a table of number of visits of particular users at a venue from json
 function mostVisitedVenues(element, tableJson) {
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Number of visits</td></tr>';
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Number of visits</td><td>Latest visit date</td></tr>';
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user'] + '\')">View profile and Tweets</a></td><td>' + row['visits'] + '</td></tr>';
+		tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user'] + '\')">View profile and Tweets</a></td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td></tr>';
 	}
 	
 	tablehtml += '</table>';
