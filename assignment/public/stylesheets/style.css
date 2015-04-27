@@ -636,3 +636,8 @@ noscript {
 	padding: 50px;
 	box-sizing: border-box;
 }
+
+.radio_wrapper {
+	float: left;
+	padding: 10px;
+}

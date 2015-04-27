@@ -436,6 +436,7 @@ io.on('connection', function(socket){
 		console.log(params);
 		
 		// params.screenname
+		// params.twitterfoursquare
 		// params.days
 		// params.liveresults
 		
@@ -569,6 +570,7 @@ io.on('connection', function(socket){
 		console.log(params);
 		
 		// params.days
+		// params.twitterfoursquare
 		// params.liveresults
 		// params.radius
 		// params.lat
