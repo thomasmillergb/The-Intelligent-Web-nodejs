@@ -593,7 +593,7 @@ io.on('connection', function(socket){
                 	console.log(data);
 					user= data.user;
 					venues = twitterFunctions.venues(data,venues);
-					usersList = twitterFunctions.users(data.user, usersList);
+					usersList = twitterFunctions.users(data, usersList);
             		var returndata = {};
 					
 					if (data.coordinates)
