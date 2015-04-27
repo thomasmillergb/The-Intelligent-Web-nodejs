@@ -466,7 +466,7 @@ io.on('connection', function(socket){
 	                stream.on('data', function (data) {
 
 	                	var user= data.user;
-	              	params.foursqaure = true;
+	              	//params.foursqaure = true;
 						if(params.foursqaure){
 							foursqaure.getVenues(data,function(checkIns){
 								if(checkIns != null){
