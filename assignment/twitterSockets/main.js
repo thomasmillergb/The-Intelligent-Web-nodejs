@@ -401,9 +401,24 @@ io.on('connection', function(socket){
 
 		keywordsTable['words'].sort(function(x, y){
 
-			xtotal = eval(x.occurences.join('+'));
-			ytotal = eval(y.occurences.join('+'));
-	
+			var xtotal = eval(x.occurences.join('+'));
+			var ytotal = eval(y.occurences.join('+'));
+			
+			var x0count = 0;
+			var y0count = 0;
+			
+			for (var i = 0; i < x.occurences.length; ++i){
+			    if (x.occurences[i] == 0)
+			        x0count++;
+			        
+			    if (y.occurences[i] == 0)
+			        y0count++;
+			}
+			
+			if (x0count < y0count)
+				return -1;
+			if (x0count > y0count)
+				return 1;
 			if (xtotal < ytotal)
 				return 1;
 			if (xtotal > ytotal)
