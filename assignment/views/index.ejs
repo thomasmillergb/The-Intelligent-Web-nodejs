@@ -68,6 +68,7 @@
 				<div class="center_wrapper">
 					<h1>Discussion search</h1>
 					Tracking public discussions on specific topics (e.g. via hashtags or keywords): input keywords and/or hashtags. Outputs a list of messages containing the required keyword/hashtags. Its possible to limit the query to a specific geographic region.
+					<span class="extra">Extra</span> - Marks features that are not including in the assignment specification
 					<form id="discussion_search_form" action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
@@ -93,6 +94,7 @@
 											Turning on live results will use the streaming API, and push results from live tweets as they happen. When turned off, only historic data is searched.
 										</div>
 									</div>
+									<span class="extra">Extra</span>
 								</td>
 								<td>
 									<div class="onoffswitch">
@@ -229,7 +231,8 @@
 			<div id="user_discussion_tab">
 				<div class="center_wrapper">
 					<h1>Specific user discussion search</h1>
-					What specific users discuss about: the ids/screen_names of up to 10 users are provided in input and the most frequent Y keywords used in the last Z days must be displayed (with associated total count, as well as count for each users). Input: user ids, Y, Z – with Z >1
+					What specific users discuss about: the ids/screen_names of up to 10 users are provided in input and the most frequent Y keywords used in the last Z days must be displayed (with associated total count, as well as count for each users). Input: user ids, Y, Z – with Z >1<br>
+					<span class="extra">Extra</span> - Marks features that are not including in the assignment specification
 					<form id="user_discussion_search_form" action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
@@ -283,6 +286,7 @@
 											Turning on live results will use the streaming API, and push results from live tweets as they happen. When turned off, only historic data is searched.
 										</div>
 									</div>
+									<span class="extra">Extra</span>
 								</td>
 								<td>
 									<div class="onoffswitch">
@@ -306,6 +310,7 @@
 														Only search for tweets that are within a geo location.
 													</div>
 												</div>
+												<span class="extra">Extra</span>
 											</td>
 											<td>
 												<div class="onoffswitch">
@@ -419,6 +424,7 @@
 				<div class="center_wrapper">
 					<h1>User venues search</h1>
 					What points of interest (venues) a specific user has visited in the last X days (input: user id, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published)
+					<span class="extra">Extra</span> - Marks features that are not including in the assignment specification
 					<form id="user_venues_search_form" action="/" method="post">
 						<table class="req_twitter_api">
 							<tr>
@@ -444,6 +450,7 @@
 											When Twitter is selected locations from geotagged tweets will be found. When FourSqaure is selected FourSqaure venue checkins that have been tweeted will be found.
 										</div>
 									</div>
+									<span class="extra">Extra</span>
 								</td>
 								<td>
 									<div class="clear_fix">
@@ -532,6 +539,7 @@
 				<div class="center_wrapper">
 					<h1>Venue search</h1>
 					Who is visiting venues in a specific geographic area (or visiting a named venue) or have done so in the last X days (input: name of location or coordinates, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published).
+					<span class="extra">Extra</span> - Marks features that are not including in the assignment specification
 					<form id="venue_search_form" action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
@@ -543,6 +551,7 @@
 											When Twitter is selected people from geotagged tweets will be found. When FourSqaure is selected FourSqaure users will be found.
 										</div>
 									</div>
+									<span class="extra">Extra</span>
 								</td>
 								<td>
 									<div class="clear_fix">

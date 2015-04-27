@@ -64,29 +64,44 @@ io.on('connection', function(socket){
 		filterParams = {};
 		
 		if (params.search != '')
-		  filterParams["track"] =  [params.search];
+			filterParams["track"] = [params.search];
+		
+		var bounds;
 		
 		if (params.uselocation) {
-		  var bounds = getBoundingBox([params.lat, params.long], params.radius);
-		  filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
+			bounds = getBoundingBox([params.lat, params.long], params.radius);
+			//filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
 		}
 		
-		if (params.liveresults) {		
+		
+		if (params.liveresults) {
+			
+			
+			console.log(filterParams);
+			
 			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams, function (stream) {
 				
                 
 
                 stream.on('data', function (data) {
+	                
+	                if (!params.uselocation || (params.uselocation && data.coordinates
+	                && data.coordinates.coordinates[0] >= bounds[0]
+	                && data.coordinates.coordinates[0] <= bounds[2]
+	                && data.coordinates.coordinates[1] >= bounds[1]
+	                && data.coordinates.coordinates[1] <= bounds[3])) {
                     
-                    var tempData = {};
-                    tempData.tweet = data;
-                    tempData.marker = [];
-                    // Its geotaggggeddd! Yaaaay
-                   
-		    		tempData.marker = twitterFunctions.venues(data,tempData.marker)[0];
-
-                    io.sockets.emit('stream_discussion_search', tempData);
-                    // throw  new Exception('end');
+	                    var tempData = {};
+	                    tempData.tweet = data;
+	                    tempData.marker = [];
+	                    // Its geotaggggeddd! Yaaaay
+	                   
+			    		tempData.marker = twitterFunctions.venues(data,tempData.marker)[0];
+	
+	                    io.sockets.emit('stream_discussion_search', tempData);
+	                    // throw  new Exception('end');
+	                    
+                    }
                 });
                 
                 twitterAPI.currentDiscussionStream = stream;
