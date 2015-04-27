@@ -15,18 +15,15 @@ var sort_by = function(field, reverse, primer){
 exports.venues = function(currentData, venues, sortbydate){
     if (currentData["coordinates"] || currentData.place) {
         
-		//console.log(currentData);
         marker = {};
         
         marker.date = parseTwitterDate(currentData.created_at);
-        console.log( marker.date );
 
         if(null != currentData.place)
         	marker.venue = currentData.place.full_name;
         else
         	marker.venue = "Unknowed";
 
-        //console.log(marker.venue);
         if(currentData["coordinates"] && currentData.coordinates.coordinates[1]){
 
         	//improvement find long and lat from place name
@@ -34,8 +31,7 @@ exports.venues = function(currentData, venues, sortbydate){
 	        marker.long = currentData.coordinates.coordinates[0];
 	        marker.label = "<h3>@" + currentData.user.screen_name + "</h3>" + currentData.text + "";
     	}
-        //console.log(currentData);	
-        //console.log(marker);
+
         if(venues.length == 0){
         	marker.visits = 1;
         	venues.push(marker);
@@ -69,8 +65,6 @@ exports.venues = function(currentData, venues, sortbydate){
 	    venues = venues.sort(sort_by('date', true,parseInt));
 	else
 		venues = venues.sort(sort_by('visits', true,parseInt));
-	//console.log(venues);
-
 
 	return venues;
 }

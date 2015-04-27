@@ -101,7 +101,7 @@ $(function(){
 								
 								newBounds = false;
 							}
-							appendTweetWithAccount($("#discussion_tweet_return"), data.tweet);
+							appendTweetWithAccount($("#discussion_tweet_return"), data.tweet, true);
 						});
 						
 					// Use the REST API	

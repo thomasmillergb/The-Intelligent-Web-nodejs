@@ -69,7 +69,6 @@ io.on('connection', function(socket){
 		if (params.uselocation) {
 		  var bounds = getBoundingBox([params.lat, params.long], params.radius);
 		  filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
-		  console.log(bounds);
 		}
 		
 		if (params.liveresults) {		
@@ -86,7 +85,6 @@ io.on('connection', function(socket){
                    
 		    		tempData.marker = twitterFunctions.venues(data,tempData.marker)[0];
 
-                    //console.log(data.user.screen_name + " : " + data.text);
                     io.sockets.emit('stream_discussion_search', tempData);
                     // throw  new Exception('end');
                 });
@@ -450,8 +448,7 @@ io.on('connection', function(socket){
 					var venues =[];
 	                stream.on('data', function (data) {
 	              
-	                	console.log(data);
-						user= data.user;
+						user = data.user;
 						
 						venues = twitterFunctions.venues(data,venues);
 	            		var returndata = {};
@@ -468,9 +465,7 @@ io.on('connection', function(socket){
 				        }
 						
 						returndata.visitedvenuestable = venues;
-						//console.log(data);
 	
-	                    //console.log(data.user.screen_name + " : " + data.text);
 	                    io.sockets.emit('stream_user_venues_search', returndata);
 	                    // throw  new Exception('end');
 	                
@@ -580,7 +575,6 @@ io.on('connection', function(socket){
 			var	filterParams = { track: params.search };
 			var bounds = getBoundingBox([params.lat, params.long], (params.radius));
 		    filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
-        	console.log(filterParams);
             var user;
             
 			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams,function (stream) {
@@ -590,8 +584,7 @@ io.on('connection', function(socket){
 				
 				
                 stream.on('data', function (data) {
-                	console.log(data);
-					user= data.user;
+					user = data.user;
 					venues = twitterFunctions.venues(data,venues);
 					usersList = twitterFunctions.users(data, usersList);
             		var returndata = {};

@@ -200,7 +200,10 @@ function removeTimezone(str) {
 
 // Appends a tweet to an element from the tweets json including the users account on the left
 // Returns the created element
-function appendTweetWithAccount(element, tweetJson) {
+function appendTweetWithAccount(element, tweetJson, append) {
+	
+		if (append === undefined)
+			append = false;
 		
 		var tweethtml ='<table class="tweet_table" id="' + tweetJson['id_str'] + '"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + tweetJson['user']['profile_image_url'].replace("_normal", "") + '" alt="' + tweetJson['user']['screen_name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '" class="screen_name">' + tweetJson['user']['name'] + '</a><br><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a><br><br></div></div>';
 					
@@ -229,8 +232,11 @@ function appendTweetWithAccount(element, tweetJson) {
 		}
 		
 		tweethtml +='</td></tr></table><hr>';
-		
-	returnelement = $(tweethtml).prependTo(element);
+	
+	if (append)
+		returnelement = $(tweethtml).appendTo(element);
+	else
+		returnelement = $(tweethtml).prependTo(element);
 
 		
 	return returnelement;
