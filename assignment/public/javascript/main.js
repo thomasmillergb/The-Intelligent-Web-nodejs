@@ -1,6 +1,4 @@
 var socket;
-var haveTwitterAPITokens = false;
-var haveFourAPITokens = false;
 
 var gmapsloaded = false;
 
@@ -118,30 +116,32 @@ $(function(){
 // Applies restrictions to forms so that they can not be used if the user has not obtained API tokens
 function setRestrictions() {
 	
+	$("*").removeClass("validation_fail");
+	
 	if (haveTwitterAPITokens)
 	{
-		$("body").removeClass("no_twitter");
-		$("body").addClass("twitter");
-		$("#twitter_api_button").addClass("check");
+	  $("body").removeClass("no_twitter");
+	  $("body").addClass("twitter");
+	  $("#twitter_api_button").addClass("check");
 	}
 	else
 	{
-		$("body").addClass("no_twitter");
-		$("body").removeClass("twitter");
-		$("#twitter_api_button").removeClass("check");
+	  $("body").addClass("no_twitter");
+	  $("body").removeClass("twitter");
+	  $("#twitter_api_button").removeClass("check");
 	}
-		
+	  
 	if (haveFourAPITokens)
 	{
-		$("body").removeClass("no_four");
-		$("body").addClass("four");
-		$("#foursquare_api_button").addClass("check");
+	  $("body").removeClass("no_four");
+	  $("body").addClass("four");
+	  $("#foursquare_api_button").addClass("check");
 	}
 	else
 	{
-		$("body").addClass("no_four");
-		$("body").removeClass("four");
-		$("#foursquare_api_button").removeClass("check");
+	  $("body").addClass("no_four");
+	  $("body").removeClass("four");
+	  $("#foursquare_api_button").removeClass("check");
 	}
 
 	// Reset socket connection

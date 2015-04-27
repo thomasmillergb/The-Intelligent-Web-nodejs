@@ -9,8 +9,34 @@ var multiUsernameRegex = /^([A-Za-z0-9_]{1,15}[,\s]*)+$/; //regex to check twitt
 
 	
 function ValidateForm(form) {
-
+	
 	$("*").removeClass("validation_fail");
+	
+	if (!haveTwitterAPITokens) {
+		addNotification("Twitter login", "You need to log in to Twitter to use this search", 5000);
+		loadingOverlay(false);
+		
+		$("#twitter_api_button").addClass("validation_fail");
+		
+		$("html, body").animate({scrollTop: 0});
+		return false;
+	}
+	
+	if (!haveFourAPITokens) {
+		
+		var elementsreqfoursqaure = form.find("input[type=radio][attr-reqfoursquare=true]:checked");
+		
+		if (elementsreqfoursqaure.length > 0) {
+			addNotification("FourSquare login", "You need to log in to FourSquare to use this search", 5000);
+			loadingOverlay(false);
+			
+			$("#foursquare_api_button").addClass("validation_fail");
+			
+			$("html, body").animate({scrollTop: 0});
+			return false;
+		}
+	}
+	
 	
 	var alphanumericelements = form.find("input[attr-validate=alphanumeric]");
 	var usernameelements = form.find("input[attr-validate=username]");
@@ -25,7 +51,7 @@ function ValidateForm(form) {
 		if (alphanumericRegex.test($(alphanumericelements[i]).val()) == false) { 
 			addNotification("Invalid input!", "Please enter a valid search term in " + $(alphanumericelements[i]).attr("name"), 5000);
 			loadingOverlay(false);
-			$(alphanumericelements[i]).addClass("validation_fail");
+			$(alphanumericelements[i]).addClass("validation_fail").focus();
 			$("html, body").animate({scrollTop: 0});
 			return false; //if it doesn't, fail the form
 		}
@@ -37,9 +63,9 @@ function ValidateForm(form) {
 		
 		
 		if (usernameRegex.test($(usernameelements[i]).val()) == false) { 
-			addNotification("Invalid input!", "Please enter a valid Twitter username in " + $(alphanumericelements[i]).attr("name"), 5000);
+			addNotification("Invalid input!", "Please enter a valid Twitter username in " + $(usernameelements[i]).attr("name"), 5000);
 			loadingOverlay(false);
-			$(alphanumericelements[i]).addClass("validation_fail");
+			$(usernameelements[i]).addClass("validation_fail").focus();
 			$("html, body").animate({scrollTop: 0});
 			return false; //if it doesn't, fail the form
 		}
@@ -50,9 +76,9 @@ function ValidateForm(form) {
 	{
 
 		if (multiUsernameRegex.test($(multiusernameelements[i]).val()) == false) { 
-			addNotification("Invalid input!", "Please enter a valid list of Twitter usernames in " + $(alphanumericelements[i]).attr("name"), 5000);
+			addNotification("Invalid input!", "Please enter a valid list of Twitter usernames in " + $(multiusernameelements[i]).attr("name"), 5000);
 			loadingOverlay(false);
-			$(alphanumericelements[i]).addClass("validation_fail");
+			$(multiusernameelements[i]).addClass("validation_fail").focus();
 			$("html, body").animate({scrollTop: 0});
 			return false; //if it doesn't, fail the form
 		}
@@ -64,7 +90,7 @@ function ValidateForm(form) {
 		if (isNaN($(numericelements[i]).val())) { 
 			addNotification("Invalid input!", "Please use only numeric values in " + $(numericelements[i]).attr("name"), 5000);
 			loadingOverlay(false);
-			$(numericelements[i]).addClass("validation_fail");
+			$(numericelements[i]).addClass("validation_fail").focus();
 			$("html, body").animate({scrollTop: 0});
 			return false; //
 		}
@@ -77,7 +103,7 @@ function ValidateForm(form) {
 		if ($(nonempty[i]).val() == "") { 
 			addNotification("Invalid input!", "Please enter a value in " + $(nonempty[i]).attr("name"), 5000);
 			loadingOverlay(false);
-			$(nonempty[i]).addClass("validation_fail");
+			$(nonempty[i]).addClass("validation_fail").focus();
 			$("html, body").animate({scrollTop: 0});
 			return false; //
 		}
@@ -92,7 +118,7 @@ function ValidateForm(form) {
 		if (isNaN(latlonnum)) { 
 			addNotification("Validation failed", "Please enter a number in " + latlonname, 5000);
 			loadingOverlay(false);
-			$(latlong[i]).addClass("validation_fail");
+			$(latlong[i]).addClass("validation_fail").focus();
 			$("html, body").animate({scrollTop: 0});
 			return false;
 		
@@ -100,7 +126,7 @@ function ValidateForm(form) {
 			if (latlonnum > 90 || latlonnum < -90) {
 			addNotification("Validation failed", "Please enter a number between -90 and +90 in " + latlonname, 5000);
 			loadingOverlay(false);
-			$(latlong[i]).addClass("validation_fail");
+			$(latlong[i]).addClass("validation_fail").focus();
 			$("html, body").animate({scrollTop: 0});
 			return false;
 			}
@@ -108,7 +134,7 @@ function ValidateForm(form) {
 			if (latlonnum > 180 || latlonnum < -180) {
 			addNotification("Validation failed", "Please enter a number between -180 and +180 in " + latlonname, 5000);
 			loadingOverlay(false);
-			$(latlong[i]).addClass("validation_fail");
+			$(latlong[i]).addClass("validation_fail").focus();
 			$("html, body").animate({scrollTop: 0});
 			return false;
 			}

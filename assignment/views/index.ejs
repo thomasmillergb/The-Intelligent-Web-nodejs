@@ -6,13 +6,17 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 		
+		<script>
+			var haveTwitterAPITokens = false;
+			var haveFourAPITokens = false;
+		</script>
 		<script src="/javascript/socket.io.js"></script>
 		<script src="/javascript/main.js"></script>
 		<script src="/javascript/searches.js"></script>
 		<script src="/javascript/mapinit.js"></script>
 		<script src="/javascript/validate.js"></script>
 	</head>
-	<body class="no_twitter no_four">
+	<body class=""><!-- no_twitter no_four -->
 		<noscript>Javascript is required to be able to use this app. Please enable it and then refresh the page.</noscript>
 		<header>
 			<%= title %> - Inteligent web assignment
@@ -454,10 +458,10 @@
 								<td>
 									<div class="clear_fix">
 										<div class="radio_wrapper">
-											<input type="radio" name="twitterfoursquare" value="twitter"> Twitter
+											<input type="radio" id="user_venue_twitter" name="twitterfoursquare" value="twitter"> <label for="user_venue_twitter">Twitter</label>
 										</div>
 										<div class="radio_wrapper">
-											<input type="radio" name="twitterfoursquare" value="foursquare" checked="true"> FourSquare
+											<input type="radio" id="user_venue_foursquare" name="twitterfoursquare" attr-reqfoursquare="true" value="foursquare" checked="true"> <label for="user_venue_foursquare">FourSquare</label>
 										</div>
 									</div>
 								</td>
@@ -555,10 +559,10 @@
 								<td>
 									<div class="clear_fix">
 										<div class="radio_wrapper">
-											<input type="radio" name="twitterfoursquare" value="twitter"> Twitter
+											<input type="radio" id="venue_twitter" name="twitterfoursquare" value="twitter"> <label for="venue_twitter">Twitter</label>
 										</div>
 										<div class="radio_wrapper">
-											<input type="radio" name="twitterfoursquare" value="foursquare" checked="true"> FourSquare
+											<input type="radio" id="venue_foursquare" name="twitterfoursquare" attr-reqfoursquare="true" value="foursquare" checked="true"> <label for="venue_foursquare">FourSquare</label>
 										</div>
 									</div>
 								</td>
