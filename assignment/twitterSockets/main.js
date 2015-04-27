@@ -81,15 +81,15 @@ io.on('connection', function(socket){
 			
 			currentTwitStream = twitterAPI.stream('statuses/filter', filterParams, function (stream) {
 				
-                
+                console.log(bounds);
 
                 stream.on('data', function (data) {
 	                
 	                if (!params.uselocation || (params.uselocation && data.coordinates
-	                && data.coordinates.coordinates[0] >= bounds[0]
-	                && data.coordinates.coordinates[0] <= bounds[2]
-	                && data.coordinates.coordinates[1] >= bounds[1]
-	                && data.coordinates.coordinates[1] <= bounds[3])) {
+	                && data.coordinates.coordinates[1] >= bounds[0]
+	                && data.coordinates.coordinates[1] <= bounds[2]
+	                && data.coordinates.coordinates[0] >= bounds[1]
+	                && data.coordinates.coordinates[0] <= bounds[3])) {
                     
 	                    var tempData = {};
 	                    tempData.tweet = data;

@@ -68,7 +68,6 @@
 				<div class="center_wrapper">
 					<h1>Discussion search</h1>
 					Tracking public discussions on specific topics (e.g. via hashtags or keywords): input keywords and/or hashtags. Outputs a list of messages containing the required keyword/hashtags. Its possible to limit the query to a specific geographic region.
-					<span class="extra">Extra</span> - Marks features that are not including in the assignment specification
 					<form id="discussion_search_form" action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
 							<tr>
@@ -85,7 +84,7 @@
 									<input type="text" name="search" attr-validate="alphanumeric" attr-nonEmpty="true" placeholder="e.g. iPhone" />
 								</td>
 							</tr>
-							<tr>
+							<!--<tr>
 								<td>
 									Live results:
 									<div class="infoicon">
@@ -105,7 +104,7 @@
 									    </label>
 									</div>
 								</td>
-							</tr>
+							</tr>-->
 							<tr>
 								<td>
 									<table>
@@ -423,7 +422,7 @@
 			<div id="user_venue_tab">
 				<div class="center_wrapper">
 					<h1>User venues search</h1>
-					What points of interest (venues) a specific user has visited in the last X days (input: user id, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published)
+					What points of interest (venues) a specific user has visited in the last X days (input: user id, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published)<br>
 					<span class="extra">Extra</span> - Marks features that are not including in the assignment specification
 					<form id="user_venues_search_form" action="/" method="post">
 						<table class="req_twitter_api">
@@ -538,7 +537,7 @@
 			<div id="venue_tab">
 				<div class="center_wrapper">
 					<h1>Venue search</h1>
-					Who is visiting venues in a specific geographic area (or visiting a named venue) or have done so in the last X days (input: name of location or coordinates, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published).
+					Who is visiting venues in a specific geographic area (or visiting a named venue) or have done so in the last X days (input: name of location or coordinates, plus X – value of X may be zero: in this case the streaming API must be used to capture information when it is published).<br>
 					<span class="extra">Extra</span> - Marks features that are not including in the assignment specification
 					<form id="venue_search_form" action="/" method="post" class="map_init">
 						<table class="req_twitter_api">
