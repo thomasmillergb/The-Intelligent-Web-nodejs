@@ -467,7 +467,7 @@ io.on('connection', function(socket){
 
 	                	var user= data.user;
 	              	//params.foursqaure = true;
-						if(params.twitterfoursquare == 'foursqaure'){
+						if(params.twitterfoursquare){
 							foursqaure.getVenues(data,function(checkIns){
 								if(checkIns != null){
 						
@@ -559,8 +559,8 @@ io.on('connection', function(socket){
 						var venues =[];
 
 						var venuemarkers = [];
-						searchParams.foursqaure = true;
-						if(searchParams.foursqaure){
+						//searchParams.foursqaure = true;
+						if(params.twitterfoursquare){
 							foursqaure.getVenues(data,function(checkIns){
 								checkIns.forEach(function(checkin,idx){
 									

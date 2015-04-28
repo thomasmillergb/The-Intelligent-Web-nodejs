@@ -456,7 +456,7 @@ function visitedVenues(element, tableJson) {
 		console.log(row['date']);
 		console.log(new Date(row['date']));
 		
-		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date']*1000)) + '</td></tr>';
+		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td></tr>';
 	}
 	
 	tablehtml += '</table>';
@@ -474,7 +474,7 @@ function mostVisitedVenues(element, tableJson) {
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user'] + '\')">View profile and Tweets</a></td><td>' + row['visits'] + '</td><td>' + (new Date(row['date']*1000)) + '</td></tr>';
+		tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user'] + '\')">View profile and Tweets</a></td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td></tr>';
 	}
 	
 	tablehtml += '</table>';
