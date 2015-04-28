@@ -2,7 +2,7 @@ var fourFunction = require('./commonFourSqaureFunctions.js')
 
 
 exports.getVenues  = function(tweets, callback){
-	console.log(Array.isArray(tweets));
+	//console.log(Array.isArray(tweets));
 	if(Array.isArray(tweets))
 	fourFunction.getFourSquareFromTweets(tweets, function(checkins){
 		callback(checkins);
@@ -34,7 +34,7 @@ function findVenues(latitude, longitude, radius) {
 
             if (!error && response.statusCode == 200) {
                 // Print out the response body
-                console.log(body)
+                //console.log(body)
             }
             else console.log('error: ' + response.statusCode + ' response: ' + JSON.parse(response.body).meta.errorDetail);
         });

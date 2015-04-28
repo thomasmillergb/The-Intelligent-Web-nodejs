@@ -316,12 +316,20 @@ function appendLocation(element, markerJson) {
 			content: message
 		});
 	
+		var keepopen = false;
+	
+		google.maps.event.addListener(marker, 'click', function() {
+			keepopen = !keepopen;
+			infowindow.open(marker.get('map'), marker);
+		});
+	
 		google.maps.event.addListener(marker, 'mouseover', function() {
 			infowindow.open(marker.get('map'), marker);
 		});
 		
 		google.maps.event.addListener(marker, 'mouseout', function() {
-			infowindow.open();
+			if (!keepopen)
+				infowindow.open();
 		});
 	}
 	

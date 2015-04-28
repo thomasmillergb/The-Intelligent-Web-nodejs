@@ -467,7 +467,7 @@ io.on('connection', function(socket){
 
 	                	var user= data.user;
 	              	//params.foursqaure = true;
-						if(params.twitterfoursquare){
+						if(params.twitterfoursquare == 'foursquare'){
 							foursqaure.getVenues(data,function(checkIns){
 								if(checkIns != null){
 						
@@ -482,7 +482,7 @@ io.on('connection', function(socket){
 						   
 						                venues = foursqaure.venues(checkin,venues);
 						                returndata.visitedvenuestable = venues;
-						                console.log(returndata);
+
 										io.sockets.emit('stream_user_venues_search', returndata);
 									});
 								}else{
@@ -560,7 +560,14 @@ io.on('connection', function(socket){
 
 						var venuemarkers = [];
 						//searchParams.foursqaure = true;
-						if(params.twitterfoursquare){
+						if (params.twitterfoursquare == 'foursquare') {
+							
+							var dataoutput = {};
+							
+							if (data.length > 0)
+								dataoutput.user = data[0].user;
+							
+							
 							foursqaure.getVenues(data,function(checkIns){
 								checkIns.forEach(function(checkin,idx){
 									
@@ -571,21 +578,21 @@ io.on('connection', function(socket){
 					                venuemarkers.push(tempmarker);
 					                venues = foursqaure.venues(checkin,venues);
 					                
-					                if(idx ==checkIns.length-1){
-					                	var data = {};
+					                if (idx == checkIns.length-1){
+					                	
 						
-										data.user = checkin.firstName + " "+checkin.user.lastName ;
-										data.markers = venuemarkers;
-										data.visitedvenuestable = venues;
-										console.log(data);
-										fn(null, data);
+										//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
+										
+										dataoutput.markers = venuemarkers;
+										dataoutput.visitedvenuestable = venues;
+										
+										fn(null, dataoutput);
 					                }
 								});
 							});
 
 
-						}
-						else{
+						} else {
 			                for (var indx in data) {
 			                	var currentData = data[indx];			
 
@@ -593,22 +600,23 @@ io.on('connection', function(socket){
 								user = currentData.user;
 								venues = twitterFunctions.venues(currentData,venues);
 	                		}
-	                	for (var indx in data)
-			                if (data[indx].coordinates && data[indx].coordinates.coordinates) {
-				                var tempmarker = {};
-				                tempmarker.lat = data[indx].coordinates.coordinates[1];
-						        tempmarker.long = data[indx].coordinates.coordinates[0];
-						        tempmarker.label = "<h3>@" + data[indx].user.screen_name + "</h3>" + data[indx].text + "";
-				                venuemarkers.push(tempmarker);
-			                }
+	                		
+		                	for (var indx in data)
+				                if (data[indx].coordinates && data[indx].coordinates.coordinates) {
+					                var tempmarker = {};
+					                tempmarker.lat = data[indx].coordinates.coordinates[1];
+							        tempmarker.long = data[indx].coordinates.coordinates[0];
+							        tempmarker.label = "<h3>@" + data[indx].user.screen_name + "</h3>" + data[indx].text + "";
+					                venuemarkers.push(tempmarker);
+				                }
+		
+							var data = {};
+							
+							data.user = user;
+							data.markers = venuemarkers;
+							data.visitedvenuestable = venues;
 	
-						var data = {};
-						
-						data.user = user;
-						data.markers = venuemarkers;
-						data.visitedvenuestable = venues;
-
-						fn(null, data);
+							fn(null, data);
 						}
 					}
 

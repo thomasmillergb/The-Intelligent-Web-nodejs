@@ -41,7 +41,7 @@ function getVenues(params){
 		getFourSquareFromTweets(data,function(checkins){
 			getCheckin(checkins,function(callback){
 
-				console.log(callback);
+				//console.log(callback);
 			});
 		});
 
@@ -65,7 +65,7 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 			var result = tweet.text.match(regex);
 			//var id = result[0].replace('t.co/','');
 		    //console.log(urlExpander.expand(result[0]));
-		    console.log(result[0]);
+		    //console.log(result[0]);
 		    /*
 		    expandUrl("http://"+result[0])
 			.then(function (longUrl) {
@@ -77,7 +77,7 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 					var result2 = longUrl.match(fourRegex);
 
 					result2 = result2[0].replace('c/','');
-				    console.log(result2);
+				    //console.log(result2);
 				    getCheckin(result2,function(checkin){
 				    	checkins.push(checkin);
 				    	counter++;
@@ -119,15 +119,15 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 
 		var regex = /t.co\/[a-zA-Z0-9]+/;
 		var result = tweets.text.match(regex);
-	    console.log(result[0]);
+	    //console.log(result[0]);
 	    expander("http://"+result[0],function(longUrl){
-	    	console.log(longUrl);
+	    	//console.log(longUrl);
 	    	var fourRegex = /c\/[a-zA-Z0-9]+/;
 			if(fourRegex.test(longUrl)){
 				
 				var result2 = longUrl.match(fourRegex);
 				result2 = result2[0].replace('c/','');
-			    console.log(result2);
+			    //console.log(result2);
 			    getCheckin(result2,function(checkin){
 			    	checkins.push(checkin);
 			    

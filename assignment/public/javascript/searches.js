@@ -21,11 +21,18 @@ function getFormData(element) {
     var formData = {};
     element.find('[name]').each(function() {
 
-	    if ($(this).is('[type=checkbox]') || $(this).is('[type=radio]'))
-	    	formData[this.name] = $(this).is(':checked'); 
+	    if ($(this).is('[type=checkbox]'))
+	    	formData[this.name] = $(this).is(':checked');
+	    else if ($(this).is('[type=radio]')) {
+		    if ($(this).is(':checked')) {
+		    	formData[this.name] = $(this).attr('value'); 
+	    	}
+	    }	
 	    else
-        	formData[this.name] = this.value;  
-    })
+		    formData[this.name] = this.value;
+		      
+    });
+    
     return formData;
 };
 
@@ -194,7 +201,7 @@ $(function(){
 					} else {
 						// Not streaming
 						
-						console.log(data);
+						//console.log(data);
 						
 						addNotification("User discussion search", "Search successful", 5000);
 					
@@ -285,7 +292,7 @@ $(function(){
 						
 						addNotification("User venues search", "Search successful", 5000);
 					
-						console.log(data);
+						//console.log(data);
 					
 						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
 					
