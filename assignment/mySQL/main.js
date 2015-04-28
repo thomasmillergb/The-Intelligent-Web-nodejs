@@ -38,8 +38,7 @@ twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, r
 
 
 var addUser = exports.addUser = function(userParms){
-	createdDate = userParms.created_at;
-	var sql = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ("+userParms.id+",'" + userParms.screen_name+"' , '"+userParms.name+"', '"+userParms.location+"', '"+userParms.url+"', '"+createdDate+"', '"+userParms.description+"', '"+userParms.profile_image_url+"', 'https://twitter.com/"+userParms.screen_name+ "')";
+	var sql = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ("+userParms.id+",'" + userParms.screen_name+"' , '"+userParms.name+"', '"+userParms.location+"', '"+userParms.url+"', '"+userParms.created_at+"', '"+userParms.description+"', '"+userParms.profile_image_url+"', 'https://twitter.com/"+userParms.screen_name+ "')";
 	connection.query(sql,function(err, result){
 		if(!err)
 			console.log(result);
@@ -53,9 +52,8 @@ var addUser = exports.addUser = function(userParms){
 };
 
 var addTweet = exports.addTweet = function(tweet){
-	console.log(tweet);
-	createdDate = dateFormat(tweet.created_at, "yyyy-mm-dd h:MM:ss");
-	var sql = "INSERT INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ("+tweet.id+",'" + tweet.text+"' , '"+createdDate+"','"+tweet.user.id+"')";
+	
+	var sql = "INSERT INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ("+tweet.id+",'" + tweet.text+"' , '"+tweet.created_at+"','"+tweet.user.id+"')";
 	console.log(sql);
 		connection.query(sql,function(err, result){
 		if(!err){
@@ -95,6 +93,8 @@ var addVenue = exports.addVenue = function(tweet){
 	
 };
 
+
+//EXPAND FOR FOURSQAURE AND TWITTER
 var userSearch = exports.userSearch = function(user){
 	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
 	var sql = 'SELECT * FROM `twitter_users` WHERE screenName ="'+user+'"';	
@@ -143,9 +143,9 @@ var addFourSqaureUser = exports.addUser = function(userParms){
 	});
 
 };
-var addVenue = exports.addFourSquareVenue = function(userId, venue){
-	
-	var sql = "INSERT INTO `venues` (`id`,`name`,`lat`, `long`, `user_id_fk`) VALUES ('"+venue.id+"',"+venue.name+","+venue.lat+",'"+venue.lng+"','"+userId+"')";
+var addVenue = exports.addFourSquareVenue = function(checkin){
+	var venue = checkin.venue;
+	var sql = "INSERT INTO `venues` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`) VALUES ('"+venue.id+"',"+venue.name+","+venue.lat+",'"+venue.lng+"','"checkin.id+"')";
 	connection.query(sql,function(err, result){
 		if(!err)
 			console.log(result);
