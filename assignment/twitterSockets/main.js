@@ -467,10 +467,10 @@ io.on('connection', function(socket){
 
 	                	var user= data.user;
 	              	//params.foursqaure = true;
-						if(params.foursqaure){
+						if(params.twitterfoursquare == 'foursqaure'){
 							foursqaure.getVenues(data,function(checkIns){
 								if(checkIns != null){
-									console.log("please say i am here");
+						
 									checkIns.forEach(function(checkin,idx){
 										returndata= {};
 										returndata.user = user;
