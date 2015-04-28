@@ -21,18 +21,11 @@ function getFormData(element) {
     var formData = {};
     element.find('[name]').each(function() {
 
-	    if ($(this).is('[type=checkbox]'))
+	    if ($(this).is('[type=checkbox]') || $(this).is('[type=radio]'))
 	    	formData[this.name] = $(this).is(':checked'); 
-	    if ($(this).is('[type=radio]')) {
-		    if ($(this).is(':checked')) {
-		    	formData[this.name] = $(this).attr('value'); 
-	    	}
-	    }	
 	    else
-		    formData[this.name] = this.value;
-        	  
-    });
-    
+        	formData[this.name] = this.value;  
+    })
     return formData;
 };
 
