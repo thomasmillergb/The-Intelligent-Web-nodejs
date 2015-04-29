@@ -104,7 +104,7 @@ io.on('connection', function(socket) {
 				if (!err) {
 					var venues = [];
 
-					mySQL.insertTwitterData(data.statuses);
+					
 					for (var indx in data.statuses) {
 						var currentData = data.statuses[indx];
 						venues = twitterFunctions.venues(currentData, venues);
@@ -116,6 +116,8 @@ io.on('connection', function(socket) {
 						if (venues[indx].lat && venues[indx].long) venuemarkers.push(venues[indx]);
 					data.markers = venuemarkers;
 					data.tweets = data.statuses;
+					mySQL.insertTwitterData(data.statuses);
+					mySQL.insertFourSqaureFromTwitterData(data.statuses);
 					fn(null, data);
 				} else {
 					fn(null, null);
@@ -167,6 +169,7 @@ io.on('connection', function(socket) {
 						tempdata.userdiscussiontable = {};
 						tempdata.userdiscussiontable.users = keywordsTable.users;
 						tempdata.userdiscussiontable.words = keywordsTable.words.slice(0, maxindex);
+						mySQL.insertFourSqaureFromTwitterData(data);
 						if (data.coordinates) {
 							tempdata.marker = {};
 							tempdata.marker.lat = data.coordinates.coordinates[1];
@@ -245,6 +248,8 @@ io.on('connection', function(socket) {
 									keywordsTable.words = keywordsTable.words.slice(0, maxindex);
 									//data1.markers = venuemarkers;
 									data1.userdiscussiontable = keywordsTable; //userDiscussionJsonData;
+									mySQL.insertTwitterData(data);
+									mySQL.insertFourSqaureFromTwitterData(data);
 									fn(null, data1);
 								}
 							} else {
@@ -260,6 +265,7 @@ io.on('connection', function(socket) {
 
 	function addKeywordToTable(keywordsTable, userid, words) {
 		//words = words.toLowerCase().split(" ");
+		console.log(words);
 		//Lemmalise apostrophies and get rid of non alphanum
 		var striped = words.replace(/('[a-zA-Z])/g, "");
 		striped = striped.replace(/[^a-zA-Z ]/g, "");
@@ -322,7 +328,11 @@ io.on('connection', function(socket) {
 						if (params.twitterfoursquare == 'foursquare') {
 							foursqaure.getVenues(data, function(checkIns) {
 								if (checkIns != null) {
-									checkIns.forEach(function(checkin, idx) {
+									console.log(data.user.id);
+									mySQL.insertFourSqaureData(checkIns);
+
+									checkIns.forEach(function(checkinAndId, idx) {
+										var checkin = checkinAndId.checkin;
 										returndata = {};
 										returndata.user = user;
 										returndata.markers = {};
@@ -381,6 +391,8 @@ io.on('connection', function(socket) {
 						var user;
 						var venues = [];
 						var venuemarkers = [];
+
+						mySQL.insertTwitterData(data);
 						//searchParams.foursqaure = true;
 						if (params.twitterfoursquare == 'foursquare') {
 							var dataoutput = {};
@@ -388,10 +400,17 @@ io.on('connection', function(socket) {
 							 dataoutput.user = data[0].user;
 
 							 foursqaure.getVenues(data, function(checkIns) {
-							 	//console.log(checkIns);
+							 	//console.log(checkInArray);
+						 		//var checkIns = checkInArray.checkin;
 							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
+							 		
 							 		//console.log(checkIns);
-									checkIns.forEach(function(checkin, idx) {
+
+							 		//console.log(data.user.id);
+									mySQL.insertFourSqaureData(checkIns);
+									checkIns.forEach(function(checkinAndID, idx) {
+
+										var checkin = checkinAndID.checkin;
 										var tempmarker = {};
 										tempmarker.lat = checkin.venue.location.lat;
 										tempmarker.long = checkin.venue.location.lng;
@@ -405,14 +424,18 @@ io.on('connection', function(socket) {
 											fn(null, dataoutput);
 										}
 									});
+									
+									
 								}
 								else{
 									console.log("No Foursqaure checkIns");
 									fn("No Foursqaure checkIns", null);
 
 								}
+								
 							});
 						} else {
+
 							for (var indx in data) {
 								var currentData = data[indx];
 								var found;
