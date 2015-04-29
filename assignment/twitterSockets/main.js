@@ -6,9 +6,15 @@ var keyword_extractor = require("keyword-extractor");
 var twitterFunctions = require('./twitterFunction.js');
 var twitterAPI;
 var twitterRestAPI;
+var SparqlClient = require('sparql-client');
+var util = require('util');
+
+
+
 var io = require('socket.io').listen(3001, {
 	log: false
 });
+
 io.on('connection', function(socket) {
 	var twitter_token;
 	var twitter_token_secret;
@@ -539,6 +545,63 @@ io.on('connection', function(socket) {
 			}
 		});
 	});
+	
+	socket.on('get_points_of_interest', function(name, lat, long, fn) {
+		console.log("get_points_of_interest lat: " + lat + " long: " + long);
+		
+		var returnData = {};
+		
+		returnData.name = name;
+		returnData.lat = lat;
+		returnData.long = long;
+		
+		var endpoint = 'http://dbpedia.org/sparql';
+		
+		// Get the 20 nearest venues to the lat and long provided
+		var query = 'PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>			     ' +
+						'SELECT ?subject ?wikipage ?label ?lat ?long WHERE {		     ' +
+						'															     ' +
+						'	?subject geo:lat ?lat.									     ' +
+						'	?subject geo:long ?long.								     ' +
+						'	?subject rdfs:label ?label.								     ' +
+						'	?subject rdfs:label ?distance.							     ' +
+						'	?subject foaf:isPrimaryTopicOf ?wikipage.				     ' +
+						'															     ' +
+						'	FILTER(													     ' +
+						'		xsd:double(?lat) - xsd:double(\'' + lat + '\') <= 0.05 &&	     ' +
+						'		xsd:double(\'' + lat + '\') - xsd:double(?lat) <= 0.05 &&	     ' +
+						'		xsd:double(?long) - xsd:double(\'' + long + '\') <= 0.05 &&    ' +
+						'		xsd:double(\'' + long + '\') - xsd:double(?long) <= 0.05 &&    ' +
+						'		lang(?label) = "en"									     ' +
+						'	).														     ' +
+						'}															     ' +
+						'ORDER BY ASC((xsd:double(?lat) - xsd:double(\'' + lat + '\')) * (xsd:double(?lat) - xsd:double(\'' + lat + '\')) + (xsd:double(\'' + long + '\') - xsd:double(?long)) * (xsd:double(\'' + long + '\') - xsd:double(?long)))						 ' +
+						'LIMIT 20';
+		var client = new SparqlClient(endpoint);
+
+		returnData.venues = [];
+
+		client.query(query).execute(function(error, results) {
+		
+			if (!error) {
+				for (var i = 0; i < results.results.bindings.length; i++) {
+					
+					var currentrow = results.results.bindings[i];
+					
+					returnData.venues.push({'wikipage': currentrow.wikipage.value, 'label': currentrow.label.value, 'lat': currentrow.lat.value, 'long': currentrow.long.value});
+					
+				}
+				
+				fn(null, returnData);
+			} else {
+				console.log(error);
+				fn(error, null);
+		  	}
+			
+		});
+		
+	});
+	
 	socket.on('database_get_user_and_tweets', function(user_id, fn) {
 		console.log("database_get_user_and_tweets id: " + user_id);
 		var data = {};
