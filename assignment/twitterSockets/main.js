@@ -160,7 +160,7 @@ io.on('connection', function(socket) {
 					for (var i = 0; i < screennamesandids.length; i++) keywordsTable['users'].push(screennamesandids[i]);
 					keywordsTable['words'] = [];
 					stream.on('data', function(data) {
-						keywordsTable = addKeywordToTable(keywordsTable, data.user.id, data.text.toLowerCase().split(" "));
+						keywordsTable = addKeywordToTable(keywordsTable, data.user.id, data.text);//.toLowerCase().split(" ")
 						var tempdata = {};
 						var maxindex = params.keywords;
 						if (maxindex > keywordsTable.length) maxindex = keywordsTable.length;
