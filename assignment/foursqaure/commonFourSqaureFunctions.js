@@ -157,7 +157,7 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 
 var getCheckin = function(checkinId,twitterID, callback) {
 	var twitterExtractor = /twitterID=[0-9]+/;
-	console.log("saa: " +twitterID)
+	//console.log("twitterID: " +twitterID)
 // Configure the request
     var options = {
         // localhost does not work if you run from localhost the server itself
@@ -174,7 +174,7 @@ var getCheckin = function(checkinId,twitterID, callback) {
         function (error, response, body) {
         	var twitterIDHeader = response.client['_httpMessage']['_header'];
         	var twitterIDHope = twitterIDHeader.match(twitterExtractor);
-        	console.log(twitterIDHope);
+        	//console.log(twitterIDHope);
 			var checkin = {};
 			checkin.twitterID = twitterIDHope[0].replace('twitterID=','');
 			checkin.checkin = JSON.parse(response.body).response.checkin;
