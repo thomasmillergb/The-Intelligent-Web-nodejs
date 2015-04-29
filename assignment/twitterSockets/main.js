@@ -388,9 +388,9 @@ io.on('connection', function(socket) {
 							 dataoutput.user = data[0].user;
 
 							 foursqaure.getVenues(data, function(checkIns) {
-							 	console.log(checkIns);
+							 	//console.log(checkIns);
 							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
-							 		console.log(checkIns);
+							 		//console.log(checkIns);
 									checkIns.forEach(function(checkin, idx) {
 										var tempmarker = {};
 										tempmarker.lat = checkin.venue.location.lat;
