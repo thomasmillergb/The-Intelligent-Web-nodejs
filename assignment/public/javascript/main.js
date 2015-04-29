@@ -401,7 +401,7 @@ function setupUserPage(userJson) {
 		
 	//userJson = userJson['user'];	
 	
-	var userhtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s profile</h1><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
+	var userhtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s profile</h3><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
 	  				
 	  			
 	if (userJson['location'] !== undefined && userJson['location'] != null)
@@ -418,6 +418,50 @@ function setupUserPage(userJson) {
 	userhtml += '</td></tr></table><div id="user_tweet_location_return"></div><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_tweet_return"></div></div>';
 	
 	$("#alternate_panel_container").html(userhtml);
+}
+
+// Adds the information to the point of iterest page after the information is retirned
+function setupVenuePage(POIJson) {
+		
+	//userJson = userJson['user'];	
+	
+	var POIhtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - Points of interest near ' + POIJson['name'] + '</h3>';			
+	
+	POIhtml += '<div id="poi_venue_location_return"></div><hr><h1>Venues</h1>Below are the closed 20 venues to ' + POIJson.name + '<div id="poi_venue_location_table_return"></div></div>';
+	
+	$("#alternate_panel_container").html(POIhtml);
+}
+
+// Appends an element with a table of poi locations
+function POITable(element, tableJson) {
+	
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Name</td><td>Location</td><td>Distance from original location</td><td>Wikipedia Page</td></tr>';
+	
+	for (i = 0; i < tableJson.venues.length; i++) {
+		tablehtml += '<tr><td>' + tableJson.venues[i].label + '</td><td>' + tableJson.venues[i].lat + ', ' + tableJson.venues[i].long + '</td><td>' + getDistanceFromLatLonInKm(tableJson.venues[i].lat,tableJson.venues[i].long,tableJson.lat,tableJson.long).toFixed(1) + 'km</td><td><a href="' + tableJson.venues[i].wikipage + '" target="_blank">Wikipedia page</a></td></tr>';
+		
+	}
+
+	tablehtml += '</table>';
+	
+	element.append(tablehtml);
+	
+	return tablehtml;
+
+}
+
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+	var R = 6371; // Radius of the earth in km
+	var dLat = deg2rad(lat2-lat1);  // deg2rad below
+	var dLon = deg2rad(lon2-lon1); 
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+	var d = R * c; // Distance in km
+	return d;
+}
+
+function deg2rad(deg) {
+	return deg * (Math.PI/180)
 }
 
 // Appends an alement with a table of a set of users most used words in their tweets when given the json for it
@@ -456,15 +500,12 @@ function mostUsedWordsTable(element, tableJson) {
 // Appends an element with a table of a users most visited venues from json
 function visitedVenues(element, tableJson) {
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td><td>Latest visit date</td></tr>';
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td><td>Latest visit date</td><td>Points of interest</td></tr>';
 
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
 		
-		console.log(row['date']);
-		console.log(new Date(row['date']));
-		
-		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td></tr>';
+		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td><td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td></tr>';
 	}
 	
 	tablehtml += '</table>';
@@ -516,7 +557,7 @@ function setupUserDatabasePage(userJson) {
 		
 	//userJson = userJson['user'];	
 	
-	var userhtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s details from database</h1><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
+	var userhtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s details from database</h3><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
 	  				
 	  			
 	if (userJson['location'] !== undefined && userJson['location'] != null)
@@ -556,7 +597,7 @@ function databaseVenueTable(element, tableJson) {
 // Appends an element with a table of users that visited a venue in the database
 function setupVenueUsersDatabasePage(data) {
 	
-	var tablehtml = '<div class="center_wrapper"><h1><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - Users that have visited ' + data.location_name + '</h1><hr>';
+	var tablehtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - Users that have visited ' + data.location_name + '</h3><hr>';
 	
 	tablehtml += '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
 	

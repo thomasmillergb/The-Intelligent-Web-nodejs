@@ -275,7 +275,7 @@ $(function(){
 						
 						socket.on('stream_user_venues_search', function (data) {
 							
-							$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
+							$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>");
 					
 							visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						
@@ -294,7 +294,7 @@ $(function(){
 					
 						//console.log(data);
 					
-						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.id + "')\">View user's profile and Tweets</a>");
+						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>");
 					
 						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						
@@ -565,6 +565,39 @@ function getUserAndTweets(user_id) {
 			
 			for (i = 0; i < data.tweets.length; i++)
 				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
+			
+		}
+		
+	});
+	
+}
+
+function getPointsOfInterest(name, lat, long) {
+	
+	// TODO: Get tweets from AJAX and and them into the form before it opens
+	
+	toggleAlternatePanel(true);
+	
+	loadingOverlay(true);
+	
+	socket.emit('get_points_of_interest', name, lat, long, function (err, data) {
+		
+		loadingOverlay(false);
+		
+		if (err != null) {				
+			addNotification("Error", err, 5000);
+		} else {
+			addNotification("Points of interest", "Data recieved", 5000);
+			
+			setupVenuePage(data);
+			
+			POITable($("#poi_venue_location_table_return"), data);
+			
+			for (var indx in data.venues)
+				data.venues[indx].label = "<h3>" + data.venues[indx].label + "</h3><a href='" + data.venues[indx].wikipage + "' target='_blank'>" + data.venues[indx].wikipage + "</a>";
+			
+			appendLocation($("#poi_venue_location_return"), data.venues);
+
 			
 		}
 		
