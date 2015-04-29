@@ -17,14 +17,14 @@ twitterRestAPI = new Twit({
 });
 
 //test functions
-
-searchParams = { screen_name : "jtmcilveen"};
+//jtmcilveen
+searchParams = { screen_name : "jtmcilveen", count:200};
 //searchParams = { screen_name : "KillerMillerGB"};
 //twitterRestAPI.get('users/lookup', searchParams, function(err, data, response) {
 twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 	if(!err){
-
-		userTweets("KillerMillerGB");
+		insertTwitterData(data);
+		//userTweets("KillerMillerGB");
 		//addVenue(data[0]);
 		//addTweet(data[2]);
 		//addUser(data[0]);
@@ -36,37 +36,89 @@ twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, r
 
 });
 
-
-var addUser = exports.addUser = function(userParms){
-	var sql = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ("+userParms.id+",'" + userParms.screen_name+"' , '"+userParms.name+"', '"+userParms.location+"', '"+userParms.url+"', '"+userParms.created_at+"', '"+userParms.description+"', '"+userParms.profile_image_url+"', 'https://twitter.com/"+userParms.screen_name+ "')";
-	connection.query(sql,function(err, result){
-		if(!err)
-			console.log(result);
-		else
+var insertTwitterData =exports.insertTwitterData = function(data) {
+	var addUser = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ";
+	var addTweet = "INSERT IGNORE INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ";
+	var addVenue = "INSERT IGNORE INTO `venues` (`name`,`lat`, `long`, `tweet_fk_id`) VALUES ";
+	var venueCount = 0;
+	data.forEach(function(tweet, index) {
+		
+		var userParms =  tweet.user;
+		console.log(tweet.user);
+		addUser +="("+userParms.id+"," + mysql.escape(userParms.screen_name)+" , "+mysql.escape(userParms.name)+", "+mysql.escape(userParms.location)+", "+mysql.escape(userParms.url)+", '"+userParms.created_at+"', "+ mysql.escape(userParms.description) +", '"+userParms.profile_image_url+"', " + mysql.escape('https://twitter.com/'+userParms.screen_name) + "),"
+		addTweet += "("+tweet.id+"," + mysql.escape(tweet.text) +" , '"+tweet.created_at+"','"+tweet.user.id+"'),";
+		if(tweet.currentData && tweet.coordinates.coordinates[1]){
+			venueCount++;
+	        var lat = currentData.coordinates.coordinates[1];
+	        var long = currentData.coordinates.coordinates[0];
+			addVenue += "("+mysql.escape(tweet.place.name)+","+lat+","+long+","+tweet.id+"),"
+		}
+		else if(tweet.place){
+			venueCount++;
+			addVenue += "("+mysql.escape(tweet.place.name)+","+0.0+","+0.0+","+tweet.id+"),"
+		}
+	});
+	connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
+		console.log(err);
+		connection.query(addTweet.substring(0, addTweet.length - 1),function(err, result){
 			console.log(err);
-	
+			if(venueCount !=0){
+				connection.query(addVenue.substring(0, addVenue.length - 1),function(err, result){
+					console.log(err);
+				});
+			}
+		});
+	});
+
+}
+function createEffcientInsertingStatment(data){
+
+
+}
+var addUser = exports.addUser = function(tweet, callback){
+	var userParms =  tweet.user
+	     //connection.query('INSERT INTO `lastPosition` SET ? ON DUPLICATE KEY UPDATE Lat=VALUES(Lat), Lon=VALUES(Lon), Time=VALUES(Time)', result);
+	var sql = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ("+userParms.id+",'" + userParms.screen_name+"' , '"+userParms.name+"', '"+userParms.location+"', '"+userParms.url+"', '"+userParms.created_at+"', '"+userParms.description+"', '"+userParms.profile_image_url+"', 'https://twitter.com/"+userParms.screen_name+ "')"+
+	" ON DUPLICATE KEY UPDATE `screenName`=('"+ userParms.screen_name+"')"
+	//"ON DUPLICATE KEY UPDATE `screenName`=('"+ userParms.screen_name+"') `name`=('"+ userParms.name+"') `location`=('"+ userParms.location+"') `website`('"+ userParms.url+"')  `description`=('"+ userParms.description+"') image_url('"+ userParms.profile_image_url+"') user_url('https://twitter.com/"+userParms.screen_name+ "') ";
+																										
+	connection.query(sql,function(err, result){
+		if(!err){
+			addTweet(tweet);
+			console.log("add user: "+result);
+		}
+		else{
+			addTweet(tweet);
+			console.log("add user err: "+err);
+			}	
+			callback();
+		
 
 	});
 
 
 };
 
-var addTweet = exports.addTweet = function(tweet){
-	
+var addTweet = exports.addTweet = function(tweet, callback){
+	//(97382675626729470,'#neverinamillionyears would I ever voluntarily put sots in my eyes.. It just sounds painful, and I cant see the allure of getting drunk :\' , 'Sat Jul 30 19:06:53 +0000 2011','308358479')
 	var sql = "INSERT INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ("+tweet.id+",'" + tweet.text+"' , '"+tweet.created_at+"','"+tweet.user.id+"')";
-	console.log(sql);
+	
+	//console.log(sql);
 		connection.query(sql,function(err, result){
 		if(!err){
+			/*
 			if(tweet.place)
 				addVenue(tweet);
 
 			else
-			console.log(err);
+				*/
+			console.log("add tweet:" +result);
 		}
 		else
 		{
-			console.log(err);
+			console.log("add tweet err:" +err);
 		}
+		callback();
 
 	});
 };
@@ -127,7 +179,7 @@ var userTweets = exports.userSearch = function(user){
 
 
 
-var addFourSqaureUser = exports.addUser = function(userParms){
+var addFourSqaureUser = exports.addFourSqaureUser = function(userParms){
 	var gender = 0;
 	if(userParms == 'femail')
 		gender = 1;
@@ -143,9 +195,9 @@ var addFourSqaureUser = exports.addUser = function(userParms){
 	});
 
 };
-var addVenue = exports.addFourSquareVenue = function(checkin){
+var addFourSquareVenue = exports.addFourSquareVenue = function(checkin){
 	var venue = checkin.venue;
-	var sql = "INSERT INTO `venues` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`) VALUES ('"+venue.id+"',"+venue.name+","+venue.lat+",'"+venue.lng+"','"checkin.id+"')";
+	var sql = "INSERT INTO `venues` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`) VALUES ('"+venue.id+"',"+venue.name+","+venue.lat+",'"+venue.lng+"','"+checkin.id+"')";
 	connection.query(sql,function(err, result){
 		if(!err)
 			console.log(result);

@@ -4,6 +4,8 @@ var foursqaure = require('../foursqaure/main.js');
 //var keyWords = require('./keywords.js');
 var keyword_extractor = require("keyword-extractor");
 var twitterFunctions = require('./twitterFunction.js');
+
+var mySQL = require('../mySQL/main.js')
 var twitterAPI;
 var twitterRestAPI;
 var io = require('socket.io').listen(3001, {
@@ -95,9 +97,13 @@ io.on('connection', function(socket) {
 			twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
 				if (!err) {
 					var venues = [];
+
+					mySQL.insertTwitterData(data.statuses);
 					for (var indx in data.statuses) {
 						var currentData = data.statuses[indx];
 						venues = twitterFunctions.venues(currentData, venues);
+		
+
 					}
 					var venuemarkers = [];
 					for (var indx in venues)
@@ -372,22 +378,33 @@ io.on('connection', function(socket) {
 						//searchParams.foursqaure = true;
 						if (params.twitterfoursquare == 'foursquare') {
 							var dataoutput = {};
-							if (data.length > 0) dataoutput.user = data[0].user;
-							foursqaure.getVenues(data, function(checkIns) {
-								checkIns.forEach(function(checkin, idx) {
-									var tempmarker = {};
-									tempmarker.lat = checkin.venue.location.lat;
-									tempmarker.long = checkin.venue.location.lng;
-									tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
-									venuemarkers.push(tempmarker);
-									venues = foursqaure.venues(checkin, venues);
-									if (idx == checkIns.length - 1) {
-										//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
-										dataoutput.markers = venuemarkers;
-										dataoutput.visitedvenuestable = venues;
-										fn(null, dataoutput);
-									}
-								});
+							if (data.length > 0)
+							 dataoutput.user = data[0].user;
+
+							 foursqaure.getVenues(data, function(checkIns) {
+							 	console.log(checkIns);
+							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
+							 		console.log(checkIns);
+									checkIns.forEach(function(checkin, idx) {
+										var tempmarker = {};
+										tempmarker.lat = checkin.venue.location.lat;
+										tempmarker.long = checkin.venue.location.lng;
+										tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
+										venuemarkers.push(tempmarker);
+										venues = foursqaure.venues(checkin, venues);
+										if (idx == checkIns.length - 1) {
+											//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
+											dataoutput.markers = venuemarkers;
+											dataoutput.visitedvenuestable = venues;
+											fn(null, dataoutput);
+										}
+									});
+								}
+								else{
+									console.log("No Foursqaure checkIns");
+									fn("No Foursqaure checkIns", null);
+
+								}
 							});
 						} else {
 							for (var indx in data) {
