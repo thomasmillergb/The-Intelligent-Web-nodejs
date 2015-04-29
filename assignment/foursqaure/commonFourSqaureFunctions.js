@@ -78,12 +78,16 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 
 					result2 = result2[0].replace('c/','');
 				    //console.log(result2);
-				    getCheckin(result2,function(checkin){
-				    	checkins.push(checkin);
-				    	counter++;
-				    
-				    	if(tweets.length == counter){
+				    getCheckin(result2,tweet.user.id,function(err, checkin){
+				    	if(err)
 				    		callback(checkins);
+			    		else{
+					    	checkins.push(checkin);
+					    	counter++;
+				    
+					    	if(tweets.length == counter){
+					    		callback(checkins);
+					    	}
 				    	}
 				    });
 				}
@@ -128,11 +132,14 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 				var result2 = longUrl.match(fourRegex);
 				result2 = result2[0].replace('c/','');
 			    //console.log(result2);
-			    getCheckin(result2,function(checkin){
+			    getCheckin(result2,tweets.user.id,function(err, checkin){
+		    	if(err)
+		    		callback(checkins);
+		    	else{
 			    	checkins.push(checkin);
 			    
 			    	callback(checkins);
-			    	
+}			    	
 			    });
 			}
 			else
@@ -148,8 +155,9 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
    
 
 
-var getCheckin = function(checkinId, callback) {
-	
+var getCheckin = function(checkinId,twitterID, callback) {
+	var twitterExtractor = /twitterID=[0-9]+/;
+	console.log("saa: " +twitterID)
 // Configure the request
     var options = {
         // localhost does not work if you run from localhost the server itself
@@ -157,32 +165,46 @@ var getCheckin = function(checkinId, callback) {
         method: 'GET',
         headers: headers,
         qs: {'shortId': checkinId, 'oauth_token': accessToken,
-            'v': '20140806', m: 'swarm'}
+            'v': '20140806', m: 'swarm', 'twitterID':twitterID}
     }
 
 // Start the request
+
     request(options,
         function (error, response, body) {
-
-        	//console.log("come on");
+        	var twitterIDHeader = response.client['_httpMessage']['_header'];
+        	var twitterIDHope = twitterIDHeader.match(twitterExtractor);
+        	console.log(twitterIDHope);
+			var checkin = {};
+			checkin.twitterID = twitterIDHope[0].replace('twitterID=','');
+			checkin.checkin = JSON.parse(response.body).response.checkin;
+        
             if (!error && response.statusCode == 200) {
-                // Print out the response body
-                //console.log(body);
-                //console.log(response);
 
-                callback(JSON.parse(response.body).response.checkin);
-				//console.log(response);
+                callback(null,checkin);
+
             }
-            else console.log('errors: ' + response.statusCode + ' response: ' + JSON.parse(response.body).meta.errorDetail);
+            else {
+            	console.log('errors: ' + response.statusCode + ' response: ' + JSON.parse(response.body).meta.errorDetail);
+            if(response.statusCode=403){
+            	var datetime = new Date(response.caseless.dict['x-ratelimit-reset']*1000);
+            	console.log("API Resets at: " + datetime);
+            	callback("err",null);
+
+            }
+        }
         });
+
+
 }
 
 
 
  var urlExpander = require('expand-url');
-function expander(shortUrl,callback){
-    urlExpander.expand(shortUrl, function(err, longUrl){
 
+function expander(shortUrl,callback){
+    urlExpander.expand(shortUrl ,function(err, longUrl){
+    	//console.log(response)
   
         callback(longUrl);
     });

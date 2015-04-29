@@ -2,20 +2,25 @@ var mysql      = require('mysql');
 var prettyjson = require('prettyjson');
 var Twit = require('twit');
 var dateFormat = require('dateformat');
-var connection = mysql.createConnection({
-  host     : 'jamesmcilveen.com',
-  user     : 'iw',
-  password : 'web123',
-  database : 'intelligent_web'
-});
 
+var foursqaure = require('../foursqaure/main.js');
+
+function createConnection(callback){
+	var connection = mysql.createConnection({
+	  host     : 'jamesmcilveen.com',
+	  user     : 'iw',
+	  password : 'web123',
+	  database : 'intelligent_web'
+	});
+	callback(connection);
+}
 twitterRestAPI = new Twit({
   consumer_key: 'NlT41DmogCgb5C6PsgogvHy29',
   consumer_secret: '4e0sav0ciNSlafDjMWjQKXAQXCmxAC3vfTQv9TuB5LEiJPP905',
   access_token: "351930928-yxyRBBj5UOOKXVBGNrVXs562E77PkWgPglqP0yma",
   access_token_secret: "hqDIZPei3XVXliXGCMiSqkW4pCaLrgI1pzxr9PVidPVLh"	
 });
-
+/*
 //test functions
 //jtmcilveen
 searchParams = { screen_name : "jtmcilveen", count:200};
@@ -35,46 +40,95 @@ twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, r
 	}
 
 });
-
+*/
 var insertTwitterData =exports.insertTwitterData = function(data) {
-	var addUser = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ";
-	var addTweet = "INSERT IGNORE INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ";
-	var addVenue = "INSERT IGNORE INTO `venues` (`name`,`lat`, `long`, `tweet_fk_id`) VALUES ";
-	var venueCount = 0;
-	data.forEach(function(tweet, index) {
-		
-		var userParms =  tweet.user;
-		console.log(tweet.user);
-		addUser +="("+userParms.id+"," + mysql.escape(userParms.screen_name)+" , "+mysql.escape(userParms.name)+", "+mysql.escape(userParms.location)+", "+mysql.escape(userParms.url)+", '"+userParms.created_at+"', "+ mysql.escape(userParms.description) +", '"+userParms.profile_image_url+"', " + mysql.escape('https://twitter.com/'+userParms.screen_name) + "),"
-		addTweet += "("+tweet.id+"," + mysql.escape(tweet.text) +" , '"+tweet.created_at+"','"+tweet.user.id+"'),";
-		if(tweet.currentData && tweet.coordinates.coordinates[1]){
-			venueCount++;
-	        var lat = currentData.coordinates.coordinates[1];
-	        var long = currentData.coordinates.coordinates[0];
-			addVenue += "("+mysql.escape(tweet.place.name)+","+lat+","+long+","+tweet.id+"),"
-		}
-		else if(tweet.place){
-			venueCount++;
-			addVenue += "("+mysql.escape(tweet.place.name)+","+0.0+","+0.0+","+tweet.id+"),"
-		}
-	});
-	connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
-		console.log(err);
-		connection.query(addTweet.substring(0, addTweet.length - 1),function(err, result){
-			console.log(err);
-			if(venueCount !=0){
-				connection.query(addVenue.substring(0, addVenue.length - 1),function(err, result){
-					console.log(err);
-				});
+	createConnection(function(connection){
+		var addUser = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ";
+		var addTweet = "INSERT IGNORE INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ";
+		var addVenue = "INSERT IGNORE INTO `venues` (`name`,`lat`, `long`, `tweet_fk_id`) VALUES ";
+		var venueCount = 0;
+		data.forEach(function(tweet, index) {
+			
+			var userParms =  tweet.user;
+			
+			addUser +="("+userParms.id+"," + mysql.escape(userParms.screen_name)+" , "+mysql.escape(userParms.name)+", "+mysql.escape(userParms.location)+", "+mysql.escape(userParms.url)+", '"+userParms.created_at+"', "+ mysql.escape(userParms.description) +", '"+userParms.profile_image_url+"', " + mysql.escape('https://twitter.com/'+userParms.screen_name) + "),"
+			addTweet += "("+tweet.id+"," + mysql.escape(tweet.text) +" , '"+tweet.created_at+"','"+tweet.user.id+"'),";
+			if(tweet.currentData && tweet.coordinates.coordinates[1]){
+				venueCount++;
+		        var lat = currentData.coordinates.coordinates[1];
+		        var long = currentData.coordinates.coordinates[0];
+				addVenue += "("+mysql.escape(tweet.place.name)+","+lat+","+long+","+tweet.id+"),"
+			}
+			else if(tweet.place){
+				venueCount++;
+				addVenue += "("+mysql.escape(tweet.place.name)+","+0.0+","+0.0+","+tweet.id+"),"
 			}
 		});
+		connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
+			if(err)console.log(err);
+			connection.query(addTweet.substring(0, addTweet.length - 1),function(err, result){
+				if(err)console.log(err);
+				if(venueCount !=0){
+					connection.query(addVenue.substring(0, addVenue.length - 1),function(err, result){
+						if(err)console.log(err);
+						connection.end();
+					});
+				}else{
+					connection.end();
+				}
+			});
+		});
+	});
+}
+var insertFourSqaureFromTwitterData =exports.insertFourSqaureFromTwitterData = function(data) {
+
+	foursqaure.getVenues(data, function(checkIns) {
+		console.log("comeon");
+		console.log(checkIns);
+		insertFourSqaureData(checkIns);
+	});
+}
+var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID) {
+
+
+	createConnection(function(connection){
+
+		var addVenue = "INSERT IGNORE INTO `foursqaure_venue` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`) VALUES ";
+		var addUser = "INSERT IGNORE INTO `foursqaure_users` (`foursqaure_id`, `twitter_user_fk_id`, `firstName`, `lastName`, `female`, `photoURL`) VALUES ";
+
+		if(checkInsAndID != null && checkInsAndID != [] && checkInsAndID.length > 0){
+			checkInsAndID.forEach(function(checkinAndID, idx) {
+				var checkin = checkinAndID.checkin
+
+				//console.log(checkin);
+				
+				var userParms = checkin.user;
+				var gender = 0;
+				if(userParms == 'femail')
+					gender = 1;
+				var photoURL = userParms.photo.prefix + userParms.photo.suffix.substring(1);
+
+				addUser += "("+userParms.id+"," +checkinAndID.twitterID+"," + mysql.escape(userParms.firstName)+" , "+mysql.escape(userParms.lastName)+", '"+gender+"', '"+photoURL+"'),";
+
+				var venue = checkin.venue;
+				addVenue += "("+ mysql.escape(checkin.id) +","+mysql.escape(venue.id)+","+mysql.escape(venue.name)+","+venue.location.lat+","+venue.location.lng+","+mysql.escape(checkin.user.id)+","+ checkin.createdAt +"),";
+
+			});
+				connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
+					if(err)console.log(err);
+					connection.query(addVenue.substring(0, addVenue.length - 1),function(err, result){
+						if(err)console.log(err);
+						connection.end();
+					});
+
+				});
+
+
+		}
 	});
 
 }
-function createEffcientInsertingStatment(data){
 
-
-}
 var addUser = exports.addUser = function(tweet, callback){
 	var userParms =  tweet.user
 	     //connection.query('INSERT INTO `lastPosition` SET ? ON DUPLICATE KEY UPDATE Lat=VALUES(Lat), Lon=VALUES(Lon), Time=VALUES(Time)', result);
