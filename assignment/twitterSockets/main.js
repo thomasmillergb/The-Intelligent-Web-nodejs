@@ -184,7 +184,7 @@ io.on('connection', function(socket) {
 					if (twitterAPI.currentDiscussionStream != undefined) {
 						twitterAPI.currentDiscussionStream.destroy();
 						twitterAPI.currentDiscussionStream = undefined;
-						keyWords.reset();
+						//keyWords.reset();
 					}
 					return fn();
 				});
