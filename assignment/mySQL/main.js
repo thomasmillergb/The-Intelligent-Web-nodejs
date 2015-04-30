@@ -48,8 +48,18 @@ var insertTwitterData =exports.insertTwitterData = function(data) {
 		var addTweet = "INSERT IGNORE INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ";
 		var addVenue = "INSERT IGNORE INTO `venues` (`name`,`lat`, `long`, `tweet_fk_id`) VALUES ";
 		var venueCount = 0;
+		//console.log(data);
+		//sort out if not array
+		
+		if(!Array.isArray(data)){
+			var x = [];
+			x.push(data);
+			data = [];
+			data = x;
+		}
+		//console.log(data);
 		data.forEach(function(tweet, index) {
-			
+			//console.log(tweet);
 			var userParms =  tweet.user;
 			
 			addUser +="("+userParms.id+"," + mysql.escape(userParms.screen_name)+" , "+mysql.escape(userParms.name)+", "+mysql.escape(userParms.location)+", "+mysql.escape(userParms.url)+", '"+userParms.created_at+"', "+ mysql.escape(userParms.description) +", '"+userParms.profile_image_url+"', " + mysql.escape('https://twitter.com/'+userParms.screen_name) + "),"
@@ -65,6 +75,7 @@ var insertTwitterData =exports.insertTwitterData = function(data) {
 				addVenue += "("+mysql.escape(tweet.place.name)+","+0.0+","+0.0+","+tweet.id+"),"
 			}
 		});
+		//console.log(addUser);
 		connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
 			if(err)console.log(err);
 			connection.query(addTweet.substring(0, addTweet.length - 1),function(err, result){
@@ -117,7 +128,7 @@ var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID)
 				addVenue += "("+ mysql.escape(checkin.id) +","+mysql.escape(venue.id)+","+mysql.escape(venue.name)+","+venue.location.lat+","+venue.location.lng+","+mysql.escape(checkin.user.id)+","+ checkin.createdAt +","+checkinAndID.tweetID+"),";
 
 			});
-			//console.log(addVenue);
+			//console.log(addUser);
 				connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
 					if(err)console.log(err);
 					//console.log(addVenue);

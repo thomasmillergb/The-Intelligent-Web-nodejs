@@ -169,7 +169,10 @@ io.on('connection', function(socket) {
 						tempdata.userdiscussiontable = {};
 						tempdata.userdiscussiontable.users = keywordsTable.users;
 						tempdata.userdiscussiontable.words = keywordsTable.words.slice(0, maxindex);
+						
+						mySQL.insertTwitterData(data);
 						mySQL.insertFourSqaureFromTwitterData(data);
+						
 						if (data.coordinates) {
 							tempdata.marker = {};
 							tempdata.marker.lat = data.coordinates.coordinates[1];
@@ -265,7 +268,7 @@ io.on('connection', function(socket) {
 
 	function addKeywordToTable(keywordsTable, userid, words) {
 		//words = words.toLowerCase().split(" ");
-		console.log(words);
+		//console.log(words);
 		//Lemmalise apostrophies and get rid of non alphanum
 		var striped = words.replace(/('[a-zA-Z])/g, "");
 		striped = striped.replace(/[^a-zA-Z ]/g, "");
