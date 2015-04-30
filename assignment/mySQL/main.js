@@ -20,7 +20,7 @@ twitterRestAPI = new Twit({
   access_token: "351930928-yxyRBBj5UOOKXVBGNrVXs562E77PkWgPglqP0yma",
   access_token_secret: "hqDIZPei3XVXliXGCMiSqkW4pCaLrgI1pzxr9PVidPVLh"	
 });
-
+/*
 //test functions
 //jtmcilveen
 searchParams = { screen_name : "KillerMillerGB", count:2};
@@ -28,7 +28,7 @@ searchParams = { screen_name : "KillerMillerGB", count:2};
 //twitterRestAPI.get('users/lookup', searchParams, function(err, data, response) {
 twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 	if(!err){
-		//insertTwitterData(data);
+		insertTwitterData(data);
 		//userTweets("KillerMillerGB");
 		//addVenue(data[0]);
 		//addTweet(data[2]);
@@ -41,7 +41,7 @@ twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, r
 	}
 
 });
-
+*/
 var insertTwitterData =exports.insertTwitterData = function(data) {
 	createConnection(function(connection){
 		var addUser = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ";
@@ -120,7 +120,7 @@ var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID)
 			//console.log(addVenue);
 				connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
 					if(err)console.log(err);
-					
+					//console.log(addVenue);
 					connection.query(addVenue.substring(0, addVenue.length - 1),function(err, result){
 						if(err)console.log(err);
 						connection.end();

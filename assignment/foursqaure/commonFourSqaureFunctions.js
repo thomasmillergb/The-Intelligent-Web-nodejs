@@ -131,18 +131,20 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
    
 }
 
-var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function(tweets,callback){
+var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function(tweet,callback){
 
 
 	var checkins = [];
-	if('<a href="http://foursquare.com" rel="nofollow">Foursquare</a>'==tweets.source){
+	if('<a href="http://foursquare.com" rel="nofollow">Foursquare</a>'==tweet.source){
 
 		var regex = /t.co\/[a-zA-Z0-9]+/;
-		var result = tweets.text.match(regex);
+		var result = tweet.text.match(regex);
 	    //console.log(result[0]);
+	    var id = result[0].replace('t.co/','');
+	    var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id
 	    urlExpander(shortTwitterURL,function(longUrl, userID, tweetID){
 
-	    	console.log(originalUrl);
+	    	
 	    	//console.log(longUrl);
 	    	var fourRegex = /c\/[a-zA-Z0-9]+/;
 
