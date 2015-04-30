@@ -328,12 +328,13 @@ io.on('connection', function(socket) {
 					stream.on('data', function(data) {
 						var user = data.user;
 						//params.foursqaure = true;
+						mySQL.insertTwitterData(checkIns);
+						
 						if (params.twitterfoursquare == 'foursquare') {
 							foursqaure.getVenues(data, function(checkIns) {
 								if (checkIns != null) {
-									console.log(data.user.id);
+									
 									mySQL.insertFourSqaureData(checkIns);
-
 									checkIns.forEach(function(checkinAndId, idx) {
 										var checkin = checkinAndId.checkin;
 										returndata = {};
@@ -351,7 +352,8 @@ io.on('connection', function(socket) {
 								}
 							});
 						} else {
-							console.log(data);
+							mySQL.insertFourSqaureFromTwitterData(data);
+							//console.log(data);
 							user = data.user;
 							venues = twitterFunctions.venues(data, venues);
 							var returndata = {};
@@ -438,7 +440,7 @@ io.on('connection', function(socket) {
 								
 							});
 						} else {
-
+							mySQL.insertFourSqaureFromTwitterData(data);
 							for (var indx in data) {
 								var currentData = data[indx];
 								var found;
