@@ -63,22 +63,34 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 
 			var regex = /t.co\/[a-zA-Z0-9]+/;
 			var result = tweet.text.match(regex);
-			//var id = result[0].replace('t.co/','');
+			var id = result[0].replace('t.co/','');
 		    //console.log(urlExpander.expand(result[0]));
 		    //console.log(result[0]);
+
+
 		    /*
 		    expandUrl("http://"+result[0])
 			.then(function (longUrl) {
 				*/
-				expander("http://"+result[0],function(longUrl){
+
+
+				var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id
+				/*
+				expander(shortTwitterURL,function(longUrl){
+					*/
+				urlExpander(shortTwitterURL,function(longUrl, userID, tweetID){
+
+
 				var fourRegex = /c\/[a-zA-Z0-9]+/;
 				if(fourRegex.test(longUrl)){
 
 					var result2 = longUrl.match(fourRegex);
 
 					result2 = result2[0].replace('c/','');
+				//	console.log(result2);
 				    //console.log(result2);
-				    getCheckin(result2,tweet.user.id,function(err, checkin){
+				    
+				    getCheckin(result2,userID,tweetID,function(err, checkin){
 				    	if(err)
 				    		callback(checkins);
 			    		else{
@@ -90,6 +102,7 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 					    	}
 				    	}
 				    });
+
 				}
 				else{
 					counter++;
@@ -99,7 +112,9 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 
 				    }
 				}
+				
 			});
+
 	
 		}
 		else{
@@ -115,6 +130,7 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 
    
 }
+
 var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function(tweets,callback){
 
 
@@ -124,15 +140,19 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 		var regex = /t.co\/[a-zA-Z0-9]+/;
 		var result = tweets.text.match(regex);
 	    //console.log(result[0]);
-	    expander("http://"+result[0],function(longUrl){
+	    urlExpander(shortTwitterURL,function(longUrl, userID, tweetID){
+
+	    	console.log(originalUrl);
 	    	//console.log(longUrl);
 	    	var fourRegex = /c\/[a-zA-Z0-9]+/;
+
 			if(fourRegex.test(longUrl)){
 				
 				var result2 = longUrl.match(fourRegex);
 				result2 = result2[0].replace('c/','');
+
 			    //console.log(result2);
-			    getCheckin(result2,tweets.user.id,function(err, checkin){
+			    getCheckin(result2,userID,tweetID,function(err, checkin){
 		    	if(err)
 		    		callback(checkins);
 		    	else{
@@ -155,8 +175,10 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
    
 
 
-var getCheckin = function(checkinId,twitterID, callback) {
-	var twitterExtractor = /twitterID=[0-9]+/;
+var getCheckin = function(checkinId,userID,tweetID, callback) {
+	var checkinExtractor = /shortId=[a-zA-Z0-9]+/;
+	var twitterUserExtractor = /userID=[0-9]+/;
+	var tweetIDExtractor = /tweetID=[0-9]+/;
 	//console.log("twitterID: " +twitterID)
 // Configure the request
     var options = {
@@ -165,18 +187,30 @@ var getCheckin = function(checkinId,twitterID, callback) {
         method: 'GET',
         headers: headers,
         qs: {'shortId': checkinId, 'oauth_token': accessToken,
-            'v': '20140806', m: 'swarm', 'twitterID':twitterID}
+            'v': '20140806', m: 'swarm', 'userID':userID, 'tweetID':tweetID}
     }
 
 // Start the request
 
     request(options,
         function (error, response, body) {
-        	var twitterIDHeader = response.client['_httpMessage']['_header'];
-        	var twitterIDHope = twitterIDHeader.match(twitterExtractor);
-        	//console.log(twitterIDHope);
+        	var header = response.client['_httpMessage']['_header'];
+        	var twitterUserIDHeader = header.match(twitterUserExtractor);
+        	var tweetIDHeader = header.match(tweetIDExtractor);
+
+      
+
+   			var checkinIDHeader = header.match(checkinExtractor);
+
+   			//console.log(checkinIDHeader);
 			var checkin = {};
-			checkin.twitterID = twitterIDHope[0].replace('twitterID=','');
+			checkin.swarmURL = checkinIDHeader[0].replace('shortId=','');
+			//console.log(checkin.swarmURL);
+
+			checkin.twitterID = twitterUserIDHeader[0].replace('userID=','');
+			checkin.tweetID = tweetIDHeader[0].replace('tweetID=','');
+			//console.log(twitterUserIDHeader[0]);
+
 			checkin.checkin = JSON.parse(response.body).response.checkin;
         
             if (!error && response.statusCode == 200) {
@@ -199,14 +233,65 @@ var getCheckin = function(checkinId,twitterID, callback) {
 }
 
 
-
+/*
  var urlExpander = require('expand-url');
 
+
 function expander(shortUrl,callback){
+
     urlExpander.expand(shortUrl ,function(err, longUrl){
     	//console.log(response)
   
         callback(longUrl);
     });
+
+}
+
+var SingleUrlExpander = require('url-expander').SingleUrlExpander;
+
+function expander(shortUrl,callback){
+	//console.log(shortUrl);
+	var expander = new SingleUrlExpander(shortUrl);
+	//console.log(expander);
+	expander.on('expanded', function (originalUrl, expandedUrl) {
+    // do something
+    console.log(originalUrl);
+    console.log(expandedUrl);
+	});
+	expander.expand();
+
+}
+*/  
+var http = require('http');
+function urlExpander(url,callback){
+  //console.log(url);
+  var options = {
+  host: 't.co',
+  port: 80,
+  path: '/'+url,
+  method: 'GET'
+  };
+  var twitterUserExtractor = /tweetUserID=[0-9]+/;
+  var tweetIDExtractor = /tweetID=[0-9]+/;
+  var req = http.request(options, function(res) {
+  	        var header = res.client['_httpMessage']['_header'];
+        	var twitterUserIDHeader = header.match(twitterUserExtractor);
+        	var tweetIDHeader = header.match(tweetIDExtractor);
+        	var twitterUserID = twitterUserIDHeader[0].replace('tweetUserID=','');
+        	var tweetID = tweetIDHeader[0].replace('tweetID=','');
+  //console.log(twitterIDHeader);
+  callback(JSON.stringify(res.headers),twitterUserID,tweetID);
+  //callback()
+  res.on('data', function (chunk) {
+    //console.log('BODY: ' + chunk);
+
+  });
+  });
+
+  req.on('error', function(e) {
+  console.log('problem with request: ' + e.message);
+  });
+
+  req.end();
 
 }

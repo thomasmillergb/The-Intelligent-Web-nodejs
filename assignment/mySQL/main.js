@@ -20,27 +20,28 @@ twitterRestAPI = new Twit({
   access_token: "351930928-yxyRBBj5UOOKXVBGNrVXs562E77PkWgPglqP0yma",
   access_token_secret: "hqDIZPei3XVXliXGCMiSqkW4pCaLrgI1pzxr9PVidPVLh"	
 });
-/*
+
 //test functions
 //jtmcilveen
-searchParams = { screen_name : "jtmcilveen", count:200};
+searchParams = { screen_name : "KillerMillerGB", count:2};
 //searchParams = { screen_name : "KillerMillerGB"};
 //twitterRestAPI.get('users/lookup', searchParams, function(err, data, response) {
 twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 	if(!err){
-		insertTwitterData(data);
+		//insertTwitterData(data);
 		//userTweets("KillerMillerGB");
 		//addVenue(data[0]);
 		//addTweet(data[2]);
 		//addUser(data[0]);
 		//console.log(data[0]);
+		insertFourSqaureFromTwitterData(data);
 	}
 	else{
 		console.log(err);
 	}
 
 });
-*/
+
 var insertTwitterData =exports.insertTwitterData = function(data) {
 	createConnection(function(connection){
 		var addUser = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ";
@@ -83,8 +84,7 @@ var insertTwitterData =exports.insertTwitterData = function(data) {
 var insertFourSqaureFromTwitterData =exports.insertFourSqaureFromTwitterData = function(data) {
 
 	foursqaure.getVenues(data, function(checkIns) {
-		console.log("comeon");
-		console.log(checkIns);
+		//console.log(checkIns);
 		insertFourSqaureData(checkIns);
 	});
 }
@@ -93,13 +93,16 @@ var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID)
 
 	createConnection(function(connection){
 
-		var addVenue = "INSERT IGNORE INTO `foursqaure_venue` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`) VALUES ";
+		var addVenue = "INSERT IGNORE INTO `foursqaure_venue` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`, `tweet_id_fk`) VALUES ";
 		var addUser = "INSERT IGNORE INTO `foursqaure_users` (`foursqaure_id`, `twitter_user_fk_id`, `firstName`, `lastName`, `female`, `photoURL`) VALUES ";
 
 		if(checkInsAndID != null && checkInsAndID != [] && checkInsAndID.length > 0){
 			checkInsAndID.forEach(function(checkinAndID, idx) {
 				var checkin = checkinAndID.checkin
-
+				/*
+				console.log("tweetid: "+checkinAndID.tweetID);
+				console.log("tweetid: "+checkinAndID.twitterID);
+*/
 				//console.log(checkin);
 				
 				var userParms = checkin.user;
@@ -111,15 +114,18 @@ var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID)
 				addUser += "("+userParms.id+"," +checkinAndID.twitterID+"," + mysql.escape(userParms.firstName)+" , "+mysql.escape(userParms.lastName)+", '"+gender+"', '"+photoURL+"'),";
 
 				var venue = checkin.venue;
-				addVenue += "("+ mysql.escape(checkin.id) +","+mysql.escape(venue.id)+","+mysql.escape(venue.name)+","+venue.location.lat+","+venue.location.lng+","+mysql.escape(checkin.user.id)+","+ checkin.createdAt +"),";
+				addVenue += "("+ mysql.escape(checkin.id) +","+mysql.escape(venue.id)+","+mysql.escape(venue.name)+","+venue.location.lat+","+venue.location.lng+","+mysql.escape(checkin.user.id)+","+ checkin.createdAt +","+checkinAndID.tweetID+"),";
 
 			});
+			//console.log(addVenue);
 				connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
 					if(err)console.log(err);
+					
 					connection.query(addVenue.substring(0, addVenue.length - 1),function(err, result){
 						if(err)console.log(err);
 						connection.end();
 					});
+
 
 				});
 

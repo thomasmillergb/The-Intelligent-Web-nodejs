@@ -1,4 +1,4 @@
- 
+ /*
 var request = require('deferred').promisify(require("request"));
 
 function expandUrl(shortUrl, callback) {
@@ -11,20 +11,25 @@ expandUrl("http://t.co/Xx5puY2Hhy",function(callback){
 console.log(callback);	
 });
 
-
- /*var http = require('http')
+*/
+function urlExpander(url,callback)
+ var http = require('http')
 var options = {
   host: 't.co',
   port: 80,
-  path: '/oN9zWeBjgp',
+  path: '/'+url,
   method: 'GET'
 };
 var req = http.request(options, function(res) {
-  console.log('STATUS: ' + res.statusCode);
-  console.log('HEADERS: ' + JSON.stringify(res.headers));
-  res.setEncoding('utf8');
+  //console.log('STATUS: ' + res.statusCode);
+  //console.log('HEADERS: ' + JSON.stringify(res.headers));
+  //var fourRegex = /c\/[a-zA-Z0-9]+/;
+  //res.headers
+  //res.setEncoding('utf8');
+  callback(JSON.stringify(res.headers));
   res.on('data', function (chunk) {
-    console.log('BODY: ' + chunk);
+    //console.log('BODY: ' + chunk);
+
   });
 });
 
@@ -36,7 +41,7 @@ req.on('error', function(e) {
 req.write('data\n');
 req.write('data\n');
 req.end();
-*/
+
 
   /*var Q = require("q");
   var request = require("request");
