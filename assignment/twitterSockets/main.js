@@ -343,7 +343,7 @@ io.on('connection', function(socket) {
 										returndata.markers.lat = checkin.venue.location.lat;
 										returndata.markers.long = checkin.venue.location.lng;
 										returndata.markers.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
-										venues = foursqaure.venues(checkin, venues);
+										venues = foursqaure.venues(checkinAndID, venues);
 										returndata.visitedvenuestable = venues;
 										io.sockets.emit('stream_user_venues_search', returndata);
 									});
@@ -421,7 +421,7 @@ io.on('connection', function(socket) {
 										tempmarker.long = checkin.venue.location.lng;
 										tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
 										venuemarkers.push(tempmarker);
-										venues = foursqaure.venues(checkin, venues);
+										venues = foursqaure.venues(checkinAndID, venues);
 										if (idx == checkIns.length - 1) {
 											//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
 											dataoutput.markers = venuemarkers;
@@ -522,18 +522,72 @@ io.on('connection', function(socket) {
 				fn();
 			} else {
 				var searchParams;
+				params.search = "swarmapp.com/c/";
 				searchParams = {
 					q: params.search,
 					geocode: [params.lat, params.long, params.radius + "mi"],
 					count: 200
 				};
+						
+
 				twitterRestAPI.get('search/tweets', searchParams, function(err, data, response) {
 					if (!err) {
+						var venuemarkers = [];
 						//Remove any tweets that are before the specified number of days
 						//There is no way to use the api to do this, so manual clipping 
 						//is needed
-						if (params.days > 0) data = sliceOlderTweets(data, params.days);
+
+						//if (params.days > 0) data = sliceOlderTweets(data, params.days);
 						var returndata = {};
+						if (params.twitterfoursquare != 'foursquare') {
+							var dataoutput = {};
+							var venues = [];
+							//console.log(data);
+							//console.log(data);
+							//console.log(data.length);
+							//console.log(data.statuses);
+							if (data.statuses.length > 0){
+							 foursqaure.getVenues(data.statuses, function(checkIns) {
+							 	//console.log(checkInArray);
+						 		//var checkIns = checkInArray.checkin;
+							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
+							 		
+//							 		console.log(checkIns);
+
+							 		//console.log(data.user.id);
+									//mySQL.insertFourSqaureData(checkIns);
+									checkIns.forEach(function(checkinAndID, idx) {
+
+										var checkin = checkinAndID.checkin;
+										var tempmarker = {};
+										tempmarker.lat = checkin.venue.location.lat;
+										tempmarker.long = checkin.venue.location.lng;
+										tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
+
+										venuemarkers.push(tempmarker);
+										venues = foursqaure.userVenues(checkinAndID, venues);
+										if (idx == checkIns.length - 1) {
+											//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
+											dataoutput.markers = venuemarkers;
+											dataoutput.visitedvenuestable = venues;
+											fn(null, dataoutput);
+										}
+									});
+									
+									
+								}
+								else{
+									console.log("No Foursqaure checkIns");
+									fn("No Foursqaure checkIns", null);
+
+								}
+								
+							});
+}else{
+		console.log("No Foursqaure checkIns");
+		fn("No Foursqaure checkIns, try extending area", null);
+}
+						} else{
 						returndata.visitedvenuestable = [];
 						for (var indx in data.statuses) returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx], returndata.visitedvenuestable);
 						returndata.markers = [];
@@ -548,6 +602,8 @@ io.on('connection', function(socket) {
 						}
 						//data.markers = venuemarkers;
 						fn(null, returndata);
+
+					}
 					} else {
 						console.log(err);
 						fn(null, null);

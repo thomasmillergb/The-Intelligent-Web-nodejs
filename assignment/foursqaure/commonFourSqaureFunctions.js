@@ -74,11 +74,11 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 				*/
 
 
-				var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id
+				var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id + "&screen_name=" +tweet.user.screen_name
 				/*
 				expander(shortTwitterURL,function(longUrl){
 					*/
-				urlExpander(shortTwitterURL,function(longUrl, userID, tweetID){
+				urlExpander(shortTwitterURL,function(longUrl, userID, tweetID,screen_name){
 
 
 				var fourRegex = /c\/[a-zA-Z0-9]+/;
@@ -90,7 +90,7 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 				//	console.log(result2);
 				    //console.log(result2);
 				    
-				    getCheckin(result2,userID,tweetID,function(err, checkin){
+				    getCheckin(result2,userID,tweetID,screen_name,function(err, checkin){
 				    	if(err)
 				    		callback(checkins);
 			    		else{
@@ -177,10 +177,13 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
    
 
 
-var getCheckin = function(checkinId,userID,tweetID, callback) {
+var getCheckin = function(checkinId,userID,tweetID,screen_name, callback) {
 	var checkinExtractor = /shortId=[a-zA-Z0-9]+/;
 	var twitterUserExtractor = /userID=[0-9]+/;
 	var tweetIDExtractor = /tweetID=[0-9]+/;
+
+
+	var tweetScreenNameExtractor = /screen_name=[a-zA-Z0-9]+/;
 	//console.log("twitterID: " +twitterID)
 // Configure the request
     var options = {
@@ -189,7 +192,7 @@ var getCheckin = function(checkinId,userID,tweetID, callback) {
         method: 'GET',
         headers: headers,
         qs: {'shortId': checkinId, 'oauth_token': accessToken,
-            'v': '20140806', m: 'swarm', 'userID':userID, 'tweetID':tweetID}
+            'v': '20140806', m: 'swarm', 'userID':userID, 'tweetID':tweetID, 'screen_name':screen_name}
     }
 
 // Start the request
@@ -199,10 +202,8 @@ var getCheckin = function(checkinId,userID,tweetID, callback) {
         	var header = response.client['_httpMessage']['_header'];
         	var twitterUserIDHeader = header.match(twitterUserExtractor);
         	var tweetIDHeader = header.match(tweetIDExtractor);
-
-      
-
    			var checkinIDHeader = header.match(checkinExtractor);
+   			var twitterScreen_nameHeader = header.match(tweetScreenNameExtractor);
 
    			//console.log(checkinIDHeader);
 			var checkin = {};
@@ -211,6 +212,7 @@ var getCheckin = function(checkinId,userID,tweetID, callback) {
 
 			checkin.twitterID = twitterUserIDHeader[0].replace('userID=','');
 			checkin.tweetID = tweetIDHeader[0].replace('tweetID=','');
+			checkin.screen_name = twitterScreen_nameHeader[0].replace('screen_name=','');
 			//console.log(twitterUserIDHeader[0]);
 
 			checkin.checkin = JSON.parse(response.body).response.checkin;
@@ -271,18 +273,37 @@ function urlExpander(url,callback){
   host: 't.co',
   port: 80,
   path: '/'+url,
-  method: 'GET'
+  method: 'POST'
   };
   var twitterUserExtractor = /tweetUserID=[0-9]+/;
   var tweetIDExtractor = /tweetID=[0-9]+/;
+  var tweetScreenNameExtractor = /screen_name=[@]*[a-zA-Z0-9]+/;
+	
+
+	
+	
+
   var req = http.request(options, function(res) {
   	        var header = res.client['_httpMessage']['_header'];
         	var twitterUserIDHeader = header.match(twitterUserExtractor);
         	var tweetIDHeader = header.match(tweetIDExtractor);
+        	var twitterScreen_nameHeader = header.match(tweetScreenNameExtractor);
+
+
+
         	var twitterUserID = twitterUserIDHeader[0].replace('tweetUserID=','');
         	var tweetID = tweetIDHeader[0].replace('tweetID=','');
+        	var screen_name;
+        	if(twitterScreen_nameHeader==null){
+        			screen_name = "anonymous user"
+        	}
+        	else
+        	{
+        			 screen_name = twitterScreen_nameHeader[0].replace('screen_name=','');
+        	}
+//        	console.log(screen_name);
   //console.log(twitterIDHeader);
-  callback(JSON.stringify(res.headers),twitterUserID,tweetID);
+  callback(JSON.stringify(res.headers),twitterUserID,tweetID, screen_name);
   //callback()
   res.on('data', function (chunk) {
     //console.log('BODY: ' + chunk);

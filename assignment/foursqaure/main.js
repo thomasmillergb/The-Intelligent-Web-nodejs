@@ -42,10 +42,16 @@ function findVenues(latitude, longitude, radius) {
 
 //findVenues(53.3829700, -1.4659000, 500, accessToken);
 
-exports.venues = function(checkin, venues){
-    
-   
+exports.venues = function(checkinAndID, venues){
+    var checkin = checkinAndID.checkin;
+            
+            //checkinAndID.tweetID;
     marker = {};
+    //console.log(checkinAndID.screen_name);
+    marker.user_id=checkinAndID.twitterID;
+    marker.screen_name=checkinAndID.user;
+    console.log(checkinAndID);
+    console.log(checkin);
     marker.venue = checkin.venue.name;
     marker.lat = checkin.venue.location.lat;
     marker.long = checkin.venue.location.lng;
@@ -80,7 +86,50 @@ exports.venues = function(checkin, venues){
 
 	return venues;
 }
+exports.userVenues = function(checkinAndID, venues){
+    var checkin = checkinAndID.checkin;
+            
+            //checkinAndID.tweetID;
+    marker = {};
+    //console.log(checkinAndID.screen_name);
+    marker.user_id=checkinAndID.twitterID;
+    marker.user=checkinAndID.screen_name;
 
+    marker.venue = checkin.venue.name;
+    marker.lat = checkin.venue.location.lat;
+    marker.long = checkin.venue.location.lng;
+    marker.label = "<h3>@" + checkin.user.firstName + " "+ checkin.user.lastName+  "</h3>" + checkin.shout + "";
+    marker.date = checkin.createdAt*1000;
+    //console.log(checkin);
+    //console.log(currentData); 
+    //console.log(marker);
+    if(venues.length == 0){
+        marker.visits = 1;
+        venues.push(marker);
+    }
+    else
+    {
+        var found = false;
+        venues.forEach(function(user){
+            if(user.user == marker.user){
+                user.visits += 1;
+                found = true
+                return true
+            }
+        });
+        if(!found){
+                marker.visits = 1;
+                venues.push(marker);
+        }
+    }
+    //var visitedVenuesJson = [{"venue":"Sheffield", "lat":"53.371143", "long":"-1.392339", "visits":"2"},{"venue":"Sheffield 2", "lat":"53.371143", "long":"-1.38", "visits":"1"}];
+    venues = venues.sort(sort_by('date', true,parseInt));
+    //console.log(venues);
+
+
+    return venues;
+}
+//var venueUserVistorsJson = [{"user":"jtmcilveen", "user_id":"839249234", "visits":"5"},{"user":"fabcirca", "user_id":"839249235", "visits":"2"}];
 var sort_by = function(field, reverse, primer){
 
    var key = primer ? 
