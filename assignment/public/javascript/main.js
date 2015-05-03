@@ -444,13 +444,13 @@ function POITable(element, tableJson) {
 		if (tableJson.venues[i].image_link == 'undefined' || tableJson.venues[i].image_link == 'none')
 			image = "No photo";
 		else
-			image = '<img property="assigment:image_uri" src="' + tableJson.venues[i].image_link + '" width="100" />';
+			image = '<img property="assigment:imageURI" src="' + tableJson.venues[i].image_link + '" width="100" />';
 			
 		var desc = "";
 		if (tableJson.venues[i].category)
 			desc += '<span property="assigment:category">' + tableJson.venues[i].category + "</span><br>";
 		if (tableJson.venues[i].description)
-			desc += '<span property="dc:description">' + tableJson.venues[i].description + '</span>';
+			desc += '<span property="assigment:description">' + tableJson.venues[i].description + '</span>';
 
 		var address = "";
 		if (tableJson.venues[i].address)
@@ -458,11 +458,11 @@ function POITable(element, tableJson) {
 
 		tablehtml += '<tr about=“http://127.0.0.1:3000/venues/data.rdf#' + tableJson.venues[i].label.replace(/\W/g, '') + '" typeof="assigment:venue">'+
 						'<td>' + image + '</td>' +
-						'<td property="rdfs:label">' + tableJson.venues[i].label + '</td>' +
+						'<td property="assigment:name">' + tableJson.venues[i].label + '</td>' +
 						'<td>' + desc + '<br></td>' +
-						'<td><span property="geo:lat">' + tableJson.venues[i].lat + '</span>, <span property="geo:long">' + tableJson.venues[i].long + '</span></td>' +
+						'<td><span property="assigment:lat">' + tableJson.venues[i].lat + '</span>, <span property="assigment:long">' + tableJson.venues[i].long + '</span></td>' +
 						'<td>' + getDistanceFromLatLonInKm(tableJson.venues[i].lat,tableJson.venues[i].long,tableJson.lat,tableJson.long).toFixed(1) + 'km</td>' +
-						'<td><a property="prov:wasDerivedFrom" href="' + tableJson.venues[i].link + '" target="_blank">' + tableJson.venues[i].label + '</a></td>' +
+						'<td><a property="assigment:URI" href="' + tableJson.venues[i].link + '" target="_blank">' + tableJson.venues[i].label + '</a></td>' +
 						'<td property="assigment:sourceAPI">' + tableJson.venues[i].from + '</td>' +
 						address +
 						'</tr>';

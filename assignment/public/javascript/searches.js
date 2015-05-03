@@ -296,14 +296,14 @@ $(function(){
 					
 						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for" +
 						
-						'<span xmlns:assignment="http://127.0.0.1/rdf/assigment.rdf">'+
-							'<span about=“http://127.0.0.1:3000/twitteruser/data.rdf#' + data.user.screen_name + ' typeof="assigment:twitteruser">' +
+						'<span xmlns:assignment="http://127.0.0.1/rdf/rdf.xml">'+
+							'<span about=“http://127.0.0.1:3000/twitteruser/data.rdf#' + data.user.screen_name + ' typeof="assigment:twitterUser">' +
 								'<a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@' + data.user.screen_name + '</a>' +
-								'<span style="display:none;" property="assigment:twitterscreenname">' + data.user.screen_name + '</span>' +
-								'<span style="display:none;" property="assigment:twitterid">' + data.user.id_str + '</span>' +
-								'<span style="display:none;" property="assigment:twitterlocation">' + data.user.location + '</span>' +
-								'<span style="display:none;" property="assigment:twitterprofilepicture">' + data.user.profile_image_url + '</span>' +
-								'<span style="display:none;" property="assigment:twitterrealname">' + data.user.name + '</span>' +
+								'<span style="display:none;" property="assigment:screenName">' + data.user.screen_name + '</span>' +
+								'<span style="display:none;" property="assigment:id">' + data.user.id_str + '</span>' +
+								'<span style="display:none;" property="assigment:location">' + data.user.location + '</span>' +
+								'<span style="display:none;" property="assigment:profilePicture">' + data.user.profile_image_url + '</span>' +
+								'<span style="display:none;" property="assigment:realName">' + data.user.name + '</span>' +
 							'</span>' +
 								
 						'</span>'+
