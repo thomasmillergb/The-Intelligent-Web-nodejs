@@ -435,7 +435,7 @@ function setupVenuePage(POIJson) {
 // Appends an element with a table of poi locations
 function POITable(element, tableJson) {
 	
-	var tablehtml = '<table class="tweet_results_table" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/terms/" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:geo="http://purl.org/dc/terms/" xmlns:assignment="http://127.0.0.1/rdf/assigment.rdf" xmlns="http://www.w3.org/ns/prov#" cellspacing="0"><tr><td>Picture</td><td>Name</td><td>Description</td><td>Location</td><td>Distance from original location</td><td>Webpage</td><td>Source</td></tr>';
+	var tablehtml = '<table class="tweet_results_table" xmlns:assignment="http://127.0.0.1/rdf/rdf.xml" cellspacing="0"><tr><td>Picture</td><td>Name</td><td>Description</td><td>Location</td><td>Distance from original location</td><td>Webpage</td><td>Source</td></tr>';
 	
 	for (i = 0; i < tableJson.venues.length; i++) {
 		
