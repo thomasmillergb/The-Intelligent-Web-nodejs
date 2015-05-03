@@ -294,7 +294,21 @@ $(function(){
 					
 						//console.log(data);
 					
-						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for <a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@" + data.user.screen_name + "</a><br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>");
+						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for" +
+						
+						'<span xmlns:assignment="http://127.0.0.1/rdf/assigment.rdf">'+
+							'<span about=“http://127.0.0.1:3000/twitteruser/data.rdf#' + data.user.screen_name + ' typeof="assigment:twitteruser">' +
+								'<a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@' + data.user.screen_name + '</a>' +
+								'<span style="display:none;" property="assigment:twitterscreenname">' + data.user.screen_name + '</span>' +
+								'<span style="display:none;" property="assigment:twitterid">' + data.user.id_str + '</span>' +
+								'<span style="display:none;" property="assigment:twitterlocation">' + data.user.location + '</span>' +
+								'<span style="display:none;" property="assigment:twitterprofilepicture">' + data.user.profile_image_url + '</span>' +
+								'<span style="display:none;" property="assigment:twitterrealname">' + data.user.name + '</span>' +
+							'</span>' +
+								
+						'</span>'+
+						
+						"<br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>");
 					
 						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						

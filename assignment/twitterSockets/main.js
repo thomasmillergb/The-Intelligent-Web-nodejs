@@ -686,7 +686,7 @@ io.on('connection', function(socket) {
 		var returnedsources = 0;
 		
 		
-		foursqaure.getVenuesFromLocation('53.381796,-1.480719', function(err, venuedata) {
+		foursqaure.getVenuesFromLocation(lat + ',' + long, function(err, venuedata) {
 			if (err == null) {
 				
 				venuedata = JSON.parse(venuedata);
@@ -699,10 +699,11 @@ io.on('connection', function(socket) {
 					
 					var link = "https://foursquare.com/v/" + venuedata.response.venues[index].id;
 					if (venuedata.response.venues[index].url)
-						link = venuedata.response.venues[index].url;
+						link = venuedata.response.venues[index].url;      
+          
+          			var address = venuedata.response.venues[index].location.address + ', ' + venuedata.response.venues[index].location.postalCode + ', ' + venuedata.response.venues[index].location.country
 					
-					
-					returnData.venues.push({'link': link, 'label': venuedata.response.venues[index].name, 'lat': venuedata.response.venues[index].location.lat.toFixed(6), 'long': venuedata.response.venues[index].location.lng.toFixed(6), 'image_link': 'none', 'comment': name.substring(0,100), 'from': 'FourSqaure'});
+					returnData.venues.push({'link': link, 'label': venuedata.response.venues[index].name, 'lat': venuedata.response.venues[index].location.lat.toFixed(6), 'long': venuedata.response.venues[index].location.lng.toFixed(6), 'image_link': 'none', 'category': name.substring(0,100), 'description':'', 'from': 'FourSqaure', 'address': address});
 				}
 				
 				returnedsources++;
@@ -722,7 +723,7 @@ io.on('connection', function(socket) {
 					
 					var currentrow = results.results.bindings[i];
 					
-					returnData.venues.push({'link': currentrow.link.value, 'label': currentrow.label.value, 'lat': currentrow.lat.value, 'long': currentrow.long.value, 'image_link': currentrow.image_link.value, 'comment': currentrow.comment.value.substring(0,100), 'from': 'DBPedia'});
+					returnData.venues.push({'link': currentrow.link.value, 'label': currentrow.label.value, 'lat': currentrow.lat.value, 'long': currentrow.long.value, 'image_link': currentrow.image_link.value,'category':'', 'description': currentrow.comment.value.substring(0,100), 'from': 'DBPedia'});
 					
 				}
 				

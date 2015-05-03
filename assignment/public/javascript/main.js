@@ -435,7 +435,7 @@ function setupVenuePage(POIJson) {
 // Appends an element with a table of poi locations
 function POITable(element, tableJson) {
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Picture</td><td>Name</td><td>Description</td><td>Location</td><td>Distance from original location</td><td>Webpage</td><td>Source</td></tr>';
+	var tablehtml = '<table class="tweet_results_table" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/terms/" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:geo="http://purl.org/dc/terms/" xmlns:assignment="http://127.0.0.1/rdf/assigment.rdf" xmlns="http://www.w3.org/ns/prov#" cellspacing="0"><tr><td>Picture</td><td>Name</td><td>Description</td><td>Location</td><td>Distance from original location</td><td>Webpage</td><td>Source</td></tr>';
 	
 	for (i = 0; i < tableJson.venues.length; i++) {
 		
@@ -444,9 +444,28 @@ function POITable(element, tableJson) {
 		if (tableJson.venues[i].image_link == 'undefined' || tableJson.venues[i].image_link == 'none')
 			image = "No photo";
 		else
-			image = '<img src="' + tableJson.venues[i].image_link + '" width="100" />';
-		
-		tablehtml += '<tr><td>' + image + '</td><td>' + tableJson.venues[i].label + '</td><td>' + tableJson.venues[i].comment + '</td><td>' + tableJson.venues[i].lat + ', ' + tableJson.venues[i].long + '</td><td>' + getDistanceFromLatLonInKm(tableJson.venues[i].lat,tableJson.venues[i].long,tableJson.lat,tableJson.long).toFixed(1) + 'km</td><td><a href="' + tableJson.venues[i].link + '" target="_blank">' + tableJson.venues[i].label + '</a></td><td>' + tableJson.venues[i].from + '</td></tr>';
+			image = '<img property="assigment:image_uri" src="' + tableJson.venues[i].image_link + '" width="100" />';
+			
+		var desc = "";
+		if (tableJson.venues[i].category)
+			desc += '<span property="assigment:category">' + tableJson.venues[i].category + "</span><br>";
+		if (tableJson.venues[i].description)
+			desc += '<span property="dc:description">' + tableJson.venues[i].description + '</span>';
+
+		var address = "";
+		if (tableJson.venues[i].address)
+			address = '<td style="display:none" property="assigment:address">' + tableJson.venues[i].address + '</td>' ;
+
+		tablehtml += '<tr about=“http://127.0.0.1:3000/venues/data.rdf#' + tableJson.venues[i].label.replace(/\W/g, '') + '" typeof="assigment:venue">'+
+						'<td>' + image + '</td>' +
+						'<td property="rdfs:label">' + tableJson.venues[i].label + '</td>' +
+						'<td>' + desc + '<br></td>' +
+						'<td><span property="geo:lat">' + tableJson.venues[i].lat + '</span>, <span property="geo:long">' + tableJson.venues[i].long + '</span></td>' +
+						'<td>' + getDistanceFromLatLonInKm(tableJson.venues[i].lat,tableJson.venues[i].long,tableJson.lat,tableJson.long).toFixed(1) + 'km</td>' +
+						'<td><a property="prov:wasDerivedFrom" href="' + tableJson.venues[i].link + '" target="_blank">' + tableJson.venues[i].label + '</a></td>' +
+						'<td property="assigment:sourceAPI">' + tableJson.venues[i].from + '</td>' +
+						address +
+						'</tr>';
 		
 	}
 

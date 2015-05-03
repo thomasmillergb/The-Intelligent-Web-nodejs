@@ -57,8 +57,8 @@ exports.venues = function(checkinAndID, venues){
     //console.log(checkinAndID.screen_name);
     marker.user_id=checkinAndID.twitterID;
     marker.screen_name=checkinAndID.user;
-    console.log(checkinAndID);
-    console.log(checkin);
+    //console.log(checkinAndID);
+    //console.log(checkin);
     marker.venue = checkin.venue.name;
     marker.lat = checkin.venue.location.lat;
     marker.long = checkin.venue.location.lng;
