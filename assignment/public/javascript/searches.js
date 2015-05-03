@@ -594,7 +594,7 @@ function getPointsOfInterest(name, lat, long) {
 			POITable($("#poi_venue_location_table_return"), data);
 			
 			for (var indx in data.venues)
-				data.venues[indx].label = "<h3>" + data.venues[indx].label + "</h3><a href='" + data.venues[indx].wikipage + "' target='_blank'>" + data.venues[indx].wikipage + "</a>";
+				data.venues[indx].label = "<h3>" + data.venues[indx].label + "</h3><a href='" + data.venues[indx].link + "' target='_blank'>" + data.venues[indx].link + "</a>";
 			
 			appendLocation($("#poi_venue_location_return"), data.venues);
 

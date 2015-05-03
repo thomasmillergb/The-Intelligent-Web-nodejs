@@ -86,8 +86,8 @@ $(function(){
 			
 			function setLatLong() {
 			  templocation = map.getCenter();
-			  currentform.find(".lat").get(0).value = parseFloat(templocation.k.toFixed(6));
-			  currentform.find(".long").get(0).value = parseFloat(templocation.D.toFixed(6));
+			  currentform.find(".lat").get(0).value = parseFloat(templocation.A.toFixed(6));
+			  currentform.find(".long").get(0).value = parseFloat(templocation.F.toFixed(6));
 			  Draw_Circle();
 			}
 			  			

@@ -15,6 +15,13 @@ exports.getVenues  = function(tweets, callback){
 }
 
 
+exports.getVenuesFromLocation = function(location, callback){
+	fourFunction.getVenuesFromLocation(location, function(err, data){
+		callback(err, data);
+	});
+}
+
+
 
 function findVenues(latitude, longitude, radius) {
 

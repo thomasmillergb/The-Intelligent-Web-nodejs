@@ -184,7 +184,7 @@ io.on('connection', function(socket) {
 					if (twitterAPI.currentDiscussionStream != undefined) {
 						twitterAPI.currentDiscussionStream.destroy();
 						twitterAPI.currentDiscussionStream = undefined;
-						keyWords.reset();
+						//keyWords.reset();
 					}
 					return fn();
 				});
@@ -599,13 +599,15 @@ io.on('connection', function(socket) {
 		
 		// Get the 20 nearest venues to the lat and long provided
 		var query = 'PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>			     ' +
-						'SELECT ?subject ?wikipage ?label ?lat ?long WHERE {		     ' +
+						'SELECT ?subject ?link ?image_link ?comment ?label ?lat ?long WHERE {					' +
 						'															     ' +
 						'	?subject geo:lat ?lat.									     ' +
 						'	?subject geo:long ?long.								     ' +
 						'	?subject rdfs:label ?label.								     ' +
 						'	?subject rdfs:label ?distance.							     ' +
-						'	?subject foaf:isPrimaryTopicOf ?wikipage.				     ' +
+						'	?subject foaf:isPrimaryTopicOf ?link.						' +
+						'	?subject foaf:depiction ?image_link.								' +
+						'	?subject rdfs:comment ?comment.						     ' +
 						'															     ' +
 						'	FILTER(													     ' +
 						'		xsd:double(?lat) - xsd:double(\'' + lat + '\') <= 0.05 &&	     ' +
@@ -616,10 +618,41 @@ io.on('connection', function(socket) {
 						'	).														     ' +
 						'}															     ' +
 						'ORDER BY ASC((xsd:double(?lat) - xsd:double(\'' + lat + '\')) * (xsd:double(?lat) - xsd:double(\'' + lat + '\')) + (xsd:double(\'' + long + '\') - xsd:double(?long)) * (xsd:double(\'' + long + '\') - xsd:double(?long)))						 ' +
-						'LIMIT 20';
+						'LIMIT 10';
 		var client = new SparqlClient(endpoint);
 
 		returnData.venues = [];
+		var returnedsources = 0;
+		
+		
+		foursqaure.getVenuesFromLocation('53.381796,-1.480719', function(err, venuedata) {
+			if (err == null) {
+				
+				venuedata = JSON.parse(venuedata);
+				
+				for (var index in venuedata.response.venues) {
+					
+					var name = "";
+					if (venuedata.response.venues[index].categories[0])
+						name = venuedata.response.venues[index].categories[0].name;
+					
+					var link = "https://foursquare.com/v/" + venuedata.response.venues[index].id;
+					if (venuedata.response.venues[index].url)
+						link = venuedata.response.venues[index].url;
+					
+					
+					returnData.venues.push({'link': link, 'label': venuedata.response.venues[index].name, 'lat': venuedata.response.venues[index].location.lat.toFixed(6), 'long': venuedata.response.venues[index].location.lng.toFixed(6), 'image_link': 'none', 'comment': name.substring(0,100), 'from': 'FourSqaure'});
+				}
+				
+				returnedsources++;
+				
+				if (returnedsources == 2)
+					fn(null, returnData);
+				
+			} else {
+				fn(err, null);
+			}
+		});
 
 		client.query(query).execute(function(error, results) {
 		
@@ -628,14 +661,18 @@ io.on('connection', function(socket) {
 					
 					var currentrow = results.results.bindings[i];
 					
-					returnData.venues.push({'wikipage': currentrow.wikipage.value, 'label': currentrow.label.value, 'lat': currentrow.lat.value, 'long': currentrow.long.value});
+					returnData.venues.push({'link': currentrow.link.value, 'label': currentrow.label.value, 'lat': currentrow.lat.value, 'long': currentrow.long.value, 'image_link': currentrow.image_link.value, 'comment': currentrow.comment.value.substring(0,100), 'from': 'DBPedia'});
 					
 				}
 				
-				fn(null, returnData);
+				returnedsources++;
+				
+				if (returnedsources == 2)
+					fn(null, returnData);
+				
 			} else {
 				console.log(error);
-				fn(error, null);
+				
 		  	}
 			
 		});

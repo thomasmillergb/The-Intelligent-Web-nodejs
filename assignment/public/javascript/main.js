@@ -427,7 +427,7 @@ function setupVenuePage(POIJson) {
 	
 	var POIhtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - Points of interest near ' + POIJson['name'] + '</h3>';			
 	
-	POIhtml += '<div id="poi_venue_location_return"></div><hr><h1>Venues</h1>Below are the closed 20 venues to ' + POIJson.name + '<div id="poi_venue_location_table_return"></div></div>';
+	POIhtml += '<div id="poi_venue_location_return"></div><hr><h1>Venues</h1>Below are 20 venues close to ' + POIJson.name + '<div id="poi_venue_location_table_return"></div></div>';
 	
 	$("#alternate_panel_container").html(POIhtml);
 }
@@ -435,10 +435,18 @@ function setupVenuePage(POIJson) {
 // Appends an element with a table of poi locations
 function POITable(element, tableJson) {
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Name</td><td>Location</td><td>Distance from original location</td><td>Wikipedia Page</td></tr>';
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Picture</td><td>Name</td><td>Description</td><td>Location</td><td>Distance from original location</td><td>Webpage</td><td>Source</td></tr>';
 	
 	for (i = 0; i < tableJson.venues.length; i++) {
-		tablehtml += '<tr><td>' + tableJson.venues[i].label + '</td><td>' + tableJson.venues[i].lat + ', ' + tableJson.venues[i].long + '</td><td>' + getDistanceFromLatLonInKm(tableJson.venues[i].lat,tableJson.venues[i].long,tableJson.lat,tableJson.long).toFixed(1) + 'km</td><td><a href="' + tableJson.venues[i].wikipage + '" target="_blank">Wikipedia page</a></td></tr>';
+		
+		var image = "";
+		
+		if (tableJson.venues[i].image_link == 'undefined' || tableJson.venues[i].image_link == 'none')
+			image = "No photo";
+		else
+			image = '<img src="' + tableJson.venues[i].image_link + '" width="100" />';
+		
+		tablehtml += '<tr><td>' + image + '</td><td>' + tableJson.venues[i].label + '</td><td>' + tableJson.venues[i].comment + '</td><td>' + tableJson.venues[i].lat + ', ' + tableJson.venues[i].long + '</td><td>' + getDistanceFromLatLonInKm(tableJson.venues[i].lat,tableJson.venues[i].long,tableJson.lat,tableJson.long).toFixed(1) + 'km</td><td><a href="' + tableJson.venues[i].link + '" target="_blank">' + tableJson.venues[i].label + '</a></td><td>' + tableJson.venues[i].from + '</td></tr>';
 		
 	}
 

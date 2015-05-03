@@ -48,6 +48,43 @@ function getVenues(params){
     });
 
 }
+
+var getVenuesFromLocation = exports.getVenuesFromLocation = function(location, callback){
+	
+	//client.get('statuses/user_timeline', params, function(err, data, response) {
+	//	
+	//	callback(null, data);
+	//
+    //});
+    
+    
+    var options = {
+        // localhost does not work if you run from localhost the server itself
+        url: 'https://api.foursquare.com/v2/venues/search',
+        method: 'GET',
+        headers: headers,
+        qs: {'ll': location, 'oauth_token': accessToken, 'v': '20140806', 'limit': 10}
+    }
+
+// Start the request
+
+    request(options, function (error, response, body) {
+	    
+      	var header = response.client['_httpMessage']['_header'];
+      	
+      	if (!error && response.statusCode == 200) {
+	  	
+      	    callback(error,body);
+	  	
+      	} else {
+      		console.log('errors: ' + response.statusCode + ' response: ' + JSON.parse(response.body).meta.errorDetail);
+      	}
+        	
+    });
+
+}
+
+
 var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,callback){
 
 
