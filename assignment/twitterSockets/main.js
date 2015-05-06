@@ -480,10 +480,6 @@ io.on('connection', function(socket) {
 		// params.long
 
 
-		if (params.twitterfoursquare == 'foursquare') {
-
-		}
-		else{
 			if (params.liveresults) {
 				var filterParams = {
 					track: params.search
@@ -537,11 +533,12 @@ io.on('connection', function(socket) {
 						//There is no way to use the api to do this, so manual clipping 
 						//is needed
 
-						//if (params.days > 0) data = sliceOlderTweets(data, params.days);
+						if (params.days > 0) data = sliceOlderTweets(data, params.days);
 						var returndata = {};
-						if (params.twitterfoursquare != 'foursquare') {
+						if (params.twitterfoursquare == 'foursquare') {
 							var dataoutput = {};
 							var venues = [];
+						
 							//console.log(data);
 							//console.log(data);
 							//console.log(data.length);
@@ -583,10 +580,10 @@ io.on('connection', function(socket) {
 								}
 								
 							});
-}else{
-		console.log("No Foursqaure checkIns");
-		fn("No Foursqaure checkIns, try extending area", null);
-}
+							}else{
+									console.log("No Foursqaure checkIns");
+									fn("No Foursqaure checkIns, try extending area", null);
+							}
 						} else{
 						returndata.visitedvenuestable = [];
 						for (var indx in data.statuses) returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx], returndata.visitedvenuestable);
@@ -610,7 +607,7 @@ io.on('connection', function(socket) {
 					}
 				});
 			}
-		}
+		
 	});
 	socket.on('get_user_and_tweets', function(screenname, fn) {
 		console.log("get_user_and_tweets screen_name: " + screenname);
