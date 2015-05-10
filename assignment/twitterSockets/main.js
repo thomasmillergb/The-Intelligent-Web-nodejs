@@ -539,20 +539,9 @@ io.on('connection', function(socket) {
 						if (params.twitterfoursquare == 'foursquare') {
 							var dataoutput = {};
 							var venues = [];
-						
-							//console.log(data);
-							//console.log(data);
-							//console.log(data.length);
-							//console.log(data.statuses);
 							if (data.statuses.length > 0){
 							 foursqaure.getVenues(data.statuses, function(checkIns) {
-							 	//console.log(checkInArray);
-						 		//var checkIns = checkInArray.checkin;
 							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
-							 		
-//							 		console.log(checkIns);
-
-							 		//console.log(data.user.id);
 									//mySQL.insertFourSqaureData(checkIns);
 									checkIns.forEach(function(checkinAndID, idx) {
 

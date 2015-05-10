@@ -292,7 +292,6 @@ var cachVenue = function(venue,checkin, callback){
 	
 		if(venueCach[counter].venue.id == venue.venue.id){
 
-			console.log("yay cached");
 			found = true;
 			checkin.checkin.venue = venueCach[counter].venue;
 			callback(checkin);
@@ -300,7 +299,6 @@ var cachVenue = function(venue,checkin, callback){
 		counter++;
 	}
 	if(!found){
-		console.log("yay caching");
 		venueCach.push(venue);
 		checkin.checkin.venue = venue.venue;
 		callback(checkin);
@@ -312,18 +310,14 @@ var cachVenue = function(venue,checkin, callback){
 var findCachVenue = function(checkin, callback){
 	var found = false;
 	var counter = 0;
-	console.log(venueCach);
 	while(counter<venueCach.length&& !found){
-		console.log(counter);
 		if(venueCach[counter].venue.id == checkin.checkin.venue.id){
-			console.log("yay found cach");
 			found = true;
 			checkin.checkin.venue = venueCach[counter].venue;
 			callback(true, checkin);
 		}
 		counter++;
 	}
-	console.log(counter);
 	callback(false, checkin);
 
 
@@ -342,9 +336,6 @@ var getVenueDetails = function(checkin, callback) {
 
         request(options,
         function (error, response, body) {
-        	//console.log(error);
-        	//var header = response.client//['_httpMessage']['_header'];
-        	//console.log(header);
         	callback(JSON.parse(response.body).response);
         });
 
