@@ -328,15 +328,15 @@ io.on('connection', function(socket) {
 					stream.on('data', function(data) {
 						var user = data.user;
 						//params.foursqaure = true;
-						mySQL.insertTwitterData(checkIns);
+						mySQL.insertTwitterData(data);
 						
 						if (params.twitterfoursquare == 'foursquare') {
 							foursqaure.getVenues(data, function(checkIns) {
 								if (checkIns != null) {
 									
 									mySQL.insertFourSqaureData(checkIns);
-									checkIns.forEach(function(checkinAndId, idx) {
-										var checkin = checkinAndId.checkin;
+									checkIns.forEach(function(checkinAndID, idx) {
+										var checkin = checkinAndID.checkin;
 										returndata = {};
 										returndata.user = user;
 										returndata.markers = {};
@@ -385,7 +385,7 @@ io.on('connection', function(socket) {
 			} else {
 				var searchParams = {
 					screen_name: screennamesandids.username,
-					count: 200
+					count: 20
 				};
 				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 					if (!err) {
@@ -412,10 +412,11 @@ io.on('connection', function(socket) {
 							 		//console.log(checkIns);
 
 							 		//console.log(data.user.id);
-									mySQL.insertFourSqaureData(checkIns);
+									//mySQL.insertFourSqaureData(checkIns);
 									checkIns.forEach(function(checkinAndID, idx) {
 
 										var checkin = checkinAndID.checkin;
+										console.log(checkin.venue);
 										var tempmarker = {};
 										tempmarker.lat = checkin.venue.location.lat;
 										tempmarker.long = checkin.venue.location.lng;

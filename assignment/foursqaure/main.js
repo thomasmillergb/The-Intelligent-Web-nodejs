@@ -62,7 +62,20 @@ exports.venues = function(checkinAndID, venues){
     marker.venue = checkin.venue.name;
     marker.lat = checkin.venue.location.lat;
     marker.long = checkin.venue.location.lng;
+    
+
+/*
+    console.log("checkinAndID");
+    console.log(checkin.venue);
+    console.log("checkinAndID");
+    console.log(checkin);
+    //marker.
+*/
+
+
+
     marker.label = "<h3>@" + checkin.user.firstName + " "+ checkin.user.lastName+  "</h3>" + checkin.shout + "";
+
 	marker.date = checkin.createdAt*1000;
     //console.log(checkin);
     //console.log(currentData);	

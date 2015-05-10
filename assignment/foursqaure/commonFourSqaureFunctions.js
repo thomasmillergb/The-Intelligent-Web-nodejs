@@ -179,7 +179,7 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 	    //console.log(result[0]);
 	    var id = result[0].replace('t.co/','');
 	    var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id
-	    urlExpander(shortTwitterURL,function(longUrl, userID, tweetID){
+	    urlExpander(shortTwitterURL,function(longUrl, userID, tweetID, screen_name){
 
 	    	
 	    	//console.log(longUrl);
@@ -191,7 +191,7 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 				result2 = result2[0].replace('c/','');
 
 			    //console.log(result2);
-			    getCheckin(result2,userID,tweetID,function(err, checkin){
+			    getCheckin(result2,userID,tweetID,screen_name,function(err, checkin){
 		    	if(err)
 		    		callback(checkins);
 		    	else{
@@ -212,8 +212,8 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 }
 
    
-
-
+var venueCach = [];
+var checkinsCach = [];
 var getCheckin = function(checkinId,userID,tweetID,screen_name, callback) {
 	var checkinExtractor = /shortId=[a-zA-Z0-9]+/;
 	var twitterUserExtractor = /userID=[0-9]+/;
@@ -250,30 +250,105 @@ var getCheckin = function(checkinId,userID,tweetID,screen_name, callback) {
 			checkin.twitterID = twitterUserIDHeader[0].replace('userID=','');
 			checkin.tweetID = tweetIDHeader[0].replace('tweetID=','');
 			checkin.screen_name = twitterScreen_nameHeader[0].replace('screen_name=','');
-			//console.log(twitterUserIDHeader[0]);
-
 			checkin.checkin = JSON.parse(response.body).response.checkin;
-        
-            if (!error && response.statusCode == 200) {
 
-                callback(null,checkin);
+			if (!error && response.statusCode == 200) {
+			//if not here cach and get
 
-            }
-            else {
+				findCachVenue(checkin, function(found, checkin){
+					if(!found){
+						getVenueDetails(checkin,function(venue){
+							cachVenue(venue,checkin,function(checkin){
+								callback(null,checkin);
+							});
+						});
+
+	        		}
+	        	else{
+	               	 callback(null,checkin);
+
+	           		}
+				});
+	        }else {
             	console.log('errors: ' + response.statusCode + ' response: ' + JSON.parse(response.body).meta.errorDetail);
-            if(response.statusCode=403){
-            	var datetime = new Date(response.caseless.dict['x-ratelimit-reset']*1000);
-            	console.log("API Resets at: " + datetime);
-            	callback("err",null);
-
-            }
-        }
+	            if(response.statusCode=403){
+	            	var datetime = new Date(response.caseless.dict['x-ratelimit-reset']*1000);
+	            	console.log("API Resets at: " + datetime);
+	            	callback("err",null);
+	            }
+        		
+        	}
+        	
         });
 
 
 }
+var cachVenue = function(venue,checkin, callback){
+	var found = false;
+	var counter = 0;
+	
+	while(counter<venueCach.length&& !found){
+
+	
+		if(venueCach[counter].venue.id == venue.venue.id){
+
+			console.log("yay cached");
+			found = true;
+			checkin.checkin.venue = venueCach[counter].venue;
+			callback(checkin);
+		}
+		counter++;
+	}
+	if(!found){
+		console.log("yay caching");
+		venueCach.push(venue);
+		checkin.checkin.venue = venue.venue;
+		callback(checkin);
+	}
+
+		
+	
+}
+var findCachVenue = function(checkin, callback){
+	var found = false;
+	var counter = 0;
+	console.log(venueCach);
+	while(counter<venueCach.length&& !found){
+		console.log(counter);
+		if(venueCach[counter].venue.id == checkin.checkin.venue.id){
+			console.log("yay found cach");
+			found = true;
+			checkin.checkin.venue = venueCach[counter].venue;
+			callback(true, checkin);
+		}
+		counter++;
+	}
+	console.log(counter);
+	callback(false, checkin);
 
 
+}
+
+var getVenueDetails = function(checkin, callback) {
+	//console.log(checkin);
+    var options = {
+        // localhost does not work if you run from localhost the server itself
+        url: 'https://api.foursquare.com/v2/venues/'+checkin.checkin.venue.id,
+        method: 'GET',
+        headers: headers,
+        qs: {'oauth_token': accessToken,
+            'v': '20140806', m: 'swarm'}
+    }
+
+        request(options,
+        function (error, response, body) {
+        	//console.log(error);
+        	//var header = response.client//['_httpMessage']['_header'];
+        	//console.log(header);
+        	callback(JSON.parse(response.body).response);
+        });
+
+}
 /*
  var urlExpander = require('expand-url');
 
