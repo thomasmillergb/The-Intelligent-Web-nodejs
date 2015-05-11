@@ -152,7 +152,7 @@ exports.userVenues = function(checkinAndID, venues){
         else{
             marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
             marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
-            marker.bestPhoto.url = checkin.venue.bestPhoto.prefix + "64" + checkin.venue.bestPhoto.suffix;  
+            marker.bestPhoto.url = checkin.venue.categories[0].icon.prefix + "64" + checkin.venue.categories[0].icon.suffix;  
         }
     }
     else{

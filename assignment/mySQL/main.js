@@ -92,9 +92,9 @@ var insertTwitterData =exports.insertTwitterData = function(data) {
 		});
 	});
 }
-var insertFourSqaureFromTwitterData =exports.insertFourSqaureFromTwitterData = function(data) {
+var insertFourSqaureFromTwitterData =exports.insertFourSqaureFromTwitterData = function(data, access_token) {
 
-	foursqaure.getVenues(data, function(checkIns) {
+	foursqaure.getVenues(data,access_token, function(checkIns) {
 		//console.log(checkIns);
 		insertFourSqaureData(checkIns);
 	});

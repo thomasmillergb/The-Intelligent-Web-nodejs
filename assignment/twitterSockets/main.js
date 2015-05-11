@@ -124,7 +124,7 @@ io.on('connection', function(socket) {
 					data.markers = venuemarkers;
 					data.tweets = data.statuses;
 					mySQL.insertTwitterData(data.statuses);
-					mySQL.insertFourSqaureFromTwitterData(data.statuses);
+					mySQL.insertFourSqaureFromTwitterData(data.statuses, four_token);
 					fn(null, data);
 				} else {
 					fn(null, null);
@@ -178,7 +178,7 @@ io.on('connection', function(socket) {
 						tempdata.userdiscussiontable.words = keywordsTable.words.slice(0, maxindex);
 						
 						mySQL.insertTwitterData(data);
-						mySQL.insertFourSqaureFromTwitterData(data);
+						mySQL.insertFourSqaureFromTwitterData(data,four_token);
 						
 						if (data.coordinates) {
 							tempdata.marker = {};
@@ -259,7 +259,7 @@ io.on('connection', function(socket) {
 									//data1.markers = venuemarkers;
 									data1.userdiscussiontable = keywordsTable; //userDiscussionJsonData;
 									mySQL.insertTwitterData(data);
-									mySQL.insertFourSqaureFromTwitterData(data);
+									mySQL.insertFourSqaureFromTwitterData(data,four_token);
 									fn(null, data1);
 								}
 							} else {
@@ -359,7 +359,7 @@ io.on('connection', function(socket) {
 								}
 							});
 						} else {
-							mySQL.insertFourSqaureFromTwitterData(data);
+							mySQL.insertFourSqaureFromTwitterData(data,four_token);
 							//console.log(data);
 							user = data.user;
 							venues = twitterFunctions.venues(data, venues);
@@ -407,6 +407,7 @@ io.on('connection', function(socket) {
 						mySQL.insertTwitterData(data);
 						//searchParams.foursqaure = true;
 						if (params.twitterfoursquare == 'foursquare') {
+							
 							var dataoutput = {};
 							if (data.length > 0)
 							 dataoutput.user = data[0].user;
@@ -446,8 +447,9 @@ io.on('connection', function(socket) {
 								}
 								
 							});
+
 						} else {
-							mySQL.insertFourSqaureFromTwitterData(data);
+							mySQL.insertFourSqaureFromTwitterData(data,four_token);
 							for (var indx in data) {
 								var currentData = data[indx];
 								var found;

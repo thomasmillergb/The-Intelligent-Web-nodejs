@@ -545,7 +545,9 @@ function visitedVenues(element, tableJson) {
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
 		
-		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td><td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td></tr>';
+		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td></td><td>' + 
+		row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td><td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + 
+			row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td></tr>';
 	}
 	
 	tablehtml += '</table>';
