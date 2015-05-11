@@ -63,12 +63,22 @@ exports.venues = function(checkinAndID, venues){
     marker.lat = Math.floor(checkin.venue.location.lat * Math.pow(10,8)) / Math.pow(10,8);
     marker.long = Math.floor(checkin.venue.location.lng * Math.pow(10,8)) / Math.pow(10,8);
         // detaled veune
-    marker.rating = checkin.venue.rating;
+    if(checkin.venue.rating != null){
+        marker.rating = checkin.venue.rating;
+    }
+    else{
+        marker.rating = "Not yet rated";
+    }
+    if(checkin.venue.location.formattedAddress != null)
+        marker.formattedAddress = checkin.venue.location.formattedAddress
+    else
+        marker.formattedAddress = "No address found"
     marker.likes = checkin.venue.likes.count;
-    marker.rating = checkin.venue.rating;
     marker.shortUrl = checkin.venue.shortUrl;
     marker.foursquare = true;
     marker.bestPhoto = {};
+
+
     if(checkin.venue.description != null){
         marker.description = checkin.venue.description;
 
@@ -147,7 +157,17 @@ exports.userVenues = function(checkinAndID, venues){
     marker.date = checkin.createdAt*1000;
 
     // detaled veune
-    marker.rating = checkin.venue.rating;
+    if(checkin.venue.rating != null){
+        marker.rating = checkin.venue.rating;
+    }
+    else{
+        marker.rating = "Not yet rated";
+    }
+    if(checkin.venue.location.formattedAddress != null)
+        marker.formattedAddress = checkin.venue.location.formattedAddress
+    else
+        marker.formattedAddress = "No address found"
+
     marker.likes = checkin.venue.likes.count;
     marker.rating = checkin.venue.rating;
     marker.shortUrl = checkin.venue.shortUrl;

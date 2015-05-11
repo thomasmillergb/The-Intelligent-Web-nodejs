@@ -540,7 +540,7 @@ function mostUsedWordsTable(element, tableJson) {
 // Appends an element with a table of a users most visited venues from json
 function visitedVenues(element, tableJson) {
 	if(tableJson[0].foursquare){
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Picture</td><td>Venue</td><td>Description</td><td>Rating</td><td>Likes</td><td>Lat/Long</td><td>Number of visits</td><td>Latest visit date</td><td>Points of interest</td></tr>';
+	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Picture</td><td>Venue</td><td>Description</td><td>Rating</td><td>Likes</td><td>Lat/Long</td><td>Address</td><td>Number of visits</td><td>Latest visit date</td><td>Points of interest</td></tr>';
 
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
@@ -548,7 +548,7 @@ function visitedVenues(element, tableJson) {
 		tablehtml += '<tr><td><img src='+row.bestPhoto +' class="tableimage" ></td><td><a href="' +row.shortUrl+'">'+ row['venue'] + '</a><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td></td>'+
 		'<td>'+  row.description +' </td><td>'+ row.rating   +' </td><td>'+ row.likes   +' </td><td>'+
 		 
-		row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td><td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + 
+		row['lat'] + ', ' + row['long'] + '</td><td>'+ row.formattedAddress +'</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td><td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + 
 			row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td></tr>';
 	}
 	
