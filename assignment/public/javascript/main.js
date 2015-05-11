@@ -545,7 +545,7 @@ function visitedVenues(element, tableJson) {
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
 		
-		tablehtml += '<tr><td><a href="' +row.shortUrl+'"><img src='+row.bestPhoto +'</a> class="tableimage" ></td><td><a href="' +row.shortUrl+'">'+ row['venue'] + '</a><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td></td>'+
+		tablehtml += '<tr><td><img src='+row.bestPhoto +' class="tableimage" ></td><td><a href="' +row.shortUrl+'">'+ row['venue'] + '</a><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td></td>'+
 		'<td>'+  row.description +' </td><td>'+ row.rating   +' </td><td>'+ row.likes   +' </td><td>'+
 		 
 		row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td><td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + 
