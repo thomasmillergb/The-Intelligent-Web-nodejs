@@ -42,7 +42,7 @@ twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, r
 
 });
 */
-var insertTwitterData =exports.insertTwitterData = function(data) {
+var insertTwitterData =exports.insertTwitterData = function(data, callback) {
 	createConnection(function(connection){
 		var addUser = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES ";
 		var addTweet = "INSERT IGNORE INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ";
@@ -84,9 +84,11 @@ var insertTwitterData =exports.insertTwitterData = function(data) {
 					connection.query(addVenue.substring(0, addVenue.length - 1),function(err, result){
 						if(err)console.log(err);
 						connection.end();
+						callback();
 					});
 				}else{
 					connection.end();
+					callback();
 				}
 			});
 		});

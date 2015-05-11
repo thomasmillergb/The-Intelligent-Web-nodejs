@@ -123,8 +123,9 @@ io.on('connection', function(socket) {
 						if (venues[indx].lat && venues[indx].long) venuemarkers.push(venues[indx]);
 					data.markers = venuemarkers;
 					data.tweets = data.statuses;
-					mySQL.insertTwitterData(data.statuses);
-					mySQL.insertFourSqaureFromTwitterData(data.statuses, four_token);
+					mySQL.insertTwitterData(data.statuses,function(){
+						mySQL.insertFourSqaureFromTwitterData(data.statuses,four_token);
+					});
 					fn(null, data);
 				} else {
 					fn(null, null);
@@ -177,8 +178,10 @@ io.on('connection', function(socket) {
 						tempdata.userdiscussiontable.users = keywordsTable.users;
 						tempdata.userdiscussiontable.words = keywordsTable.words.slice(0, maxindex);
 						
-						mySQL.insertTwitterData(data);
-						mySQL.insertFourSqaureFromTwitterData(data,four_token);
+						
+						mySQL.insertTwitterData(data,function(){
+							mySQL.insertFourSqaureFromTwitterData(data,four_token);
+						});
 						
 						if (data.coordinates) {
 							tempdata.marker = {};
@@ -258,8 +261,9 @@ io.on('connection', function(socket) {
 									keywordsTable.words = keywordsTable.words.slice(0, maxindex);
 									//data1.markers = venuemarkers;
 									data1.userdiscussiontable = keywordsTable; //userDiscussionJsonData;
-									mySQL.insertTwitterData(data);
-									mySQL.insertFourSqaureFromTwitterData(data,four_token);
+									mySQL.insertTwitterData(data,function(){
+										mySQL.insertFourSqaureFromTwitterData(data,four_token);
+									});
 									fn(null, data1);
 								}
 							} else {
@@ -335,13 +339,14 @@ io.on('connection', function(socket) {
 					stream.on('data', function(data) {
 						var user = data.user;
 						//params.foursqaure = true;
-						mySQL.insertTwitterData(data);
 						
 						if (params.twitterfoursquare == 'foursquare') {
 							foursqaure.getVenues(data,four_token, function(checkIns) {
 								if (checkIns != null) {
+									mySQL.insertTwitterData(data,function(){
+										mySQL.insertFourSqaureData(checkIns);
+									});
 									
-									mySQL.insertFourSqaureData(checkIns);
 									checkIns.forEach(function(checkinAndID, idx) {
 										var checkin = checkinAndID.checkin;
 										returndata = {};
@@ -359,7 +364,10 @@ io.on('connection', function(socket) {
 								}
 							});
 						} else {
-							mySQL.insertFourSqaureFromTwitterData(data,four_token);
+							mySQL.insertTwitterData(data,function(){
+								mySQL.insertFourSqaureFromTwitterData(data,four_token);
+							});
+							
 							//console.log(data);
 							user = data.user;
 							venues = twitterFunctions.venues(data, venues);
@@ -404,7 +412,7 @@ io.on('connection', function(socket) {
 						var venues = [];
 						var venuemarkers = [];
 
-						mySQL.insertTwitterData(data);
+				
 						//searchParams.foursqaure = true;
 						if (params.twitterfoursquare == 'foursquare') {
 							
@@ -420,7 +428,10 @@ io.on('connection', function(socket) {
 							 		//console.log(checkIns);
 
 							 		//console.log(data.user.id);
-									//mySQL.insertFourSqaureData(checkIns);
+
+									mySQL.insertTwitterData(data,function(){
+										mySQL.insertFourSqaureData(checkIns);
+									});
 									checkIns.forEach(function(checkinAndID, idx) {
 
 										var checkin = checkinAndID.checkin;
@@ -449,7 +460,10 @@ io.on('connection', function(socket) {
 							});
 
 						} else {
-							//mySQL.insertFourSqaureFromTwitterData(data,four_token);
+							//
+							mySQL.insertTwitterData(data,function(){
+								mySQL.insertFourSqaureFromTwitterData(data,four_token);
+							});
 							for (var indx in data) {
 								var currentData = data[indx];
 								var found;
@@ -502,6 +516,9 @@ io.on('connection', function(socket) {
 					var venues = [];
 					var usersList = [];
 					stream.on('data', function(data) {
+						mySQL.insertTwitterData(data.statuses,function(){
+							mySQL.insertFourSqaureFromTwitterData(data.statuses, four_token);
+						});
 						user = data.user;
 						venues = twitterFunctions.venues(data, venues);
 						usersList = twitterFunctions.users(data, usersList);
@@ -531,7 +548,7 @@ io.on('connection', function(socket) {
 				searchParams = {
 					q: params.search,
 					geocode: [params.lat, params.long, params.radius + "mi"],
-					count: 50
+					count: 20
 				};
 						
 
@@ -550,7 +567,10 @@ io.on('connection', function(socket) {
 							if (data.statuses.length > 0){
 							 foursqaure.getVenues(data.statuses,four_token, function(checkIns) {
 							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
-									mySQL.insertFourSqaureData(checkIns);
+							
+							 		mySQL.insertTwitterData(data,function(){
+										mySQL.insertFourSqaureData(checkIns);
+									});
 									checkIns.forEach(function(checkinAndID, idx) {
 
 										var checkin = checkinAndID.checkin;
@@ -568,6 +588,7 @@ io.on('connection', function(socket) {
 											fn(null, dataoutput);
 										}
 									});
+									
 									
 									
 								}
