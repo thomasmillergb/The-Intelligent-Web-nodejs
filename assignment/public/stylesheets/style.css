@@ -231,7 +231,7 @@ header #right .fake_nav_button:hover .hover_container, header #right .fake_nav_b
 
 #tab_container > div {
 	display: none;
-	padding: 100px 20px 20px 20px;
+	padding: 100px 0 20px 0;
 }
 
 #tab_container > div:first-child {
