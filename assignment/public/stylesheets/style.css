@@ -237,7 +237,11 @@ header #right .fake_nav_button:hover .hover_container, header #right .fake_nav_b
 #tab_container > div:first-child {
 	display: block;
 }
+.tableimage{
+	height: 120px;
+	max-width: 200px;
 
+}
 table, .white_container {
 	margin: 20px auto;
 	width: 100%;
