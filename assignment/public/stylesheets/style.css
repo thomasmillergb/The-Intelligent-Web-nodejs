@@ -237,9 +237,12 @@ header #right .fake_nav_button:hover .hover_container, header #right .fake_nav_b
 #tab_container > div:first-child {
 	display: block;
 }
-.tableimage{
+.tableimage {
 	max-width: 100%;
+}
 
+.tweet_results_table td {
+	word-wrap: break-word;
 }
 table, .white_container {
 	margin: 20px auto;

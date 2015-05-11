@@ -442,10 +442,11 @@ io.on('connection', function(socket) {
 										mySQL.insertTwitterData(data,function(){
 											mySQL.insertFourSqaureData(checkIns);
 										});
-										console.log("a2L:" +checkIns);
+										//console.log("a2L:" +checkIns);
 										checkIns.forEach(function(checkinAndID, idx) {
 
 											var checkin = checkinAndID.checkin;
+							
 											var tempmarker = {};
 											tempmarker.lat = checkin.venue.location.lat;
 											tempmarker.long = checkin.venue.location.lng;
