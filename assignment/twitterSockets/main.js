@@ -979,7 +979,7 @@ function visitedVenuesHTML(data, foursquare) {
 			
 			tablehtml += '<td class="tableimage">' + image + '</td>';
 			
-			tablehtml += '<td><a property="assigment:URI" href="' + row.shortUrl + '"><span property="assigment:name">'+ row['venue'] + '</span></a><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
+			tablehtml += '<td><a property="assigment:URI" href="' + row.shortUrl + '"><span property="assigment:name">'+ row['venue'] + '</span></a></td>';
 			
 			tablehtml += '<td property="assigment:description">' +  row.description + ' </td>';
 			
@@ -1009,7 +1009,7 @@ function visitedVenuesHTML(data, foursquare) {
 			row = data.visitedvenuestable[i];
 			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '" typeof="assigment:venue">';
 			
-			tablehtml += '<td><span property="assigment:name">' + row['venue'] + '</span><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
+			tablehtml += '<td><span property="assigment:name">' + row['venue'] + '</span></td>';
 			
 			tablehtml += '<td><span property="assigment:lat">' + row['lat'] + '</span>, <span property="assigment:long">' + row['long'] + '</span></td>';
 			
