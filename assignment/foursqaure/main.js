@@ -60,8 +60,8 @@ exports.venues = function(checkinAndID, venues){
     //console.log(checkinAndID);
     //console.log(checkin);
     marker.venue = checkin.venue.name;
-    marker.lat = checkin.venue.location.lat;
-    marker.long = checkin.venue.location.lng;
+    marker.lat = Math.floor(checkin.venue.location.lat * Math.pow(10,8)) / Math.pow(10,8);
+    marker.long = Math.floor(checkin.venue.location.lng * Math.pow(10,8)) / Math.pow(10,8);
         // detaled veune
     marker.rating = checkin.venue.rating;
     marker.likes = checkin.venue.likes.count;
@@ -140,8 +140,8 @@ exports.userVenues = function(checkinAndID, venues){
     marker.user=checkinAndID.screen_name;
 
     marker.venue = checkin.venue.name;
-    marker.lat = checkin.venue.location.lat;
-    marker.long = checkin.venue.location.lng;
+    marker.lat = Math.floor(checkin.venue.location.lat * Math.pow(10,8)) / Math.pow(10,8);
+    marker.long = Math.floor(checkin.venue.location.lng * Math.pow(10,8)) / Math.pow(10,8);
     marker.label = "<h3>@" + checkin.user.firstName + " "+ checkin.user.lastName+  "</h3>" + checkin.shout + "";
     marker.date = checkin.createdAt*1000;
 
