@@ -416,7 +416,6 @@ io.on('connection', function(socket) {
 									checkIns.forEach(function(checkinAndID, idx) {
 
 										var checkin = checkinAndID.checkin;
-										console.log(checkin.venue);
 										var tempmarker = {};
 										tempmarker.lat = checkin.venue.location.lat;
 										tempmarker.long = checkin.venue.location.lng;
@@ -523,7 +522,7 @@ io.on('connection', function(socket) {
 				searchParams = {
 					q: params.search,
 					geocode: [params.lat, params.long, params.radius + "mi"],
-					count: 200
+					count: 20
 				};
 						
 
@@ -542,7 +541,7 @@ io.on('connection', function(socket) {
 							if (data.statuses.length > 0){
 							 foursqaure.getVenues(data.statuses, function(checkIns) {
 							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
-									//mySQL.insertFourSqaureData(checkIns);
+									mySQL.insertFourSqaureData(checkIns);
 									checkIns.forEach(function(checkinAndID, idx) {
 
 										var checkin = checkinAndID.checkin;

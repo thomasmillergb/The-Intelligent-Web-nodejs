@@ -62,18 +62,31 @@ exports.venues = function(checkinAndID, venues){
     marker.venue = checkin.venue.name;
     marker.lat = checkin.venue.location.lat;
     marker.long = checkin.venue.location.lng;
-    
+        // detaled veune
+    marker.rating = checkin.venue.rating;
+    marker.likes = checkin.venue.likes.count;
+    marker.rating = checkin.venue.rating;
+    marker.shortUrl = checkin.venue.shortUrl;
+    if(checkin.venue.bestPhoto ==null){
 
-/*
-    console.log("checkinAndID");
-    console.log(checkin.venue);
-    console.log("checkinAndID");
-    console.log(checkin);
-    //marker.
-*/
-
-
-
+        if(checkin.venue.categories.length == 0 || checkin.venue.categories == null){
+            marker.bestPhoto.prefix = " ";
+            marker.bestPhoto.suffix = " ";
+            marker.bestPhoto = " ";  
+        }
+        else{
+            marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
+            marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
+            marker.bestPhoto.url = checkin.venue.bestPhoto.prefix + "64" + checkin.venue.bestPhoto.suffix;  
+        }
+    }
+    else{
+        marker.bestPhoto.prefix = checkin.venue.bestPhoto.prefix;
+        marker.bestPhoto.suffix = checkin.venue.bestPhoto.suffix;
+        marker.bestPhoto.height = checkin.venue.bestPhoto.height;
+        marker.bestPhoto.width = checkin.venue.bestPhoto.width;
+        marker.bestPhoto = checkin.venue.bestPhoto.prefix + marker.bestPhoto.width+"x"+ marker.bestPhoto.height + checkin.venue.bestPhoto.suffix;
+    } 
     marker.label = "<h3>@" + checkin.user.firstName + " "+ checkin.user.lastName+  "</h3>" + checkin.shout + "";
 
 	marker.date = checkin.createdAt*1000;
@@ -120,9 +133,33 @@ exports.userVenues = function(checkinAndID, venues){
     marker.long = checkin.venue.location.lng;
     marker.label = "<h3>@" + checkin.user.firstName + " "+ checkin.user.lastName+  "</h3>" + checkin.shout + "";
     marker.date = checkin.createdAt*1000;
-    //console.log(checkin);
-    //console.log(currentData); 
-    //console.log(marker);
+
+    // detaled veune
+    marker.rating = checkin.venue.rating;
+    marker.likes = checkin.venue.likes.count;
+    marker.rating = checkin.venue.rating;
+    marker.shortUrl = checkin.venue.shortUrl;
+    
+    if(checkin.venue.bestPhoto ==null){
+
+        if(checkin.venue.categories.length == 0 || checkin.venue.categories == null){
+            marker.bestPhoto.prefix = " ";
+            marker.bestPhoto.suffix = " ";
+            marker.bestPhoto = " ";  
+        }
+        else{
+            marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
+            marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
+            marker.bestPhoto.url = checkin.venue.bestPhoto.prefix + "64" + checkin.venue.bestPhoto.suffix;  
+        }
+    }
+    else{
+        marker.bestPhoto.prefix = checkin.venue.bestPhoto.prefix;
+        marker.bestPhoto.suffix = checkin.venue.bestPhoto.suffix;
+        marker.bestPhoto.height = checkin.venue.bestPhoto.height;
+        marker.bestPhoto.width = checkin.venue.bestPhoto.width;
+        marker.bestPhoto = checkin.venue.bestPhoto.prefix + marker.bestPhoto.width+"x"+ marker.bestPhoto.height + checkin.venue.bestPhoto.suffix;
+    }  
     if(venues.length == 0){
         marker.visits = 1;
         venues.push(marker);

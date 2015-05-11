@@ -101,32 +101,12 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 			var regex = /t.co\/[a-zA-Z0-9]+/;
 			var result = tweet.text.match(regex);
 			var id = result[0].replace('t.co/','');
-		    //console.log(urlExpander.expand(result[0]));
-		    //console.log(result[0]);
-
-
-		    /*
-		    expandUrl("http://"+result[0])
-			.then(function (longUrl) {
-				*/
-
-
-				var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id + "&screen_name=" +tweet.user.screen_name
-				/*
-				expander(shortTwitterURL,function(longUrl){
-					*/
+				var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id + "&screen_name=" +tweet.user.screen_name;
 				urlExpander(shortTwitterURL,function(longUrl, userID, tweetID,screen_name){
-
-
 				var fourRegex = /c\/[a-zA-Z0-9]+/;
 				if(fourRegex.test(longUrl)){
-
 					var result2 = longUrl.match(fourRegex);
-
 					result2 = result2[0].replace('c/','');
-				//	console.log(result2);
-				    //console.log(result2);
-				    
 				    getCheckin(result2,userID,tweetID,screen_name,function(err, checkin){
 				    	if(err)
 				    		callback(checkins);
@@ -139,14 +119,11 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 					    	}
 				    	}
 				    });
-
 				}
 				else{
 					counter++;
 					if(tweets.length == counter){
 					 callback(checkins);
-						
-
 				    }
 				}
 				
