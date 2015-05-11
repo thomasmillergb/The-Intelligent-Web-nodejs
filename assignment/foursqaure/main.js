@@ -67,6 +67,7 @@ exports.venues = function(checkinAndID, venues){
     marker.likes = checkin.venue.likes.count;
     marker.rating = checkin.venue.rating;
     marker.shortUrl = checkin.venue.shortUrl;
+    marker.bestPhoto = {};
     if(checkin.venue.bestPhoto ==null){
 
         if(checkin.venue.categories.length == 0 || checkin.venue.categories == null){
@@ -81,6 +82,7 @@ exports.venues = function(checkinAndID, venues){
         }
     }
     else{
+        console.log(checkin.venue.bestPhoto);
         marker.bestPhoto.prefix = checkin.venue.bestPhoto.prefix;
         marker.bestPhoto.suffix = checkin.venue.bestPhoto.suffix;
         marker.bestPhoto.height = checkin.venue.bestPhoto.height;
@@ -139,7 +141,7 @@ exports.userVenues = function(checkinAndID, venues){
     marker.likes = checkin.venue.likes.count;
     marker.rating = checkin.venue.rating;
     marker.shortUrl = checkin.venue.shortUrl;
-    
+    marker.bestPhoto = {};
     if(checkin.venue.bestPhoto ==null){
 
         if(checkin.venue.categories.length == 0 || checkin.venue.categories == null){

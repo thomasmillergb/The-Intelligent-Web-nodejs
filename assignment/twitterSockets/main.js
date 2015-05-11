@@ -49,7 +49,6 @@ io.on('connection', function(socket) {
 	});
 	socket.on('foursqaure_tokens', function(token, fn) {
 		four_token =  token;
-		console.log(four_token);
 		fn('Connection to Foursqaure was succesfull!');
 	});
 	socket.on('discussion_search', function(params, fn) {
@@ -680,7 +679,7 @@ io.on('connection', function(socket) {
 		var returnedsources = 0;
 		
 		
-		foursqaure.getVenuesFromLocation(lat + ',' + long, function(err, venuedata) {
+		foursqaure.getVenuesFromLocation(lat + ',' + long,four_token, function(err, venuedata) {
 			if (err == null) {
 				
 				venuedata = JSON.parse(venuedata);
