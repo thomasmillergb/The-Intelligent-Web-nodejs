@@ -70,7 +70,7 @@ exports.venues = function(checkinAndID, venues){
     marker.bestPhoto = {};
     if(checkin.venue.description != null){
         marker.description = checkin.venue.description;
-        console.log("yay description:" + checkin.venue.description);
+
     }
     else{
         marker.description = "No description for venue";
@@ -153,7 +153,7 @@ exports.userVenues = function(checkinAndID, venues){
     marker.bestPhoto = {};
     if(checkin.venue.description != null){
         marker.description = checkin.venue.description;
-        console.log("yay description:" + checkin.venue.description);
+  
     }
     else{
         marker.description = "No description for venue";
