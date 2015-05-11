@@ -457,34 +457,8 @@ io.on('connection', function(socket) {
 												//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
 												dataoutput.markers = venuemarkers;
 												dataoutput.visitedvenuestable = venues;
-												
-												
-												
-												var persistenthtml = visitedVenuesHTML(dataoutput, true);
-												//console.log(persistenthtml);
-												//console.log(require('path').dirname(require.main.filename));
-												
-												function pad(num, size) {
-												    var s = num+"";
-												    while (s.length < size) s = "0" + s;
-												    return s;
-												}
-												
-												
-												var filename = Math.floor(Math.random() * 999999999) + 1;
-												filename = pad(filename, 9);
-												
-												var fs = require('fs');
-												
-												fs.writeFile("rdfareturns/" + filename + ".html", persistenthtml, function(err) {
-													
-													if(err) {
-												        return console.log(err);
-												    }
-												    console.log("Saved file for persistent callback.");
-												});
-												
-												dataoutput.queryid = filename;
+
+												dataoutput.queryid = savePersistentFile(dataoutput, true);
 												
 												
 												fn(null, dataoutput);
@@ -530,6 +504,9 @@ io.on('connection', function(socket) {
 							data.user = user;
 							data.markers = venuemarkers;
 							data.visitedvenuestable = venues;
+							
+							data.queryid = savePersistentFile(data, false);
+							
 							fn(null, data);
 							}
 							else{
@@ -1053,4 +1030,30 @@ function visitedVenuesHTML(data, foursquare) {
 	
 	return tablehtml;
 
+}
+
+function savePersistentFile(dataoutput, foursquare) {
+	var persistenthtml = visitedVenuesHTML(dataoutput, foursquare);
+	
+	function pad(num, size) {
+	    var s = num+"";
+	    while (s.length < size) s = "0" + s;
+	    return s;
+	}
+	
+	
+	var filename = Math.floor(Math.random() * 999999999) + 1;
+	filename = pad(filename, 9);
+	
+	var fs = require('fs');
+	
+	fs.writeFile("rdfareturns/" + filename + ".html", persistenthtml, function(err) {
+		
+		if(err) {
+	        return console.log(err);
+	    }
+	    console.log("Saved file for persistent callback.");
+	});
+	
+	return filename;
 }

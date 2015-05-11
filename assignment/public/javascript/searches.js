@@ -310,7 +310,7 @@ $(function(){
 						
 						"<br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>" +
 						
-						"<br><br><a href=\"persistentqueries/" + data.queryid + "\" target=\"_blank\" class=\"button\">Persitent file with RDFa</a>");
+						"<br><div><span class=\"extra\">Extra</span> <a style=\"display: inline-block;\" href=\"persistentqueries/" + data.queryid + "\" target=\"_blank\" class=\"button\">Persitent file with RDFa</a></div>");
 					
 						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						
