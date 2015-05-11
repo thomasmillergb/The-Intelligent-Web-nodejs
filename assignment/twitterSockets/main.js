@@ -229,12 +229,12 @@ io.on('connection', function(socket) {
 						searchParams = {
 							screen_name: userMan,
 							geocode: [params.lat, params.long, params.radius + "mi"],
-							count: 200
+							count: 100
 						};
 					} else {
 						searchParams = {
 							screen_name: userMan,
-							count: 200
+							count: 100
 						};
 					}
 					if (searchParams) {
@@ -244,27 +244,33 @@ io.on('connection', function(socket) {
 								//There is no way to use the api to do this, so manual clipping 
 								//is needed
 								if (params.days > 0) data = sliceOlderTweets(data, params.days);
-								for (var i = 0; i < data.length; i++) {
-									keywordsTable = addKeywordToTable(keywordsTable, data[i].user.id, data[i].text);
-									if (data[i].coordinates) {
-										var marker = {};
-										marker.lat = data[i].coordinates.coordinates[1];
-										marker.long = data[i].coordinates.coordinates[0];
-										marker.label = "<h3>@" + data[i].user.screen_name + "</h3>" + data[i].text + "";
-										data1.markers.push(marker);
+
+								if(data != "as"){
+									for (var i = 0; i < data.length; i++) {
+										keywordsTable = addKeywordToTable(keywordsTable, data[i].user.id, data[i].text);
+										if (data[i].coordinates) {
+											var marker = {};
+											marker.lat = data[i].coordinates.coordinates[1];
+											marker.long = data[i].coordinates.coordinates[0];
+											marker.label = "<h3>@" + data[i].user.screen_name + "</h3>" + data[i].text + "";
+											data1.markers.push(marker);
+										}
+									}
+									counter += 1;
+									if (counter == userscreennames.length) {
+										var maxindex = params.keywords;
+										if (maxindex > keywordsTable.length) maxindex = keywordsTable.length;
+										keywordsTable.words = keywordsTable.words.slice(0, maxindex);
+										//data1.markers = venuemarkers;
+										data1.userdiscussiontable = keywordsTable; //userDiscussionJsonData;
+										mySQL.insertTwitterData(data,function(){
+											mySQL.insertFourSqaureFromTwitterData(data,four_token);
+										});
+										fn(null, data1);
 									}
 								}
-								counter += 1;
-								if (counter == userscreennames.length) {
-									var maxindex = params.keywords;
-									if (maxindex > keywordsTable.length) maxindex = keywordsTable.length;
-									keywordsTable.words = keywordsTable.words.slice(0, maxindex);
-									//data1.markers = venuemarkers;
-									data1.userdiscussiontable = keywordsTable; //userDiscussionJsonData;
-									mySQL.insertTwitterData(data,function(){
-										mySQL.insertFourSqaureFromTwitterData(data,four_token);
-									});
-									fn(null, data1);
+								else{
+									//fn("No results, try expanding the search paramters", null);
 								}
 							} else {
 								fn(null, null);
@@ -400,67 +406,78 @@ io.on('connection', function(socket) {
 			} else {
 				var searchParams = {
 					screen_name: screennamesandids.username,
-					count: 50
+					count: 40
 				};
 				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 					if (!err) {
 						//Remove any tweets that are before the specified number of days
 						//There is no way to use the api to do this, so manual clipping 
 						//is needed
+
 						if (params.days > 0) data = sliceOlderTweets(data, params.days);
+
+						
+	
 						var user;
 						var venues = [];
 						var venuemarkers = [];
 
-				
+			
 						//searchParams.foursqaure = true;
 						if (params.twitterfoursquare == 'foursquare') {
-							
-							var dataoutput = {};
-							if (data.length > 0)
-							 dataoutput.user = data[0].user;
-
-							 foursqaure.getVenues(data,four_token, function(checkIns) {
-							 	//console.log(checkInArray);
-						 		//var checkIns = checkInArray.checkin;
-							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
-							 		
-							 		//console.log(checkIns);
-
-							 		//console.log(data.user.id);
-
-									mySQL.insertTwitterData(data,function(){
-										mySQL.insertFourSqaureData(checkIns);
-									});
-									checkIns.forEach(function(checkinAndID, idx) {
-
-										var checkin = checkinAndID.checkin;
-										var tempmarker = {};
-										tempmarker.lat = checkin.venue.location.lat;
-										tempmarker.long = checkin.venue.location.lng;
-										tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
-										venuemarkers.push(tempmarker);
-										venues = foursqaure.venues(checkinAndID, venues);
-										if (idx == checkIns.length - 1) {
-											//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
-											dataoutput.markers = venuemarkers;
-											dataoutput.visitedvenuestable = venues;
-											fn(null, dataoutput);
-										}
-									});
-									
-									
-								}
-								else{
-									console.log("No Foursqaure checkIns");
-									fn("No Foursqaure checkIns", null);
-
-								}
+							if(data != ""){
+								var dataoutput = {};
+								if (data.length > 0)
+								 dataoutput.user = data[0].user;
 								
-							});
+								 foursqaure.getVenues(data,four_token, function(checkIns) {
+								 	//console.log(checkInArray);
+							 		//var checkIns = checkInArray.checkin;
+								 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
+								 		
+								 		//console.log(checkIns);
 
+								 		//console.log(data.user.id);
+
+										mySQL.insertTwitterData(data,function(){
+											mySQL.insertFourSqaureData(checkIns);
+										});
+										console.log("a2L:" +checkIns);
+										checkIns.forEach(function(checkinAndID, idx) {
+
+											var checkin = checkinAndID.checkin;
+											var tempmarker = {};
+											tempmarker.lat = checkin.venue.location.lat;
+											tempmarker.long = checkin.venue.location.lng;
+											tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
+											venuemarkers.push(tempmarker);
+											venues = foursqaure.venues(checkinAndID, venues);
+											if (idx == checkIns.length - 1) {
+												//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
+												dataoutput.markers = venuemarkers;
+												dataoutput.visitedvenuestable = venues;
+												fn(null, dataoutput);
+											}
+										});
+										
+										
+									}
+									else{
+										console.log("No Foursqaure checkIns");
+										fn("No Foursqaure checkIns in the last "+ params.days+" days", null);
+
+									}
+									
+								});
+							}
+							else{
+								console.log("No Foursqaure checkIns");
+								fn("No Foursqaure checkIns in the last "+ params.days+" days", null);
+
+								}
 						} else {
 							//
+							if(data != ""){
 							mySQL.insertTwitterData(data,function(){
 								mySQL.insertFourSqaureFromTwitterData(data,four_token);
 							});
@@ -483,6 +500,12 @@ io.on('connection', function(socket) {
 							data.markers = venuemarkers;
 							data.visitedvenuestable = venues;
 							fn(null, data);
+							}
+							else{
+								console.log("No Tweets");
+								fn("No tweets in the last "+ params.days+" days", null);
+
+								}
 						}
 					} else {
 						fn(null, null);
@@ -548,7 +571,7 @@ io.on('connection', function(socket) {
 				searchParams = {
 					q: params.search,
 					geocode: [params.lat, params.long, params.radius + "mi"],
-					count: 20
+					count: 40
 				};
 						
 
@@ -560,66 +583,73 @@ io.on('connection', function(socket) {
 						//is needed
 
 						if (params.days > 0) data = sliceOlderTweets(data, params.days);
+
 						var returndata = {};
-						if (params.twitterfoursquare == 'foursquare') {
-							var dataoutput = {};
-							var venues = [];
-							if (data.statuses.length > 0){
-							 foursqaure.getVenues(data.statuses,four_token, function(checkIns) {
-							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
-							
-							 		mySQL.insertTwitterData(data,function(){
-										mySQL.insertFourSqaureData(checkIns);
-									});
-									checkIns.forEach(function(checkinAndID, idx) {
+							if(data != ""){
+								if (params.twitterfoursquare == 'foursquare') {
+									var dataoutput = {};
+									var venues = [];
+									if (data.statuses.length > 0){
+									 foursqaure.getVenues(data.statuses,four_token, function(checkIns) {
+									 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
+									
+									 		mySQL.insertTwitterData(data.statuses,function(){
+												mySQL.insertFourSqaureData(checkIns);
+											});
+											checkIns.forEach(function(checkinAndID, idx) {
 
-										var checkin = checkinAndID.checkin;
-										var tempmarker = {};
-										tempmarker.lat = checkin.venue.location.lat;
-										tempmarker.long = checkin.venue.location.lng;
-										tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
+												var checkin = checkinAndID.checkin;
+												var tempmarker = {};
+												tempmarker.lat = checkin.venue.location.lat;
+												tempmarker.long = checkin.venue.location.lng;
+												tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
 
-										venuemarkers.push(tempmarker);
-										venues = foursqaure.userVenues(checkinAndID, venues);
-										if (idx == checkIns.length - 1) {
-											//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
-											dataoutput.markers = venuemarkers;
-											dataoutput.visitedvenuestable = venues;
-											fn(null, dataoutput);
+												venuemarkers.push(tempmarker);
+												venues = foursqaure.userVenues(checkinAndID, venues);
+												if (idx == checkIns.length - 1) {
+													//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
+													dataoutput.markers = venuemarkers;
+													dataoutput.visitedvenuestable = venues;
+													fn(null, dataoutput);
+												}
+											});
+											
+											
+											
 										}
-									});
-									
-									
-									
-								}
-								else{
-									console.log("No Foursqaure checkIns");
-									fn("No Foursqaure checkIns", null);
+										else{
+											console.log("No Foursqaure checkIns");
+											fn("No Foursqaure checkIns in the last "+ params.days+" days", null);
 
+										}
+										
+									});
+									}else{
+											console.log("No Foursqaure checkIns");
+											fn("No Foursqaure checkIns in the last "+ params.days+" days", null);
+									}
+								} else{
+								returndata.visitedvenuestable = [];
+								for (var indx in data.statuses) returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx], returndata.visitedvenuestable);
+								returndata.markers = [];
+								for (var i = 0; i < data.statuses.length; i++) {
+									if (data.statuses[i].coordinates) {
+										var tempMarker = {};
+										tempMarker.lat = data.statuses[i].coordinates.coordinates[1];
+										tempMarker.long = data.statuses[i].coordinates.coordinates[0];
+										tempMarker.label = "<h3>@" + data.statuses[i].user.screen_name + "</h3>" + data.statuses[i].text + "";
+										returndata.markers.push(tempMarker);
+									}
 								}
-								
-							});
-							}else{
-									console.log("No Foursqaure checkIns");
-									fn("No Foursqaure checkIns, try extending area", null);
-							}
-						} else{
-						returndata.visitedvenuestable = [];
-						for (var indx in data.statuses) returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx], returndata.visitedvenuestable);
-						returndata.markers = [];
-						for (var i = 0; i < data.statuses.length; i++) {
-							if (data.statuses[i].coordinates) {
-								var tempMarker = {};
-								tempMarker.lat = data.statuses[i].coordinates.coordinates[1];
-								tempMarker.long = data.statuses[i].coordinates.coordinates[0];
-								tempMarker.label = "<h3>@" + data.statuses[i].user.screen_name + "</h3>" + data.statuses[i].text + "";
-								returndata.markers.push(tempMarker);
+								//data.markers = venuemarkers;
+								fn(null, returndata);
+
 							}
 						}
-						//data.markers = venuemarkers;
-						fn(null, returndata);
+													else{
 
-					}
+								fn("No results, try expanding the search paramters", null);
+							}
 					} else {
 						console.log(err);
 						fn(null, null);
