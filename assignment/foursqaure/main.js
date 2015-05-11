@@ -67,6 +67,7 @@ exports.venues = function(checkinAndID, venues){
     marker.likes = checkin.venue.likes.count;
     marker.rating = checkin.venue.rating;
     marker.shortUrl = checkin.venue.shortUrl;
+    marker.foursquare = true;
     marker.bestPhoto = {};
     if(checkin.venue.description != null){
         marker.description = checkin.venue.description;
@@ -138,7 +139,7 @@ exports.userVenues = function(checkinAndID, venues){
     //console.log(checkinAndID.screen_name);
     marker.user_id=checkinAndID.twitterID;
     marker.user=checkinAndID.screen_name;
-
+    marker.foursquare = true;
     marker.venue = checkin.venue.name;
     marker.lat = Math.floor(checkin.venue.location.lat * Math.pow(10,8)) / Math.pow(10,8);
     marker.long = Math.floor(checkin.venue.location.lng * Math.pow(10,8)) / Math.pow(10,8);

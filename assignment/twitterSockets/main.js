@@ -449,7 +449,7 @@ io.on('connection', function(socket) {
 							});
 
 						} else {
-							mySQL.insertFourSqaureFromTwitterData(data,four_token);
+							//mySQL.insertFourSqaureFromTwitterData(data,four_token);
 							for (var indx in data) {
 								var currentData = data[indx];
 								var found;

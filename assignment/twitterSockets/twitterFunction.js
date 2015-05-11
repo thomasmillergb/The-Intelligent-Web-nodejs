@@ -30,6 +30,7 @@ exports.venues = function(currentData, venues, sortbydate){
 	        marker.lat = currentData.coordinates.coordinates[1];
 	        marker.long = currentData.coordinates.coordinates[0];
 	        marker.label = "<h3>@" + currentData.user.screen_name + "</h3>" + currentData.text + "";
+	        marker.foursquare = false;
     	}
 
         if(venues.length == 0){

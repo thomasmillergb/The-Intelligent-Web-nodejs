@@ -539,7 +539,7 @@ function mostUsedWordsTable(element, tableJson) {
 
 // Appends an element with a table of a users most visited venues from json
 function visitedVenues(element, tableJson) {
-	
+	if(tableJson[0].foursquare){
 	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Picture</td><td>Venue</td><td>Description</td><td>Rating</td><td>Likes</td><td>Lat/Long</td><td>Number of visits</td><td>Latest visit date</td><td>Points of interest</td></tr>';
 
 	for (i=0;i<tableJson.length;i++) {
@@ -557,6 +557,23 @@ function visitedVenues(element, tableJson) {
 	element.append(tablehtml);
 	
 	return tablehtml;
+	}
+	else{
+		console.log("yay");
+			var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td></tr>';
+	
+	for (i=0;i<tableJson.length;i++) {
+		row = tableJson[i];
+		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td></tr>';
+	}
+	
+	tablehtml += '</table>';
+	
+	element.append(tablehtml);
+	
+	return tablehtml;
+
+	}
 
 }
 
