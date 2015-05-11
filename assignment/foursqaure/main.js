@@ -1,29 +1,29 @@
 var fourFunction = require('./commonFourSqaureFunctions.js')
 
 
-exports.getVenues  = function(tweets, callback){
+exports.getVenues  = function(tweets,four_token, callback){
 	//console.log(Array.isArray(tweets));
 	if(Array.isArray(tweets))
-	fourFunction.getFourSquareFromTweets(tweets, function(checkins){
+	fourFunction.getFourSquareFromTweets(tweets,four_token, function(checkins){
 		callback(checkins);
 	});
 	else
-	fourFunction.getFourSquareFromTweetsLive(tweets, function(checkins){
+	fourFunction.getFourSquareFromTweetsLive(tweets,four_token, function(checkins){
 		callback(checkins);
 	});
 
 }
 
 
-exports.getVenuesFromLocation = function(location, callback){
-	fourFunction.getVenuesFromLocation(location, function(err, data){
+exports.getVenuesFromLocation = function(location, accessToken, callback){
+	fourFunction.getVenuesFromLocation(location,accessToken, function(err, data){
 		callback(err, data);
 	});
 }
 
 
 
-function findVenues(latitude, longitude, radius) {
+function findVenues(latitude, longitude, radius,accessToken) {
 
 // Configure the request
     var options = {

@@ -3,7 +3,7 @@ var request = require("request");
 var sys = require('sys')
 
 /////FourSqaure config
-var accessToken = 'Q45LXRJRPRK410WSWXP25AVR5HIIFQ3VND4PY55BAQ43AIYQ';
+//var accessToken = 'Q45LXRJRPRK410WSWXP25AVR5HIIFQ3VND4PY55BAQ43AIYQ';
 var config = {
     'secrets': {
         'clientId': 'WWHPMVGICEKKWCFXOHIAVCDD453M5VFYF5V3IZCVH1YRPRYX',
@@ -49,7 +49,7 @@ function getVenues(params){
 
 }
 
-var getVenuesFromLocation = exports.getVenuesFromLocation = function(location, callback){
+var getVenuesFromLocation = exports.getVenuesFromLocation = function(location,accessToken, callback){
 	
 	//client.get('statuses/user_timeline', params, function(err, data, response) {
 	//	
@@ -85,9 +85,9 @@ var getVenuesFromLocation = exports.getVenuesFromLocation = function(location, c
 }
 
 
-var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,callback){
+var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,accessToken,callback){
 
-
+    console.log(accessToken);
 
 	var counter = 0;
     for (var indx in tweets) {
@@ -107,7 +107,7 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 				if(fourRegex.test(longUrl)){
 					var result2 = longUrl.match(fourRegex);
 					result2 = result2[0].replace('c/','');
-				    getCheckin(result2,userID,tweetID,screen_name,function(err, checkin){
+				    getCheckin(result2,userID,tweetID,screen_name,accessToken,function(err, checkin){
 				    	if(err)
 				    		callback(checkins);
 			    		else{
@@ -145,7 +145,7 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
    
 }
 
-var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function(tweet,callback){
+var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function(tweet,accessToken,callback){
 
 
 	var checkins = [];
@@ -168,7 +168,7 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 				result2 = result2[0].replace('c/','');
 
 			    //console.log(result2);
-			    getCheckin(result2,userID,tweetID,screen_name,function(err, checkin){
+			    getCheckin(result2,userID,tweetID,screen_name,accessToken,function(err, checkin){
 		    	if(err)
 		    		callback(checkins);
 		    	else{
@@ -191,7 +191,7 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
    
 var venueCach = [];
 var checkinsCach = [];
-var getCheckin = function(checkinId,userID,tweetID,screen_name, callback) {
+var getCheckin = function(checkinId,userID,tweetID,screen_name,accessToken, callback) {
 	var checkinExtractor = /shortId=[a-zA-Z0-9]+/;
 	var twitterUserExtractor = /userID=[0-9]+/;
 	var tweetIDExtractor = /tweetID=[0-9]+/;
@@ -234,7 +234,7 @@ var getCheckin = function(checkinId,userID,tweetID,screen_name, callback) {
 
 				findCachVenue(checkin, function(found, checkin){
 					if(!found){
-						getVenueDetails(checkin,function(venue){
+						getVenueDetails(checkin,accessToken,function(venue){
 							cachVenue(venue,checkin,function(checkin){
 								callback(null,checkin);
 							});
@@ -300,7 +300,7 @@ var findCachVenue = function(checkin, callback){
 
 }
 
-var getVenueDetails = function(checkin, callback) {
+var getVenueDetails = function(checkin, accessToken,callback) {
 	//console.log(checkin);
     var options = {
         // localhost does not work if you run from localhost the server itself

@@ -152,14 +152,27 @@ function setRestrictions() {
 			socket.on('connect', function () {
 				socket.emit('twitter_tokens', localStorage.getItem("twitter_token"), localStorage.getItem("twitter_token_secret"), function(data) {
 					addNotification("Twitter", data, 5000);
+					if (haveTwitterAPITokens) {
+						socket.emit('foursqaure_tokens', localStorage.getItem("four_token"), function(data) {
+							addNotification("FourSquare", data, 5000);
+
+						});
+					}
 				});
 			});
 		else {
 			socket.emit('twitter_tokens', localStorage.getItem("twitter_token"), localStorage.getItem("twitter_token_secret"), function(data) {
 					addNotification("Twitter", data, 5000);
+					if (haveTwitterAPITokens) {
+						socket.emit('foursqaure_tokens', localStorage.getItem("four_token"), function(data) {
+							addNotification("FourSquare", data, 5000);
+
+						});
+					}
 				});
 		}	
 	}
+
 
 }
 

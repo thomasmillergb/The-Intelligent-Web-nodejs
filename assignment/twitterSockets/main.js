@@ -21,6 +21,7 @@ io.on('connection', function(socket) {
 	var twitter_token;
 	var twitter_token_secret;
 	var four_token;
+
 	socket.on('twitter_tokens', function(temp_twitter_token, temp_twitter_token_secret, fn) {
 		twitter_token = temp_twitter_token;
 		twitter_token_secret = temp_twitter_token_secret;
@@ -43,6 +44,13 @@ io.on('connection', function(socket) {
 				fn('Connection to Twitter was succesfull!');
 			}
 		});
+
+
+	});
+	socket.on('foursqaure_tokens', function(token, fn) {
+		four_token =  token;
+		console.log(four_token);
+		fn('Connection to Foursqaure was succesfull!');
 	});
 	socket.on('discussion_search', function(params, fn) {
 		console.log("discussion_search params:");
@@ -331,7 +339,7 @@ io.on('connection', function(socket) {
 						mySQL.insertTwitterData(data);
 						
 						if (params.twitterfoursquare == 'foursquare') {
-							foursqaure.getVenues(data, function(checkIns) {
+							foursqaure.getVenues(data,four_token, function(checkIns) {
 								if (checkIns != null) {
 									
 									mySQL.insertFourSqaureData(checkIns);
@@ -404,7 +412,7 @@ io.on('connection', function(socket) {
 							if (data.length > 0)
 							 dataoutput.user = data[0].user;
 
-							 foursqaure.getVenues(data, function(checkIns) {
+							 foursqaure.getVenues(data,four_token, function(checkIns) {
 							 	//console.log(checkInArray);
 						 		//var checkIns = checkInArray.checkin;
 							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
@@ -539,7 +547,7 @@ io.on('connection', function(socket) {
 							var dataoutput = {};
 							var venues = [];
 							if (data.statuses.length > 0){
-							 foursqaure.getVenues(data.statuses, function(checkIns) {
+							 foursqaure.getVenues(data.statuses,four_token, function(checkIns) {
 							 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
 									mySQL.insertFourSqaureData(checkIns);
 									checkIns.forEach(function(checkinAndID, idx) {
