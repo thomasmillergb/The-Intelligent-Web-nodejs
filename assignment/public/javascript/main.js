@@ -545,7 +545,7 @@ function visitedVenues(element, tableJson) {
 		for (i=0;i<tableJson.length;i++) {
 			row = tableJson[i];
 			
-			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '">';
+			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '" typeof="assigment:venue">';
 			
 			//console.log(tableJson[i]);
 			
@@ -588,7 +588,7 @@ function visitedVenues(element, tableJson) {
 	
 		for (i=0;i<tableJson.length;i++) {
 			row = tableJson[i];
-			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '">';
+			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '" typeof="assigment:venue">';
 			
 			tablehtml += '<td><span property="assigment:name">' + row['venue'] + '</span><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
 			
