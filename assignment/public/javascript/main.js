@@ -469,7 +469,7 @@ function POITable(element, tableJson) {
 		if (tableJson.venues[i].address)
 			address = '<td style="display:none" property="assigment:address">' + tableJson.venues[i].address + '</td>' ;
 
-		tablehtml += '<tr about=“http://127.0.0.1:3000/venues/data.rdf#' + tableJson.venues[i].label.replace(/\W/g, '') + '" typeof="assigment:venue">'+
+		tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + tableJson.venues[i].label.replace(/\W/g, '') + '" typeof="assigment:venue">'+
 						'<td>' + image + '</td>' +
 						'<td property="assigment:name">' + tableJson.venues[i].label + '</td>' +
 						'<td>' + desc + '<br></td>' +
@@ -540,38 +540,74 @@ function mostUsedWordsTable(element, tableJson) {
 // Appends an element with a table of a users most visited venues from json
 function visitedVenues(element, tableJson) {
 	if(tableJson[0].foursquare){
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Picture</td><td>Venue</td><td>Description</td><td>Rating</td><td>Likes</td><td>Lat/Long</td><td>Address</td><td>Number of visits</td><td>Latest visit date</td><td>Points of interest</td></tr>';
-
-	for (i=0;i<tableJson.length;i++) {
-		row = tableJson[i];
+		var tablehtml = '<table class="tweet_results_table" cellspacing="0" xmlns:assignment="http://127.0.0.1/rdf/rdf.xml"><tr><td>Picture</td><td>Venue</td><td>Description</td><td>Rating</td><td>Likes</td><td>Lat/Long</td><td>Address</td><td>Number of visits</td><td>Latest visit date</td><td>Points of interest</td></tr>';
+	
+		for (i=0;i<tableJson.length;i++) {
+			row = tableJson[i];
+			
+			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '" typeof="assigment:venue">';
+			
+			//console.log(tableJson[i]);
+			
+			if (row.bestPhoto == 'undefined' || row.bestPhoto == 'none')
+				image = "No photo";
+			else
+				image = '<img property="assigment:imageURI" src="' + row.bestPhoto + '" class="tableimage" />';
+			
+			
+			tablehtml += '<td class="tableimage">' + image + '</td>';
+			
+			tablehtml += '<td><a property="assigment:URI" href="' + row.shortUrl + '"><span property="assigment:name">'+ row['venue'] + '</span></a><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
+			
+			tablehtml += '<td property="assigment:description">' +  row.description + ' </td>';
+			
+			tablehtml += '<td>' + row.rating + ' </td>';
+			tablehtml += '<td>' + row.likes + ' </td>';
+			
+			tablehtml += '<td><span property="assigment:lat">' + row['lat'] + '</span>, <span property="assigment:long">' + row['long'] + '</span></td>';
+			
+			tablehtml += '<td property="assigment:address">'+ row.formattedAddress +'</td>';
+			
+			tablehtml += '<td>' + row['visits'] + '</td>';
+			
+			tablehtml += '<td>' + (new Date(row['date'])) + '</td>';
+			
+			tablehtml += '<td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + 
+				row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td>';
+			tablehtml += '</tr>';
+		}
 		
-		tablehtml += '<tr><td><img src='+row.bestPhoto +' class="tableimage" ></td><td><a href="' +row.shortUrl+'">'+ row['venue'] + '</a><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td></td>'+
-		'<td>'+  row.description +' </td><td>'+ row.rating   +' </td><td>'+ row.likes   +' </td><td>'+
-		 
-		row['lat'] + ', ' + row['long'] + '</td><td>'+ row.formattedAddress +'</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td><td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + 
-			row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td></tr>';
-	}
-	
-	tablehtml += '</table>';
-	
-	element.append(tablehtml);
-	
-	return tablehtml;
+		tablehtml += '</table>';
+		
+		element.append(tablehtml);
+		
+		return tablehtml;
 	}
 	else{
-		console.log("yay");
-			var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td></tr>';
+		var tablehtml = '<table class="tweet_results_table" cellspacing="0" xmlns:assignment="http://127.0.0.1/rdf/rdf.xml"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td><td>Last visited</td><td>Points of interest</td></tr>';
 	
-	for (i=0;i<tableJson.length;i++) {
-		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['venue'] + '<br><a href="javascript:getDatabaseUserAtVenue(\'53.3816232,-1.4817597\')">View database users that visited this venue</a></td></td><td>' + row['lat'] + ', ' + row['long'] + '</td><td>' + row['visits'] + '</td></tr>';
-	}
-	
-	tablehtml += '</table>';
-	
-	element.append(tablehtml);
-	
-	return tablehtml;
+		for (i=0;i<tableJson.length;i++) {
+			row = tableJson[i];
+			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '" typeof="assigment:venue">';
+			
+			tablehtml += '<td><span property="assigment:name">' + row['venue'] + '</span><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
+			
+			tablehtml += '<td><span property="assigment:lat">' + row['lat'] + '</span>, <span property="assigment:long">' + row['long'] + '</span></td>';
+			
+			tablehtml += '<td>' + row['visits'] + '</td>';
+			
+			tablehtml += '<td>' + row['date'] + '</td>';
+			
+			tablehtml += '<td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td>';
+			
+			tablehtml += '</tr>';
+		}
+		
+		tablehtml += '</table>';
+		
+		element.append(tablehtml);
+		
+		return tablehtml;
 
 	}
 

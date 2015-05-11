@@ -442,10 +442,11 @@ io.on('connection', function(socket) {
 										mySQL.insertTwitterData(data,function(){
 											mySQL.insertFourSqaureData(checkIns);
 										});
-										console.log("a2L:" +checkIns);
+										//console.log("a2L:" +checkIns);
 										checkIns.forEach(function(checkinAndID, idx) {
 
 											var checkin = checkinAndID.checkin;
+							
 											var tempmarker = {};
 											tempmarker.lat = checkin.venue.location.lat;
 											tempmarker.long = checkin.venue.location.lng;
@@ -456,6 +457,10 @@ io.on('connection', function(socket) {
 												//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
 												dataoutput.markers = venuemarkers;
 												dataoutput.visitedvenuestable = venues;
+
+												dataoutput.queryid = savePersistentFile(dataoutput, true);
+												
+												
 												fn(null, dataoutput);
 											}
 										});
@@ -499,6 +504,9 @@ io.on('connection', function(socket) {
 							data.user = user;
 							data.markers = venuemarkers;
 							data.visitedvenuestable = venues;
+							
+							data.queryid = savePersistentFile(data, false);
+							
 							fn(null, data);
 							}
 							else{
@@ -929,3 +937,123 @@ var exampleMarkerJson = [{"label":"<h3>@jtmcilveen</h3>Random tweet number 1","l
 var databaseUserJson = [{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"},{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"},{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"}];
 
 var databaseVenueJson = [{"venue":"St Georges Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St Georges Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St Georges Church", "coordinates":"53.3816232,-1.4817597", "visitors":12},{"venue":"St Georges Church", "coordinates":"53.3816232,-1.4817597", "visitors":12}];
+
+
+
+function visitedVenuesHTML(data, foursquare) {
+	
+	var tablehtml = "";
+	
+	tablehtml += '<html><head><link rel="stylesheet" href="/stylesheets/style.css"></head><body style="padding:20px;">';
+	
+	tablehtml += "<h1>User venues</h1>Here are the venues for" +
+						'<span xmlns:assignment="http://127.0.0.1/rdf/rdf.xml">'+
+							'<span about="http://127.0.0.1:3000/twitteruser/data.rdf#' + data.user.screen_name + '" typeof="assigment:twitterUser">' +
+								'<a href="http://www.twitter.com/' + data.user.screen_name + '">@' + data.user.screen_name + '</a>' +
+								'<span style="display:none;" property="assigment:screenName">' + data.user.screen_name + '</span>' +
+								'<span style="display:none;" property="assigment:id">' + data.user.id_str + '</span>' +
+								'<span style="display:none;" property="assigment:location">' + data.user.location + '</span>' +
+								'<span style="display:none;" property="assigment:profilePicture">' + data.user.profile_image_url + '</span>' +
+								'<span style="display:none;" property="assigment:realName">' + data.user.name + '</span>' +
+							'</span>' +
+						'</span>'+
+						"<br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>";
+	
+	
+	
+	if(foursquare){
+		tablehtml += '<table class="tweet_results_table" cellspacing="0" xmlns:assignment="http://127.0.0.1/rdf/rdf.xml"><tr><td>Picture</td><td>Venue</td><td>Description</td><td>Rating</td><td>Likes</td><td>Lat/Long</td><td>Address</td><td>Number of visits</td><td>Latest visit date</td><td>Points of interest</td></tr>';
+	
+		for (i=0;i<data.visitedvenuestable.length;i++) {
+			row = data.visitedvenuestable[i];
+			
+			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '" typeof="assigment:venue">';
+			
+			//console.log(tableJson[i]);
+			
+			if (row.bestPhoto == 'undefined' || row.bestPhoto == 'none')
+				image = "No photo";
+			else
+				image = '<img property="assigment:imageURI" src="' + row.bestPhoto + '" class="tableimage" />';
+			
+			
+			tablehtml += '<td class="tableimage">' + image + '</td>';
+			
+			tablehtml += '<td><a property="assigment:URI" href="' + row.shortUrl + '"><span property="assigment:name">'+ row['venue'] + '</span></a><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
+			
+			tablehtml += '<td property="assigment:description">' +  row.description + ' </td>';
+			
+			tablehtml += '<td>' + row.rating + ' </td>';
+			tablehtml += '<td>' + row.likes + ' </td>';
+			
+			tablehtml += '<td><span property="assigment:lat">' + row['lat'] + '</span>, <span property="assigment:long">' + row['long'] + '</span></td>';
+			
+			tablehtml += '<td property="assigment:address">'+ row.formattedAddress +'</td>';
+			
+			tablehtml += '<td>' + row['visits'] + '</td>';
+			
+			tablehtml += '<td>' + (new Date(row['date'])) + '</td>';
+			
+			tablehtml += '<td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + 
+				row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td>';
+			tablehtml += '</tr>';
+		}
+		
+		tablehtml += '</table>';
+		
+	}
+	else{
+		tablehtml += '<table class="tweet_results_table" cellspacing="0" xmlns:assignment="http://127.0.0.1/rdf/rdf.xml"><tr><td>Venue</td><td>Lat/Long</td><td>Number of visits</td><td>Last visited</td><td>Points of interest</td></tr>';
+	
+		for (i=0;i<data.visitedvenuestable.length;i++) {
+			row = data.visitedvenuestable[i];
+			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '" typeof="assigment:venue">';
+			
+			tablehtml += '<td><span property="assigment:name">' + row['venue'] + '</span><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
+			
+			tablehtml += '<td><span property="assigment:lat">' + row['lat'] + '</span>, <span property="assigment:long">' + row['long'] + '</span></td>';
+			
+			tablehtml += '<td>' + row['visits'] + '</td>';
+			
+			tablehtml += '<td>' + row['date'] + '</td>';
+			
+			tablehtml += '<td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td>';
+			
+			tablehtml += '</tr>';
+		}
+		
+		tablehtml += '</table>';
+
+	}
+	
+	tablehtml += "</body></html>";
+	
+	return tablehtml;
+
+}
+
+function savePersistentFile(dataoutput, foursquare) {
+	var persistenthtml = visitedVenuesHTML(dataoutput, foursquare);
+	
+	function pad(num, size) {
+	    var s = num+"";
+	    while (s.length < size) s = "0" + s;
+	    return s;
+	}
+	
+	
+	var filename = Math.floor(Math.random() * 999999999) + 1;
+	filename = pad(filename, 9);
+	
+	var fs = require('fs');
+	
+	fs.writeFile("rdfareturns/" + filename + ".html", persistenthtml, function(err) {
+		
+		if(err) {
+	        return console.log(err);
+	    }
+	    console.log("Saved file for persistent callback.");
+	});
+	
+	return filename;
+}

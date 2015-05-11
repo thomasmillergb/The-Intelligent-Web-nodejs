@@ -2,7 +2,6 @@ var fourFunction = require('./commonFourSqaureFunctions.js')
 
 
 exports.getVenues  = function(tweets,four_token, callback){
-	//console.log(Array.isArray(tweets));
 	if(Array.isArray(tweets))
 	fourFunction.getFourSquareFromTweets(tweets,four_token, function(checkins){
 		callback(checkins);
@@ -102,7 +101,7 @@ exports.venues = function(checkinAndID, venues){
         }
     }
     else{
-        console.log(checkin.venue.bestPhoto);
+        //console.log(checkin.venue.bestPhoto);
         marker.bestPhoto.prefix = checkin.venue.bestPhoto.prefix;
         marker.bestPhoto.suffix = checkin.venue.bestPhoto.suffix;
         marker.bestPhoto.height = checkin.venue.bestPhoto.height;

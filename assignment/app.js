@@ -45,6 +45,11 @@ app.get('/queryInterface.html', function (req, res) {
 	res.render('index', { title: 'Group N+1' });
 });
 
+app.get(/^\/persistentqueries\/([0-9]{9})/, function (req, res) {
+	console.log("serving: /rdfareturns/" + req.params[0] + ".html");
+	res.sendfile('/rdfareturns/' + req.params[0] + '.html', {root: __dirname });
+});
+
 var util = require('util');
 var OAuthTwitter = require('./oAuth/twitter.js');
 OAuthTwitter(app);

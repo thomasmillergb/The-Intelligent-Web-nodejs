@@ -297,8 +297,8 @@ $(function(){
 						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for" +
 						
 						'<span xmlns:assignment="http://127.0.0.1/rdf/rdf.xml">'+
-							'<span about=“http://127.0.0.1:3000/twitteruser/data.rdf#' + data.user.screen_name + ' typeof="assigment:twitterUser">' +
-								'<a href=\"http://www.twitter.com/" + data.user.screen_name + "\">@' + data.user.screen_name + '</a>' +
+							'<span about="http://127.0.0.1:3000/twitteruser/data.rdf#' + data.user.screen_name + '" typeof="assigment:twitterUser">' +
+								'<a href="http://www.twitter.com/' + data.user.screen_name + '">@' + data.user.screen_name + '</a>' +
 								'<span style="display:none;" property="assigment:screenName">' + data.user.screen_name + '</span>' +
 								'<span style="display:none;" property="assigment:id">' + data.user.id_str + '</span>' +
 								'<span style="display:none;" property="assigment:location">' + data.user.location + '</span>' +
@@ -308,7 +308,9 @@ $(function(){
 								
 						'</span>'+
 						
-						"<br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>");
+						"<br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>" +
+						
+						"<br><div><span class=\"extra\">Extra</span> <a style=\"display: inline-block;\" href=\"persistentqueries/" + data.queryid + "\" target=\"_blank\" class=\"button\">Persitent file with RDFa</a></div>");
 					
 						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						
