@@ -68,6 +68,15 @@ exports.venues = function(checkinAndID, venues){
     marker.rating = checkin.venue.rating;
     marker.shortUrl = checkin.venue.shortUrl;
     marker.bestPhoto = {};
+    if(checkin.venue.description != null){
+        marker.description = checkin.venue.description;
+        console.log("yay description:" + checkin.venue.description);
+    }
+    else{
+        marker.description = "No description for venue";
+
+    }
+
     if(checkin.venue.bestPhoto ==null){
 
         if(checkin.venue.categories.length == 0 || checkin.venue.categories == null){
@@ -142,6 +151,14 @@ exports.userVenues = function(checkinAndID, venues){
     marker.rating = checkin.venue.rating;
     marker.shortUrl = checkin.venue.shortUrl;
     marker.bestPhoto = {};
+    if(checkin.venue.description != null){
+        marker.description = checkin.venue.description;
+        console.log("yay description:" + checkin.venue.description);
+    }
+    else{
+        marker.description = "No description for venue";
+
+    }
     if(checkin.venue.bestPhoto ==null){
 
         if(checkin.venue.categories.length == 0 || checkin.venue.categories == null){

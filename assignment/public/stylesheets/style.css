@@ -239,7 +239,7 @@ header #right .fake_nav_button:hover .hover_container, header #right .fake_nav_b
 }
 .tableimage{
 	height: 120px;
-	max-width: 200px;
+	max-width: 100%;
 
 }
 table, .white_container {

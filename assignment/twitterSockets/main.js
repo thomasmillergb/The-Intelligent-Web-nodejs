@@ -392,7 +392,7 @@ io.on('connection', function(socket) {
 			} else {
 				var searchParams = {
 					screen_name: screennamesandids.username,
-					count: 20
+					count: 50
 				};
 				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 					if (!err) {
@@ -531,7 +531,7 @@ io.on('connection', function(socket) {
 				searchParams = {
 					q: params.search,
 					geocode: [params.lat, params.long, params.radius + "mi"],
-					count: 20
+					count: 50
 				};
 						
 
