@@ -219,36 +219,10 @@ var addVenue = exports.addVenue = function(tweet){
 };
 
 
-//EXPAND FOR FOURSQAURE AND TWITTER
-var userSearch = exports.userSearch = function(user){
-	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
-	var sql = 'SELECT * FROM `twitter_users` WHERE screenName ="'+user+'"';	
-	console.log(sql);
-	connection.query(sql, function(err, rows, fields){
-		if(!err){
-			console.log(rows);
-			userTweets(rows[0].twitterID)
-}
-		else
-			console.log(err);
-
-	});
-};
 
 
 
-var userTweets = exports.userSearch = function(user){
-	var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets.screenID ON twitter_users and twitter_users.screenName ="'+user+'"';	
-	//var sql = 'SELECT * FROM `tweets` WHERE screenID ="'+userID+'"';	
-	console.log(sql);
-	connection.query(sql, function(err, rows, fields){
-		if(!err)
-			console.log(rows);
-		else
-			console.log(err);
 
-	});
-};
 
 
 
@@ -279,3 +253,124 @@ var addFourSquareVenue = exports.addFourSquareVenue = function(checkin){
 	});
 	
 };
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////mysql search//////////////////////////////////////
+
+
+
+//EXPAND FOR FOURSQAURE AND TWITTER
+var userSearch = exports.userSearch = function(user){
+	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
+	var sql = 'SELECT * FROM `twitter_users` WHERE screenName ="'+user+'"';	
+	console.log(sql);
+	createConnection(function(connection){
+		connection.query(sql, function(err, rows, fields){
+			if(!err){
+				console.log(rows);
+				userTweets(rows[0].twitterID)
+			}
+			else
+				console.log(err);
+			connection.end();
+		});
+	});
+};
+
+
+var userTweetsScreenName = exports.userTweetsScreenName = function(user){
+	var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets ON twitter_users.twitterID = tweets.screenID AND twitter_users.screenName ='+mysql.escape(user);	
+	//var sql = 'SELECT * FROM `tweets` WHERE screenID ="'+userID+'"';	
+	console.log(sql);
+	createConnection(function(connection){
+	connection.query(sql, function(err, rows, fields){
+		if(!err)
+			console.log(rows);
+
+		else
+			console.log(err);
+		connection.end();
+	});
+	});
+};
+var userTweetsScreenID = exports.userTweetsScreenID = function(id){
+	var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets ON twitter_users.twitterID = tweets.screenID AND twitter_users.twitterID ='+mysql.escape(id);	
+	//var sql = 'SELECT * FROM `tweets` WHERE screenID ="'+userID+'"';	
+	console.log(sql);
+	createConnection(function(connection){
+	connection.query(sql, function(err, rows, fields){
+		if(!err)
+			console.log(rows);
+
+		else
+			console.log(err);
+		connection.end();
+	});
+	});
+};
+//userSearch("killermillergb");
+//userTweets(308358479);
+//userTweetsScreenID("308358479");
+
+var venueSearch = exports.venueSearch = function(param){
+	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
+	var sql;
+	if(!isNaN(param))
+	 sql = 'SELECT * FROM `venues` WHERE (name ='+mysql.escape(param)+' OR lat = '+mysql.escape(param)+' OR "long" = '+mysql.escape(param)+')';	
+	else
+	 sql = 'SELECT * FROM `venues` WHERE name ='+mysql.escape(param);	
+	console.log(sql);
+	createConnection(function(connection){
+		connection.query(sql, function(err, rows, fields){
+			if(!err){
+				console.log(rows);
+				//userTweets(rows[0].twitterID)
+			}
+			else
+				console.log(err);
+			connection.end();
+		});
+	});
+};
+var venueFourSearch = exports.venueSearch = function(param){
+	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
+	var sql;
+	if(!isNaN(param))
+	 sql = 'SELECT * FROM `foursqaure_venue` WHERE (name ='+mysql.escape(param)+' OR lat = '+mysql.escape(param)+' OR "long" = '+mysql.escape(param)+')';	
+	else
+	 sql = 'SELECT * FROM `foursqaure_venue` WHERE name ='+mysql.escape(param);	
+	console.log(sql);
+	createConnection(function(connection){
+		connection.query(sql, function(err, rows, fields){
+			if(!err){
+				console.log(rows);
+				//userTweets(rows[0].twitterID)
+			}
+			else
+				console.log(err);
+			connection.end();
+		});
+	});
+};
+//venueSearch("1.0")
+//venueFourSearch("53.24681026064928");
+
+var usersAtVenue = exports.userTweetsScreenID = function(id){
+	//var sql = 'SELECT * FROM `foursqaure_venue` INNER JOIN  tweets ON foursqaure_venue.tweet_id_fk  AND foursqaure_venue.venue_id ='+mysql.escape(id);	
+
+	var sql = 'SELECT * FROM foursqaure_venue, tweets, twitter_users WHERE foursqaure_venue.venue_id ='+ mysql.escape(id)+' AND foursqaure_venue.tweet_id_fk = tweets.tweetId'+' AND tweets.screenID = twitter_users.twitterID';	
+	console.log(sql);
+	createConnection(function(connection){
+	connection.query(sql, function(err, rows, fields){
+		if(!err)
+			console.log(rows);
+
+		else
+			console.log(err);
+		connection.end();
+	});
+	});
+};
+//usersAtVenue("4fb259c9e4b0ea9c3a983b24");
