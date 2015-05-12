@@ -22,9 +22,10 @@ $(function(){
 			map = new google.maps.Map(currentform.find('.search-map-canvas').get(0), mapOptions);
 			
 			// Create the search box and link it to the UI element.
+			var input_wrapper = currentform.find('.maps_input_wrapper').get(0);
 			var input = currentform.find('.maps_input').get(0);
 			
-			map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+			map.controls[google.maps.ControlPosition.TOP_LEFT].push(input_wrapper);
 			
 			var searchBox = new google.maps.places.SearchBox(input);
 			

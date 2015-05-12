@@ -234,7 +234,7 @@ function appendTweetWithAccount(element, tweetJson, append) {
 			tweethtml +='<span class="dark">' + tweetJson['user']['description'] + '</span><br><br>';
 			
 			
-		tweethtml +='<a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['screen_name'] + '\')">View user\'s profile and Tweets</a></td><td><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
+		tweethtml +='<a href="javascript:void(0)" onclick="getUserAndTweets(\'' + tweetJson['user']['screen_name'] + '\')">View user\'s profile and Tweets</a></td><td class="table_td_break"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['retweet_count'] + ' Re-Tweets<br><br>';
 
 
 		if (false) {
@@ -259,17 +259,11 @@ function appendTweetWithAccount(element, tweetJson, append) {
 // Returns the created element
 function appendTweetWithoutAccount(element, tweetJson) {
 	
-	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['screenName'] + '">@' + tweetJson['screenName'] + '</a> ' + removeTimezone(tweetJson['tweetDate']) + '<br><div class="tweet">' + tweetJson['tweetText'] + '</div><br>';
-	/*
-	if (false) {
-		if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
-			tweethtml +='<br><div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div><br>';
-		else
-			tweethtml += 'This tweet was not geotagged';
-	}
-	*/
+	console.log(tweetJson);
+	
+	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div><br>';
 			
-	console.log(element);
+	//console.log(element);
 		
 	returnelement = $(tweethtml).appendTo(element);
 	
@@ -615,13 +609,30 @@ function visitedVenues(element, tableJson) {
 }
 
 // Appends an element with a table of number of visits of particular users at a venue from json
-function mostVisitedVenues(element, tableJson) {
+function mostVisitedVenues(element, tableJson, foursqaure) {
 	
-	var tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Number of visits</td><td>Latest visit date</td></tr>';
+	var tablehtml = '';
+	
+	if (!foursqaure)
+		tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Venue name</td><td>Number of visits</td><td>Latest visit date</td></tr>';
+	else
+		tablehtml = '<table class="tweet_results_table" cellspacing="0"><tr><td>Username</td><td>Venue name</td><td>Picture</td><td>Location</td><td>Number of visits</td><td>Latest visit date</td></tr>';
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user'] + '\')">View profile and Tweets</a></td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td></tr>';
+		
+		if (!foursqaure)
+			tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user'] + '\')">View profile and Tweets</a></td><td>' + row['venue'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td></tr>';
+		else {
+			var picture = '';
+			if (typeof row['bestPhoto'] != 'string')
+				picture = 'No picture';
+			else
+				picture = '<img src="' + row['bestPhoto'] + '" class="tableimage" />';
+				
+			tablehtml += '<tr><td><a href="http://www.twitter.com/' + row['user'] + '">@' + row['user'] + '</a><br><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['user'] + '\')">View profile and Tweets</a></td><td><a href="shortUrl">' + row['venue'] + '</a></td><td>' + picture + '</td><td>' + row['lat'] + ', ' + row['long'] + '<br><br>' + row['formattedAddress'] + '</td><td>' + row['visits'] + '</td><td>' + (new Date(row['date'])) + '</td></tr>';
+		}
+			
 	}
 	
 	tablehtml += '</table>';

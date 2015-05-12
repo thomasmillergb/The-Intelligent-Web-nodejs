@@ -535,36 +535,48 @@ io.on('connection', function(socket) {
 
 
 			if (params.liveresults) {
+				
 				var filterParams = {
 					track: params.search
 				};
+				
 				var bounds = getBoundingBox([params.lat, params.long], (params.radius));
 				filterParams['locations'] = bounds[1] + "," + bounds[0] + "," + bounds[3] + "," + bounds[2];
 				var user;
 
 
 				currentTwitStream = twitterAPI.stream('statuses/filter', filterParams, function(stream) {
+					
 					var venues = [];
 					var usersList = [];
+					
 					stream.on('data', function(data) {
-						mySQL.insertTwitterData(data.statuses,function(){
-							mySQL.insertFourSqaureFromTwitterData(data.statuses, four_token);
+
+						mySQL.insertTwitterData(data,function(){
+							mySQL.insertFourSqaureFromTwitterData(data, four_token);
 						});
+						
 						user = data.user;
 						venues = twitterFunctions.venues(data, venues);
 						usersList = twitterFunctions.users(data, usersList);
+						
 						var returndata = {};
+						
 						if (data.coordinates) {
 							returndata.markers = {};
 							returndata.markers.lat = data.coordinates.coordinates[1];
 							returndata.markers.long = data.coordinates.coordinates[0];
 							returndata.markers.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
 						}
+						
 						returndata.visitedvenuestable = usersList;
+						
 						io.sockets.emit('stream_venues_search', returndata);
+						
 					});
 					twitterAPI.currentVenuesStream = stream;
 				});
+				
 				socket.on('venues_search_search_stop_stream', function(fn) {
 					if (twitterAPI.currentVenuesStream != undefined) {
 						twitterAPI.currentVenuesStream.destroy();
@@ -572,7 +584,9 @@ io.on('connection', function(socket) {
 					}
 					return fn();
 				});
+				
 				fn();
+				
 			} else {
 				var searchParams;
 				params.search = "swarmapp.com/c/";
@@ -593,15 +607,15 @@ io.on('connection', function(socket) {
 						if (params.days > 0) data = sliceOlderTweets(data, params.days);
 
 						var returndata = {};
-							if(data != ""){
-								if (params.twitterfoursquare == 'foursquare') {
-									var dataoutput = {};
-									var venues = [];
-									if (data.statuses.length > 0){
-									 foursqaure.getVenues(data.statuses,four_token, function(checkIns) {
-									 	if(checkIns != null && checkIns != [] && checkIns.length > 0){
-									
-									 		mySQL.insertTwitterData(data.statuses,function(){
+						if(data != ""){
+							if (params.twitterfoursquare == 'foursquare') {
+								var dataoutput = {};
+								var venues = [];
+								if (data.statuses.length > 0){
+									foursqaure.getVenues(data.statuses,four_token, function(checkIns) {
+										if(checkIns != null && checkIns != [] && checkIns.length > 0){
+								
+											mySQL.insertTwitterData(data.statuses,function(){
 												mySQL.insertFourSqaureData(checkIns);
 											});
 											checkIns.forEach(function(checkinAndID, idx) {
@@ -621,25 +635,25 @@ io.on('connection', function(socket) {
 													fn(null, dataoutput);
 												}
 											});
-											
-											
-											
-										}
-										else{
-											console.log("No Foursqaure checkIns");
-											fn("No Foursqaure checkIns in the last "+ params.days+" days", null);
-
-										}
 										
-									});
-									}else{
+										} else {
 											console.log("No Foursqaure checkIns");
 											fn("No Foursqaure checkIns in the last "+ params.days+" days", null);
-									}
-								} else{
+										}
+									
+									});
+								} else {
+									console.log("No Foursqaure checkIns");
+									fn("No Foursqaure checkIns in the last "+ params.days+" days", null);
+								}
+							} else {
 								returndata.visitedvenuestable = [];
-								for (var indx in data.statuses) returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx], returndata.visitedvenuestable);
+							
+								for (var indx in data.statuses)
+									returndata.visitedvenuestable = twitterFunctions.users(data.statuses[indx], returndata.visitedvenuestable);
+							
 								returndata.markers = [];
+								
 								for (var i = 0; i < data.statuses.length; i++) {
 									if (data.statuses[i].coordinates) {
 										var tempMarker = {};
@@ -653,11 +667,9 @@ io.on('connection', function(socket) {
 								fn(null, returndata);
 
 							}
+						} else {
+							fn("No results, try expanding the search paramters", null);
 						}
-													else{
-
-								fn("No results, try expanding the search paramters", null);
-							}
 					} else {
 						console.log(err);
 						fn(null, null);

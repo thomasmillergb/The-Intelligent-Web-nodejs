@@ -19,10 +19,12 @@ exports.venues = function(currentData, venues, sortbydate){
         
         marker.date = parseTwitterDate(currentData.created_at);
 
-        if(null != currentData.place)
+		console.log(currentData.place.full_name);
+
+        if (currentData.place)
         	marker.venue = currentData.place.full_name;
         else
-        	marker.venue = "Unknowed";
+        	marker.venue = "Unknown";
 
         if(currentData["coordinates"] && currentData.coordinates.coordinates[1]){
 
@@ -32,6 +34,8 @@ exports.venues = function(currentData, venues, sortbydate){
 	        marker.label = "<h3>@" + currentData.user.screen_name + "</h3>" + currentData.text + "";
 	        marker.foursquare = false;
     	}
+    	
+    	//console.log(marker);
 
         if(venues.length == 0){
         	marker.visits = 1;
@@ -60,6 +64,8 @@ exports.venues = function(currentData, venues, sortbydate){
         
 	}
 	
+	console.log(venues);
+	
 	//var visitedVenuesJson = [{"venue":"Sheffield", "lat":"53.371143", "long":"-1.392339", "visits":"2"},{"venue":"Sheffield 2", "lat":"53.371143", "long":"-1.38", "visits":"1"}];
 	
 	if (sortbydate !== undefined && sortbydate == true)
@@ -76,6 +82,11 @@ exports.users = function(currentUser, usersList){
 	user.user = currentUser.user.screen_name;
 	user.user_id = currentUser.user.id;
 	user.date = parseTwitterDate(currentUser.created_at);
+	
+	if (currentUser.place)
+    	user.venue = currentUser.place.full_name;
+    else
+    	user.venue = "Unknown";
 
 	if(usersList.length == 0){
 		user.visits = 1;

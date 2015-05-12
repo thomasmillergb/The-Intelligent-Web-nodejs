@@ -119,7 +119,7 @@ $(function(){
 						appendLocation($("#discussion_location_return"), data.markers);
 					
 						for (i=0;i<data.tweets.length;i++)
-							appendTweetWithAccount($("#discussion_tweet_return"), data.tweets[i]);
+							appendTweetWithAccount($("#discussion_tweet_return"), data.tweets[i], true);
 						
 						scrollToElement($("#discussion_location_return"));
 						
@@ -382,6 +382,7 @@ $(function(){
 						socket.on('stream_venues_search', function (data) {
 							
 							
+							
 							$("#venue_return").html("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
 							
 							mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
@@ -401,9 +402,9 @@ $(function(){
 					
 						$("#venue_return").html("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
 						
-						
+						console.log(data);
 					
-						mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
+						mostVisitedVenues($("#venue_return"), data.visitedvenuestable, $("#venue_search_form #user_venue_foursquare").is(':checked'));
 						
 						appendLocation($("#venue_return_location_return"), data.markers);
 						
@@ -580,6 +581,8 @@ function getUserAndTweets(user_id) {
 	
 	socket.emit('get_user_and_tweets', user_id, function (err, data) {
 		
+		//console.log(data);
+		
 		loadingOverlay(false);
 		
 		if (err != null) {				
@@ -589,6 +592,8 @@ function getUserAndTweets(user_id) {
 			
 			setupUserPage(data.user);
 			appendLocation($("#user_tweet_location_return"), data.markers);
+			
+			//console.log(data);
 			
 			for (i = 0; i < data.tweets.length; i++)
 				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
