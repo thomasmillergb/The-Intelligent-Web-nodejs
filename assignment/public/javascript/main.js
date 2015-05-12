@@ -558,7 +558,7 @@ function visitedVenues(element, tableJson) {
 			
 			tablehtml += '<td class="tableimage">' + image + '</td>';
 			
-			tablehtml += '<td><a property="assigment:URI" href="' + row.shortUrl + '"><span property="assigment:name">'+ row['venue'] + '</span></a><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
+			tablehtml += '<td><a property="assigment:URI" href="' + row.shortUrl + '"><span property="assigment:name">'+ row['venue'] + '</span></a><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] + '\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">View database users that visited this venue</a></td>';
 			
 			tablehtml += '<td property="assigment:description">' +  row.description + ' </td>';
 			
@@ -591,7 +591,7 @@ function visitedVenues(element, tableJson) {
 			row = tableJson[i];
 			tablehtml += '<tr about="http://127.0.0.1:3000/venues/data.rdf#' + row['venue'].replace(/\W/g, '') + '" typeof="assigment:venue">';
 			
-			tablehtml += '<td><span property="assigment:name">' + row['venue'] + '</span><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['lat'] + ',' + row['long'] + '\')">View database users that visited this venue</a></td>';
+			tablehtml += '<td><span property="assigment:name">' + row['venue'] + '</span><br><br><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] + '\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">View database users that visited this venue</a></td>';
 			
 			tablehtml += '<td><span property="assigment:lat">' + row['lat'] + '</span>, <span property="assigment:long">' + row['long'] + '</span></td>';
 			
@@ -664,7 +664,7 @@ function setupUserDatabasePage(userJson) {
 	if (userJson['website'] !== undefined && userJson['website'] != null)
 	  userhtml +='<span class="dark">Website</span> <a href="' + userJson['website'] + '">' + userJson['website'] + '</a><br>';
 	
-	userhtml +='<span class="dark">Joined</span> ' + removeTimezone(new Date(row['joined'])) + '<br><br>';
+	userhtml +='<span class="dark">Joined</span> ' + removeTimezone(new Date(row['oined'])) + '<br><br>';
 	
 	if (userJson['description'] !== undefined && userJson['description'] != null)
 	  userhtml +='<span class="dark">' + userJson['description'] + '</span><br><br>';				
@@ -681,7 +681,7 @@ function databaseVenueTable(element, tableJson) {
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['venue'] + '</td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['coordinates'] + '\')">Users</a></td></tr>';
+		tablehtml += '<tr><td>' + row['venue'] + '</td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] +'\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">Users</a></td></tr>';
 	}
 	
 	tablehtml += '</tbody></table></div>';
@@ -697,11 +697,11 @@ function setupVenueUsersDatabasePage(data) {
 	
 	var tablehtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - Users that have visited ' + data.location_name + '</h3><hr>';
 	
-	tablehtml += '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
+	tablehtml += '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Visits</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
 	
 	for (i=0;i<data.databaseusertable.length;i++) {
 		row = data.databaseusertable[i];
-		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['user'] + '\')">Get live tweets</a></td></tr>';
+		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td>' + row['visits'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(\'' + row['user_id'] + '\')">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['user'] + '\')">Get live tweets</a></td></tr>';
 	}
 	
 	tablehtml += '</tbody></table></div>';

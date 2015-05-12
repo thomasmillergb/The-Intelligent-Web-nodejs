@@ -229,12 +229,12 @@ io.on('connection', function(socket) {
 						searchParams = {
 							screen_name: userMan,
 							geocode: [params.lat, params.long, params.radius + "mi"],
-							count: 100
+							count: 200
 						};
 					} else {
 						searchParams = {
 							screen_name: userMan,
-							count: 100
+							count: 200
 						};
 					}
 					if (searchParams) {
@@ -406,7 +406,7 @@ io.on('connection', function(socket) {
 			} else {
 				var searchParams = {
 					screen_name: screennamesandids.username,
-					count: 40
+					count: 60
 				};
 				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 					if (!err) {
@@ -579,7 +579,7 @@ io.on('connection', function(socket) {
 				searchParams = {
 					q: params.search,
 					geocode: [params.lat, params.long, params.radius + "mi"],
-					count: 40
+					count: 60
 				};
 						
 
@@ -804,8 +804,9 @@ io.on('connection', function(socket) {
 		//data.markers = exampleMarkerJson;
 
 		mySQL.userTweetsScreenID(user_id,function(tweets){
+
+
 		var markers = [];
-		console.log(tweets);
 		for (var i = 0; i < tweets.length; i++) {
 		if (tweets[i].lat != 0.0 )  {
 				console.log(tweets[i]);
@@ -824,12 +825,31 @@ io.on('connection', function(socket) {
 		});
 
 	});
-	socket.on('database_get_users_at_venue', function(tweet_id, fn) {
-		console.log("get_tweet_replies id: " + tweet_id);
+	socket.on('database_get_users_at_venue', function(venue_id, name,foursquare, fn) {
+		console.log("database_get_users_at_venue: " + venue_id);
 		var data = {};
-		data.location_name = "TODO: Location name goes here";
-		data.databaseusertable = databaseUserJson;
-		fn(null, data);
+		
+		if(foursquare == "true"){
+			
+		mySQL.usersAtFourVenue(venue_id,function(users){
+		
+			data.location_name = name;
+			data.databaseusertable = dbUserSorting(users);
+			fn(null, data);
+
+		});
+	}
+	else{
+		mySQL.usersAtVenue(name,function(users){
+			console.log( dbUserSorting(users));
+			data.location_name = name;
+			data.databaseusertable = dbUserSorting(users);
+			fn(null, data);
+
+		});
+
+	}
+
 	});
 	socket.on('database_user_search', function(params, fn) {
 		console.log("database_user_search params:");
@@ -838,12 +858,22 @@ io.on('connection', function(socket) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
 		var data = {};
+		if(params.twitterfoursquare=="foursquare"){
 
-		mySQL.userSearch(params.username,function(users){
-			data.databaseusertable = users;
-			//console.log(users);
-			fn(null, data);	
-		});
+			mySQL.userFourSqaure(params.username,function(users){
+				data.databaseusertable = users;
+				console.log(data);
+				fn(null, data);	
+			});
+		
+		}
+		else{
+			mySQL.userSearch(params.username,function(users){
+				data.databaseusertable = users;
+				//console.log(users);
+				fn(null, data);	
+			});
+		}
 		//data.databaseusertable = databaseUserJson;
 		
 	});
@@ -854,10 +884,90 @@ io.on('connection', function(socket) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
 		var data = {};
-		data.databasevenuetable = databaseVenueJson;
-		fn(null, data);
+
+		if(params.twitterfoursquare == "foursquare"){
+			mySQL.venueFourSearch(params.venue_name_coordinates, function(venues){
+
+				data.databasevenuetable = dbVenueSorting(venues, true);
+				fn(null, data);
+			});
+
+		}
+		else{
+
+			mySQL.venueSearch(params.venue_name_coordinates, function(venues){
+
+				data.databasevenuetable = dbVenueSorting(venues, false);
+				fn(null, data);
+			});
+
+		}
 	});
 });
+
+function dbVenueSorting(venues, foursquare){
+				venueIDs = [];
+				for (var i = 0; i < venues.length; i++) {
+					var found = false;
+					counter = 0;
+					while(counter<venueIDs.length && !found){
+						if(venues[i].venue_id== venueIDs[counter].venue_id){
+							venueIDs[counter].visitors++;
+							found = true;
+
+						}
+						counter++;
+					}
+					if(!found){
+					var temp = {};
+					temp.venueDetails = venues[i];
+					
+					temp.coordinates  = temp.venueDetails.lat + ","+temp.venueDetails.long;
+					temp.venue = temp.venueDetails.name;
+					if(venues[i].venue_id == null)
+						temp.venue_id = venues[i].venue_id;
+					else	
+						temp.venue_id = venues[i].venue_id;
+					temp.foursquare = foursquare;
+					temp.visitors = 1;
+					console.log(temp);
+					venueIDs.push(temp);
+					}
+				}
+				return venueIDs;
+
+}
+function dbUserSorting(users, foursquare){
+				usersIDs = [];
+
+				for (var i = 0; i < users.length; i++) {
+					console.log(users[i].twitterID);
+					var found = false;
+					counter = 0;
+					while(counter<usersIDs.length && !found){
+						if(users[i].twitterID== usersIDs[counter].twitterID){
+							usersIDs[counter].visits++;
+							found = true;
+
+						}
+						counter++;
+					}
+					if(!found){
+					var temp = {};
+					temp.name = users[i].name;
+					temp.foursquare = foursquare;
+					temp.user = users[i].screenName;
+					temp.user_id = users[i].twitterID;
+					temp.twitterID = users[i].twitterID;
+					console.log(temp.user_id);
+					temp.visits = 1;
+					usersIDs.push(temp);
+					
+					}
+				}
+				return usersIDs;
+ //[{"user_id":"839249234", "user":"jtmcilveen", "name":"James McIlveen"}
+}
 function getMarkers(data){
 	for (var i = 0; i < data.length; i++) {
 		if (data[i].coordinates) {

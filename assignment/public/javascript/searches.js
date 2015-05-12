@@ -502,7 +502,7 @@ function scrollToElement(element) {
 }
 
 // Gets a list of users from the database
-function getDatabaseUserAtVenue(venue) {
+function getDatabaseUserAtVenue(venue,name,foursquare) {
 	
 	// TODO: Get tweets from AJAX and and them into the form before it opens
 	
@@ -510,7 +510,7 @@ function getDatabaseUserAtVenue(venue) {
 	
 	loadingOverlay(true);
 	
-	socket.emit('database_get_users_at_venue', venue, function (err, data) {
+	socket.emit('database_get_users_at_venue', venue,name,foursquare, function (err, data) {
 		
 		loadingOverlay(false);
 		
