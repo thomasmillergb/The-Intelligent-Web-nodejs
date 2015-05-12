@@ -262,15 +262,15 @@ var addFourSquareVenue = exports.addFourSquareVenue = function(checkin){
 
 
 //EXPAND FOR FOURSQAURE AND TWITTER
-var userSearch = exports.userSearch = function(user){
+var userSearch = exports.userSearch = function(user, callback){
 	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
 	var sql = 'SELECT * FROM `twitter_users` WHERE screenName ="'+user+'"';	
 	console.log(sql);
 	createConnection(function(connection){
 		connection.query(sql, function(err, rows, fields){
 			if(!err){
-				console.log(rows);
-				userTweets(rows[0].twitterID)
+				
+				callback(rows)
 			}
 			else
 				console.log(err);
@@ -280,29 +280,29 @@ var userSearch = exports.userSearch = function(user){
 };
 
 
-var userTweetsScreenName = exports.userTweetsScreenName = function(user){
+var userTweetsScreenName = exports.userTweetsScreenName = function(user,callback){
 	var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets ON twitter_users.twitterID = tweets.screenID AND twitter_users.screenName ='+mysql.escape(user);	
 	//var sql = 'SELECT * FROM `tweets` WHERE screenID ="'+userID+'"';	
 	console.log(sql);
 	createConnection(function(connection){
 	connection.query(sql, function(err, rows, fields){
 		if(!err)
-			console.log(rows);
-
+			callback(rows);
 		else
 			console.log(err);
 		connection.end();
 	});
 	});
 };
-var userTweetsScreenID = exports.userTweetsScreenID = function(id){
-	var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets ON twitter_users.twitterID = tweets.screenID AND twitter_users.twitterID ='+mysql.escape(id);	
+var userTweetsScreenID = exports.userTweetsScreenID = function(id,callback){
+	//var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets ON twitter_users.twitterID = tweets.screenID AND twitter_users.twitterID ='+mysql.escape(id);	
+	var sql = 'SELECT * FROM venues, tweets, twitter_users, foursqaure_venue WHERE twitter_users.twitterID ='+mysql.escape(id)+' AND venues.tweet_fk_id = tweets.tweetId'+' AND tweets.screenID = twitter_users.twitterID AND foursqaure_venue.tweet_id_fk = tweets.tweetId';	
 	//var sql = 'SELECT * FROM `tweets` WHERE screenID ="'+userID+'"';	
 	console.log(sql);
 	createConnection(function(connection){
 	connection.query(sql, function(err, rows, fields){
 		if(!err)
-			console.log(rows);
+			callback(rows);
 
 		else
 			console.log(err);
@@ -334,7 +334,7 @@ var venueSearch = exports.venueSearch = function(param){
 		});
 	});
 };
-var venueFourSearch = exports.venueSearch = function(param){
+var venueFourSearch = exports.venueFourSearch = function(param){
 	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
 	var sql;
 	if(!isNaN(param))
@@ -357,7 +357,7 @@ var venueFourSearch = exports.venueSearch = function(param){
 //venueSearch("1.0")
 //venueFourSearch("53.24681026064928");
 
-var usersAtVenue = exports.userTweetsScreenID = function(id){
+var usersAtVenue = exports.usersAtVenue = function(id){
 	//var sql = 'SELECT * FROM `foursqaure_venue` INNER JOIN  tweets ON foursqaure_venue.tweet_id_fk  AND foursqaure_venue.venue_id ='+mysql.escape(id);	
 
 	var sql = 'SELECT * FROM foursqaure_venue, tweets, twitter_users WHERE foursqaure_venue.venue_id ='+ mysql.escape(id)+' AND foursqaure_venue.tweet_id_fk = tweets.tweetId'+' AND tweets.screenID = twitter_users.twitterID';	
@@ -373,4 +373,5 @@ var usersAtVenue = exports.userTweetsScreenID = function(id){
 	});
 	});
 };
+
 //usersAtVenue("4fb259c9e4b0ea9c3a983b24");

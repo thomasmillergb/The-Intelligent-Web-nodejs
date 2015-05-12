@@ -796,12 +796,33 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('database_get_user_and_tweets', function(user_id, fn) {
+
+
 		console.log("database_get_user_and_tweets id: " + user_id);
 		var data = {};
-		data.user = exampleUserJson;
-		data.markers = exampleMarkerJson;
-		data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
-		fn(null, data);
+		//data.user = exampleUserJson;
+		//data.markers = exampleMarkerJson;
+
+		mySQL.userTweetsScreenID(user_id,function(tweets){
+		var markers = [];
+		console.log(tweets);
+		for (var i = 0; i < tweets.length; i++) {
+		if (tweets[i].lat != 0.0 )  {
+				console.log(tweets[i]);
+				var tempMarker = {};
+				tempMarker.lat = tweets[i].lat;
+				tempMarker.long = tweets[i].long;
+				tempMarker.label = "<h3>@" + tweets[i].screenName + "</h3>" + tweets[i].tweetText + "";
+				markers.push(tempMarker);
+			}
+		}
+		data.markers = markers;
+			data.user = tweets[0];
+			data.tweets =  tweets
+			//data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
+			fn(null, data);
+		});
+
 	});
 	socket.on('database_get_users_at_venue', function(tweet_id, fn) {
 		console.log("get_tweet_replies id: " + tweet_id);
@@ -817,8 +838,14 @@ io.on('connection', function(socket) {
 			console.log("    params." + index + ": \"" + params[index] + "\"");
 		}
 		var data = {};
-		data.databaseusertable = databaseUserJson;
-		fn(null, data);
+
+		mySQL.userSearch(params.username,function(users){
+			data.databaseusertable = users;
+			//console.log(users);
+			fn(null, data);	
+		});
+		//data.databaseusertable = databaseUserJson;
+		
 	});
 	socket.on('database_venue_search', function(params, fn) {
 		console.log("database_venue_search params:");
@@ -831,7 +858,19 @@ io.on('connection', function(socket) {
 		fn(null, data);
 	});
 });
+function getMarkers(data){
+	for (var i = 0; i < data.length; i++) {
+		if (data[i].coordinates) {
+			var tempMarker = {};
+			tempMarker.lat = data[i].lat;
+			tempMarker.long = data[i].long;
+			tempMarker.label = "<h3>@" + data[i].screenName + "</h3>" + data[i].tweetText + "";
+			returndata.markers.push(tempMarker);
+		}
+	}
+	return tempmarker;
 
+}
 function getUserIDsAndScreenNames(users, callback) {
 	var userIDs = [];
 	users.forEach(function(user, next) {

@@ -520,6 +520,8 @@ function getDatabaseUserAtVenue(venue) {
 			addNotification("Database: Users at venue", "Table recieved", 5000);
 			
 			setupVenueUsersDatabasePage(data);
+
+			databaseVenueTable($("#database_venue_table_return"), data.databasevenuetable);
 			
 		}
 		
@@ -535,9 +537,9 @@ function getDatabaseUserAndTweets(user_id) {
 	toggleAlternatePanel(true);
 	
 	loadingOverlay(true);
-	
+
 	socket.emit('database_get_user_and_tweets', user_id, function (err, data) {
-		
+
 		loadingOverlay(false);
 		
 		if (err != null) {				
@@ -546,11 +548,13 @@ function getDatabaseUserAndTweets(user_id) {
 			addNotification("Database: User and tweets", "Data recieved", 5000);
 			
 			setupUserDatabasePage(data.user);
+
 			appendLocation($("#user_database_tweet_location_return"), data.markers);
 			
 			for (i = 0; i < data.tweets.length; i++)
 				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
-			
+			//databaseTweetTable($("#user_tweet_return"), data);
+			//databaseTweetTable(data);
 		}
 		
 	});

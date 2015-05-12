@@ -208,7 +208,7 @@ function addNotification(title, message, duration) {
 
 // Removes timezone from Twitter formatted date
 function removeTimezone(str) {
-	return str.replace(/\s\+\S+/ig,"");
+	return str//str.replace(/\s\+\S+/ig,"");
 }
 
 // Appends a tweet to an element from the tweets json including the users account on the left
@@ -259,16 +259,17 @@ function appendTweetWithAccount(element, tweetJson, append) {
 // Returns the created element
 function appendTweetWithoutAccount(element, tweetJson) {
 	
-	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div>' + tweetJson['favourites_count'] + ' Favourites, ' + tweetJson['retweet_count'] + ' Re-Tweets<br>';
-	
+	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['screenName'] + '">@' + tweetJson['screenName'] + '</a> ' + removeTimezone(tweetJson['tweetDate']) + '<br><div class="tweet">' + tweetJson['tweetText'] + '</div><br>';
+	/*
 	if (false) {
 		if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
 			tweethtml +='<br><div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div><br>';
 		else
 			tweethtml += 'This tweet was not geotagged';
 	}
+	*/
 			
-	
+	console.log(element);
 		
 	returnelement = $(tweethtml).appendTo(element);
 	
@@ -635,10 +636,10 @@ function mostVisitedVenues(element, tableJson) {
 function databaseUserTable(element, tableJson) {
 	
 	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
-	
+	console.log(tableJson[0]);
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(1)">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['user'] + '\')">Get live tweets</a></td></tr>';
+		tablehtml += '<tr><td>' + row['twitterID'] + '</td><td>' + row['screenName'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['screenName'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets('+ row['twitterID'] +')">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['twitterID'] + '\')">Get live tweets</a></td></tr>';
 	}
 	
 	tablehtml += '</tbody></table></div>';
@@ -654,21 +655,21 @@ function setupUserDatabasePage(userJson) {
 		
 	//userJson = userJson['user'];	
 	
-	var userhtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s details from database</h3><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
+	var userhtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screenName'] + '">@' + userJson['screenName'] + '</a> \'s details from database</h3><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screenName'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screenName'] + '">@' + userJson['screenName'] + '</a><br><br></div></div></td><td>';
 	  				
 	  			
 	if (userJson['location'] !== undefined && userJson['location'] != null)
 	  userhtml +='<span class="dark">Location</span> ' + userJson['location'] + '<br>';
 	  
-	if (userJson['url'] !== undefined && userJson['url'] != null)
-	  userhtml +='<span class="dark">Website</span> <a href="' + userJson['url'] + '">' + userJson['url'] + '</a><br>';
+	if (userJson['website'] !== undefined && userJson['website'] != null)
+	  userhtml +='<span class="dark">Website</span> <a href="' + userJson['website'] + '">' + userJson['website'] + '</a><br>';
 	
-	userhtml +='<span class="dark">Joined</span> ' + removeTimezone(userJson['created_at']) + '<br><br>';
+	userhtml +='<span class="dark">Joined</span> ' + removeTimezone(new Date(row['joined'])) + '<br><br>';
 	
 	if (userJson['description'] !== undefined && userJson['description'] != null)
 	  userhtml +='<span class="dark">' + userJson['description'] + '</span><br><br>';				
 	
-	userhtml += '</td></tr></table><div id="user_database_tweet_location_return"></div><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><div id="user_database_tweet_return"></div></div>';
+	userhtml += '</td></tr></table><div id="user_database_tweet_location_return"></div><hr><h1>Tweets</h1>Below are the last 100 tweets for <a href="http://www.twitter.com/' + userJson['screenName'] + '">@' + userJson['screenName'] + '</a><div id="user_tweet_return"></div></div>';
 	
 	$("#alternate_panel_container").html(userhtml);
 }
@@ -706,5 +707,22 @@ function setupVenueUsersDatabasePage(data) {
 	tablehtml += '</tbody></table></div>';
 	
 	$("#alternate_panel_container").html(tablehtml);
+
+}
+
+function databaseTweetTable(element, tableJson) {
+	
+	var tablehtml = '<div class="white_container"><table class="tweet_table"><thead><tr><th>Tweet ID</th><th>Tweet</th><th>Date</th></tr></thead><tbody>';
+	//tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES ";
+	for (i=0;i<tableJson.length;i++) {
+		row = tableJson[i];
+		tablehtml += '<tr><td>' + row['tweetId'] + '</td><td>' + row['tweetText'] + '</td><td>' + new Date(row['tweetDate']) + '</td></tr>';
+	}
+	
+	tablehtml += '</tbody></table></div>';
+	
+	element.append(tablehtml);
+	console.log(tablehtml);
+	return tablehtml;
 
 }
