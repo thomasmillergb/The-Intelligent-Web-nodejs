@@ -294,7 +294,10 @@ $(function(){
 					
 						//console.log(data);
 					
-						$("#user_venues_return").html("<hr><h1>User venues</h1>Here are the venues for" +
+						$("#user_venues_return").html("<hr>" +
+						
+						'<table style="padding:0;background:none;"><tr><td>'+
+						"<h1>User venues</h1>Here are the venues for" +
 						
 						'<span xmlns:assignment="http://127.0.0.1/rdf/rdf.xml">'+
 							'<span about="http://127.0.0.1:3000/twitteruser/data.rdf#' + data.user.screen_name + '" typeof="assigment:twitterUser">' +
@@ -306,11 +309,15 @@ $(function(){
 								'<span style="display:none;" property="assigment:realName">' + data.user.name + '</span>' +
 							'</span>' +
 								
-						'</span>'+
+						'</span>' + 
 						
 						"<br><a href=\"javascript:void(0)\" onclick=\"getUserAndTweets('" + data.user.screen_name + "')\">View user's profile and Tweets</a>" +
 						
-						"<br><div><span class=\"extra\">Extra</span> <a style=\"display: inline-block;\" href=\"persistentqueries/" + data.queryid + "\" target=\"_blank\" class=\"button\">Persitent file with RDFa</a></div>");
+						'</td><td>'+
+						
+						"<br><div><span class=\"extra\">Extra</span> <a style=\"display: inline-block;\" href=\"persistentqueries/" + data.queryid + "\" target=\"_blank\" class=\"button\">Persitent file with RDFa</a></div>"
+						
+						+ '</td></table>');
 					
 						visitedVenues($("#user_venues_return"), data.visitedvenuestable);
 						
