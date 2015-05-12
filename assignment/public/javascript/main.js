@@ -259,8 +259,6 @@ function appendTweetWithAccount(element, tweetJson, append) {
 // Returns the created element
 function appendTweetWithoutAccount(element, tweetJson) {
 	
-	console.log(tweetJson);
-	
 	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div><br>';
 			
 	//console.log(element);

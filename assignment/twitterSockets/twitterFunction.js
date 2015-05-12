@@ -19,8 +19,6 @@ exports.venues = function(currentData, venues, sortbydate){
         
         marker.date = parseTwitterDate(currentData.created_at);
 
-		console.log(currentData.place.full_name);
-
         if (currentData.place)
         	marker.venue = currentData.place.full_name;
         else
@@ -63,8 +61,6 @@ exports.venues = function(currentData, venues, sortbydate){
         }
         
 	}
-	
-	console.log(venues);
 	
 	//var visitedVenuesJson = [{"venue":"Sheffield", "lat":"53.371143", "long":"-1.392339", "visits":"2"},{"venue":"Sheffield 2", "lat":"53.371143", "long":"-1.38", "visits":"1"}];
 	
