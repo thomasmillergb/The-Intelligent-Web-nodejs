@@ -686,13 +686,19 @@ function setupUserDatabasePage(userJson) {
 // Appends an element with a table of venues in the database
 function databaseVenueTable(element, tableJson) {
 	
-	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Venue name</th><th>Coordinates</th><th>Number of visitors</th><th>View users that have visited</th></tr></thead><tbody>';
+	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Photo of Venue</th><th>Venue name</th><th>Coordinates</th><th>Number of visitors</th><th>Rating</th><th>Address</th><th>View users that have visited</th></tr></thead><tbody>';
 	
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['venue'] + '</td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] +'\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">Users</a></td></tr>';
+		console.log(row);
+		var image;
+		if (row.venueDetails.bestPhoto == 'undefined' || row.venueDetails.bestPhoto == 'none')
+			image = "No photo";
+		else
+			image = '<img property="assigment:imageURI" src="' + row.venueDetails.photo + '" class="tableimage" />';
+		tablehtml += '<tr><td>'+image+'</td><td><a property="assigment:URI" href="' + row.venueDetails.url + '"><span property="assigment:name">'+ row['venue'] + '</span></a></td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td>' + row.venueDetails['rating'] +'</td><td>' + row.venueDetails['address'] +'</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] +'\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">Users</a></td></tr>';
 	}
-	
+
 	tablehtml += '</tbody></table></div>';
 	
 	element.append(tablehtml);

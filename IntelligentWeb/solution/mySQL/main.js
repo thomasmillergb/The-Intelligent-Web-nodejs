@@ -319,7 +319,8 @@ var addFourSquareVenue = exports.addFourSquareVenue = function(checkin){
 //EXPAND FOR FOURSQAURE AND TWITTER
 var userSearch = exports.userSearch = function(user, callback){
 	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
-	var sql = 'SELECT * FROM `twitter_users` WHERE screenName ="'+user+'"';	
+	paramp = "%"+user+"%";
+	var sql = 'SELECT * FROM `twitter_users` WHERE screenName LIKE"'+paramp+'"';	
 	console.log(sql);
 	createConnection(function(connection){
 		connection.query(sql, function(err, rows, fields){
@@ -351,6 +352,7 @@ var userTweetsScreenName = exports.userTweetsScreenName = function(user,callback
 };
 var userTweetsScreenID = exports.userTweetsScreenID = function(id,callback){
 	//var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets ON twitter_users.twitterID = tweets.screenID AND twitter_users.twitterID ='+mysql.escape(id);	
+
 	var sql = 'SELECT * FROM venues, tweets, twitter_users, foursqaure_venue WHERE twitter_users.twitterID ='+mysql.escape(id)+' AND venues.tweet_fk_id = tweets.tweetId'+' AND tweets.screenID = twitter_users.twitterID AND foursqaure_venue.tweet_id_fk = tweets.tweetId';	
 	//var sql = 'SELECT * FROM `tweets` WHERE screenID ="'+userID+'"';	
 	console.log(sql);
@@ -371,10 +373,11 @@ var userTweetsScreenID = exports.userTweetsScreenID = function(id,callback){
 
 var userFourSqaure = exports.userFourSqaure = function(user,callback){
 	var sql;
+	paramp = "%"+user+"%";
 	if(isNaN(user))
-	   sql = 'SELECT * FROM foursqaure_users, twitter_users WHERE (foursqaure_users.firstName ='+mysql.escape(user)+ 'OR foursqaure_users.lastName ='+mysql.escape(user)+') AND  twitter_users.twitterID = foursqaure_users.twitter_user_fk_id ';	
+	   sql = 'SELECT * FROM foursqaure_users, twitter_users WHERE (foursqaure_users.firstName LIKE'+mysql.escape(paramp)+ 'OR foursqaure_users.lastName LIKE'+mysql.escape(paramp)+') AND  twitter_users.twitterID = foursqaure_users.twitter_user_fk_id ';	
 	else
-	sql = 'SELECT * FROM foursqaure_users, twitter_users WHERE foursqaure_users.foursqaure_id ='+mysql.escape(user)+' AND  twitter_users.twitterID = foursqaure_users.twitter_user_fk_id' ;	
+	sql = 'SELECT * FROM foursqaure_users, twitter_users WHERE foursqaure_users.foursqaure_id LIKE'+mysql.escape(paramp)+' AND  twitter_users.twitterID = foursqaure_users.twitter_user_fk_id' ;	
 	//var sql = 'SELECT * FROM `tweets` WHERE screenID ="'+userID+'"';	
 	console.log(sql);
 	createConnection(function(connection){
@@ -391,10 +394,11 @@ var userFourSqaure = exports.userFourSqaure = function(user,callback){
 var venueSearch = exports.venueSearch = function(param, callback){
 	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
 	var sql;
+	paramp = "%"+param+"%";
 	if(!isNaN(param))
-	 sql = 'SELECT * FROM `venues` WHERE (name ='+mysql.escape(param)+' OR lat = '+mysql.escape(param)+' OR "long" = '+mysql.escape(param)+')';	
+	 sql = 'SELECT * FROM `venues` WHERE (name LIKE'+mysql.escape(paramp)+' OR lat LIKE '+mysql.escape(paramp)+' OR "long" LIKE '+mysql.escape(paramp)+')';	
 	else
-	 sql = 'SELECT * FROM `venues` WHERE name ='+mysql.escape(param);	
+	 sql = 'SELECT * FROM `venues` WHERE name LIKE'+mysql.escape(paramp);	
 	console.log(sql);
 	createConnection(function(connection){
 		connection.query(sql, function(err, rows, fields){
@@ -411,10 +415,15 @@ var venueSearch = exports.venueSearch = function(param, callback){
 var venueFourSearch = exports.venueFourSearch = function(param, callback){
 	//var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
 	var sql;
-	if(!isNaN(param))
-	 sql = 'SELECT * FROM `foursqaure_venue` WHERE (name ='+mysql.escape(param)+' OR lat = '+mysql.escape(param)+' OR "long" = '+mysql.escape(param)+')';	
-	else
-	 sql = 'SELECT * FROM `foursqaure_venue` WHERE name ='+mysql.escape(param);	
+
+	if(!isNaN(param)){
+		param = "%"+param+"%"
+	 sql = 'SELECT * FROM `foursqaure_venue` WHERE (name LIKE'+mysql.escape(param)+' OR lat LIKE '+mysql.escape(param)+' OR "long" LIKE '+mysql.escape(param)+')';	
+	}
+	else{
+		param = "%"+param+"%"
+	 sql = 'SELECT * FROM `foursqaure_venue` WHERE name LIKE '+mysql.escape(param);	
+	}
 	console.log(sql);
 	createConnection(function(connection){
 		connection.query(sql, function(err, rows, fields){
