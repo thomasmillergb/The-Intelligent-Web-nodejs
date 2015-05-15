@@ -557,21 +557,24 @@ io.on('connection', function(socket) {
 							mySQL.insertFourSqaureFromTwitterData(data, four_token);
 						});
 						*/
+
 						if (params.twitterfoursquare == 'foursquare') {
 							foursqaure.getVenues(data,four_token, function(checkIns) {
 
 								if(checkIns != null && checkIns != [] && checkIns.length > 0){
 							
-									mySQL.insertTwitterData(data,function(){
-										mySQL.insertFourSqaureData(checkIns);
-									});
+									//mySQL.insertTwitterData(data,function(){
+									//	mySQL.insertFourSqaureData(checkIns);
+									//});
 									
 									checkIns.forEach(function(checkinAndID, idx) {
 										var returndata = {};
 										//console.log(checkinAndID);
 										//console.log(data.user);
 										var checkin = checkinAndID.checkin;
-										
+										mySQL.insertTwitterData(data,function(){
+										mySQL.insertFourSqaureData(checkIns);
+										});
 										if(checkin.venue.location.lat!= null || checkin.venue.location.lng!= null ){
 										var tempmarker = {};
 										tempmarker.lat = checkin.venue.location.lat;

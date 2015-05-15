@@ -145,9 +145,9 @@ var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID)
 			        marker.rating = "Not yet rated";
 			    }
 			    if(checkin.venue.location.formattedAddress != null)
-			        marker.formattedAddress = checkin.venue.location.formattedAddress
+			        marker.formattedAddress =  mysql.escape(checkin.venue.location.formattedAddress);
 			    else
-			        marker.formattedAddress = "No address found"
+			        marker.formattedAddress = "No address found";
 
 			    if(checkin.venue.description != null){
 			        marker.description = checkin.venue.description;
@@ -157,40 +157,47 @@ var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID)
 			        marker.description = "No description for venue";
 
 			    }
+		
 			    marker.bestPhoto= {};
 			    if(checkin.venue.bestPhoto ==null){
-
 			        if(checkin.venue.categories.length == 0 || checkin.venue.categories == null){
 			            marker.bestPhoto.prefix = " ";
 			            marker.bestPhoto.suffix = " ";
 			            marker.bestPhoto = " ";  
 			        }
 			        else{
+			      
+
+			      
 			            marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
+
 			            marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
-			            marker.bestPhoto.url = checkin.venue.bestPhoto.prefix + "64" + checkin.venue.bestPhoto.suffix;  
+			            marker.bestPhoto.url = marker.bestPhoto.prefix + "64" + marker.bestPhoto.prefix;  
 			        }
 			    }
 			    else{
+
 			        //console.log(checkin.venue.bestPhoto);
 			        marker.bestPhoto.prefix = checkin.venue.bestPhoto.prefix;
 			        marker.bestPhoto.suffix = checkin.venue.bestPhoto.suffix;
 			        marker.bestPhoto.height = checkin.venue.bestPhoto.height;
 			        marker.bestPhoto.width = checkin.venue.bestPhoto.width;
 			        marker.bestPhoto = checkin.venue.bestPhoto.prefix + marker.bestPhoto.width+"x"+ marker.bestPhoto.height + checkin.venue.bestPhoto.suffix;
-			    } 
-			    console.log(mysql.escape(marker.formattedAddress));
-				addVenue += "("+ mysql.escape(checkin.id) +","+mysql.escape(venue.id)+","+mysql.escape(venue.name)+","+marker.lat+","+marker.long+","+mysql.escape(checkin.user.id)+","+ checkin.createdAt +","+checkinAndID.tweetID+","+mysql.escape(marker.description)+","+mysql.escape(marker.rating)+","+mysql.escape(venue.likes.count)+",'"+marker.formattedAddress+"',"+  mysql.escape(marker.bestPhoto)+ ","+  mysql.escape(venue.shortUrl) +"),";
+			    }
+			
+
+
+				addVenue += "("+ mysql.escape(checkin.id) +","+mysql.escape(venue.id)+","+mysql.escape(venue.name)+","+marker.lat+","+marker.long+","+mysql.escape(checkin.user.id)+","+ checkin.createdAt +","+checkinAndID.tweetID+","+mysql.escape(marker.description)+","+mysql.escape(marker.rating)+","+mysql.escape(venue.likes.count)+',"'+marker.formattedAddress+'",'+  mysql.escape(marker.bestPhoto)+ ","+  mysql.escape(venue.shortUrl) +"),";
 
 			});
 			//console.log(addUser);
-			console.log(addVenue);
+
 
 				connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
 					if(err)console.log(err);
 					//console.log(addVenue);
 					connection.query(addVenue.substring(0, addVenue.length - 1),function(err, result){
-						if(err)console.log(err);
+						//if(err)console.log(err);
 						connection.end();
 					});
 

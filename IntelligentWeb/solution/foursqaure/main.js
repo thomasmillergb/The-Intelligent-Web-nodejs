@@ -95,9 +95,13 @@ exports.venues = function(checkinAndID, venues){
             marker.bestPhoto = " ";  
         }
         else{
-            marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
-            marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
-            marker.bestPhoto.url = checkin.venue.bestPhoto.prefix + "64" + checkin.venue.bestPhoto.suffix;  
+
+
+  
+        marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
+
+        marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
+        marker.bestPhoto.url = marker.bestPhoto.prefix + "64" + marker.bestPhoto.prefix;  
         }
     }
     else{
@@ -187,9 +191,10 @@ exports.userVenues = function(checkinAndID, venues){
             marker.bestPhoto = " ";  
         }
         else{
-            marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
-            marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
-            marker.bestPhoto.url = checkin.venue.categories[0].icon.prefix + "64" + checkin.venue.categories[0].icon.suffix;  
+        marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
+
+        marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
+        marker.bestPhoto.url = marker.bestPhoto.prefix + "64" + marker.bestPhoto.prefix;  
         }
     }
     else{
