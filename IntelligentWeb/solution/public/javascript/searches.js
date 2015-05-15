@@ -385,7 +385,7 @@ $(function(){
 							
 							$("#venue_return").html("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
 							
-							mostVisitedVenues($("#venue_return"), data.visitedvenuestable);
+							mostVisitedVenues($("#venue_return"), data.visitedvenuestable, $("#venue_search_form #user_venue_foursquare").is(':checked'));
 						
 							if (data.markers) {
 								addMarkerToMap(map, data.markers.lat, data.markers.long, data.markers.label, newBounds);
@@ -402,7 +402,7 @@ $(function(){
 					
 						$("#venue_return").html("<hr><h1>Users at venue</h1><span>Here are the users that have been found in the search area</span>");
 						
-						console.log(data);
+		
 					
 						mostVisitedVenues($("#venue_return"), data.visitedvenuestable, $("#venue_search_form #user_venue_foursquare").is(':checked'));
 						

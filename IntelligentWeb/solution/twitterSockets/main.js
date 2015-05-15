@@ -579,14 +579,7 @@ io.on('connection', function(socket) {
 										//console.log(tempmarker);
 										tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
 									}
-										
-
 										venues = foursqaure.userVenues(checkinAndID, venues);
-
-										//console.log(checkinAndID);
-	
-										
-
 											returndata.markers = tempmarker;
 											returndata.visitedvenuestable = venues;
 					
