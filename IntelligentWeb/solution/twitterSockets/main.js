@@ -548,31 +548,69 @@ io.on('connection', function(socket) {
 				currentTwitStream = twitterAPI.stream('statuses/filter', filterParams, function(stream) {
 					
 					var venues = [];
+					var venuemarkers = [];
 					var usersList = [];
 					
 					stream.on('data', function(data) {
-
+/*
 						mySQL.insertTwitterData(data,function(){
 							mySQL.insertFourSqaureFromTwitterData(data, four_token);
 						});
+						*/
+						if (params.twitterfoursquare == 'foursquare') {
+							foursqaure.getVenues(data,four_token, function(checkIns) {
+								if(checkIns != null && checkIns != [] && checkIns.length > 0){
 						
-						user = data.user;
-						venues = twitterFunctions.venues(data, venues);
-						usersList = twitterFunctions.users(data, usersList);
-						
-						var returndata = {};
-						
-						if (data.coordinates) {
-							returndata.markers = {};
-							returndata.markers.lat = data.coordinates.coordinates[1];
-							returndata.markers.long = data.coordinates.coordinates[0];
-							returndata.markers.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
+									mySQL.insertTwitterData(data,function(){
+										mySQL.insertFourSqaureData(checkIns);
+									});
+									
+									checkIns.forEach(function(checkinAndID, idx) {
+
+										var checkin = checkinAndID.checkin;
+										var tempmarker = {};
+										tempmarker.lat = checkin.venue.location.lat;
+										tempmarker.long = checkin.venue.location.lng;
+										tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
+
+										venuemarkers.push(tempmarker);
+										venues = foursqaure.userVenues(checkinAndID, venues);
+
+										console.log(checkinAndID);
+										if (idx == checkIns.length - 1) {
+											//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
+											var dataoutput = {};
+											dataoutput.markers = venuemarkers;
+											dataoutput.visitedvenuestable = venues;
+											fn(null, dataoutput);
+										}
+									});
+								
+								} else {
+									console.log("No Foursqaure checkIns");
+									fn("No Foursqaure checkIns in the last "+ params.days+" days", null);
+								}
+							
+							});
 						}
-						
-						returndata.visitedvenuestable = usersList;
-						
-						io.sockets.emit('stream_venues_search', returndata);
-						
+						else{
+							user = data.user;
+							venues = twitterFunctions.venues(data, venues);
+							usersList = twitterFunctions.users(data, usersList);
+							
+							var returndata = {};
+							
+							if (data.coordinates) {
+								returndata.markers = {};
+								returndata.markers.lat = data.coordinates.coordinates[1];
+								returndata.markers.long = data.coordinates.coordinates[0];
+								returndata.markers.label = "<h3>@" + data.user.screen_name + "</h3>" + data.text + "";
+							}
+							
+							returndata.visitedvenuestable = usersList;
+							
+							io.sockets.emit('stream_venues_search', returndata);
+						}
 					});
 					twitterAPI.currentVenuesStream = stream;
 				});
