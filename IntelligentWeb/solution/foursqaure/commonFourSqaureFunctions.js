@@ -50,14 +50,7 @@ function getVenues(params){
 }
 
 var getVenuesFromLocation = exports.getVenuesFromLocation = function(location,accessToken, callback){
-	
-	//client.get('statuses/user_timeline', params, function(err, data, response) {
-	//	
-	//	callback(null, data);
-	//
-    //});
-    
-    
+
     var options = {
         // localhost does not work if you run from localhost the server itself
         url: 'https://api.foursquare.com/v2/venues/search',
@@ -113,7 +106,6 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 			    		else{
 					    	checkins.push(checkin);
 					    	counter++;
-				    
 					    	if(tweets.length == counter){
 					    		callback(checkins);
 					    	}
@@ -126,10 +118,7 @@ var getFourSquareFromTweets = exports.getFourSquareFromTweets = function(tweets,
 					 callback(checkins);
 				    }
 				}
-				
 			});
-
-	
 		}
 		else{
 			counter++;
@@ -155,7 +144,7 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 		var result = tweet.text.match(regex);
 	    //console.log(result[0]);
 	    var id = result[0].replace('t.co/','');
-	    var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id
+	    var shortTwitterURL = id + "?tweetUserID="+ tweet.user.id + "&tweetID=" +tweet.id + "&screen_name=" +tweet.user.screen_name;
 	    urlExpander(shortTwitterURL,function(longUrl, userID, tweetID, screen_name){
 
 	    	
@@ -167,7 +156,7 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 				var result2 = longUrl.match(fourRegex);
 				result2 = result2[0].replace('c/','');
 
-			    //console.log(result2);
+			    console.log(screen_name);
 			    getCheckin(result2,userID,tweetID,screen_name,accessToken,function(err, checkin){
 		    	if(err)
 		    		callback(checkins);

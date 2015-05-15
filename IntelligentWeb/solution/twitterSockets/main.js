@@ -559,31 +559,38 @@ io.on('connection', function(socket) {
 						*/
 						if (params.twitterfoursquare == 'foursquare') {
 							foursqaure.getVenues(data,four_token, function(checkIns) {
+
 								if(checkIns != null && checkIns != [] && checkIns.length > 0){
-						
+							
 									mySQL.insertTwitterData(data,function(){
 										mySQL.insertFourSqaureData(checkIns);
 									});
 									
 									checkIns.forEach(function(checkinAndID, idx) {
-
+										var returndata = {};
+										//console.log(checkinAndID);
+										//console.log(data.user);
 										var checkin = checkinAndID.checkin;
+										
+										if(checkin.venue.location.lat!= null || checkin.venue.location.lng!= null ){
 										var tempmarker = {};
 										tempmarker.lat = checkin.venue.location.lat;
 										tempmarker.long = checkin.venue.location.lng;
+										//console.log(tempmarker);
 										tempmarker.label = "<h3>@" + checkin.user.firstName + " " + checkin.user.lastName + "</h3>" + checkin.shout + "";
+									}
+										
 
-										venuemarkers.push(tempmarker);
 										venues = foursqaure.userVenues(checkinAndID, venues);
 
-										console.log(checkinAndID);
-										if (idx == checkIns.length - 1) {
-											//dataoutput.user = checkin.firstName + " "+checkin.user.lastName;
-											var dataoutput = {};
-											dataoutput.markers = venuemarkers;
-											dataoutput.visitedvenuestable = venues;
-											fn(null, dataoutput);
-										}
+										//console.log(checkinAndID);
+	
+										
+
+											returndata.markers = tempmarker;
+											returndata.visitedvenuestable = venues;
+					
+										io.sockets.emit('stream_venues_search', returndata);
 									});
 								
 								} else {
