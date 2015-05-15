@@ -1124,7 +1124,7 @@ function visitedVenuesHTML(data, foursquare) {
 	
 	
 	if(foursquare){
-		tablehtml += '<table class="tweet_results_table" cellspacing="0" xmlns:assignment="http://127.0.0.1/rdf/rdf.xml"><tr><td>Picture</td><td>Venue</td><td>Description</td><td>Rating</td><td>Likes</td><td>Lat/Long</td><td>Address</td><td>Number of visits</td><td>Latest visit date</td><td>Points of interest</td></tr>';
+		tablehtml += '<table class="tweet_results_table" cellspacing="0" xmlns:assignment="http://127.0.0.1/rdf/rdf.xml"><tr><td>Picture</td><td>Venue</td><td>Description</td><td>Rating</td><td>Likes</td><td>Lat/Long</td><td>Address</td><td>Number of visits</td><td>Latest visit date</td></tr>';
 	
 		for (i=0;i<data.visitedvenuestable.length;i++) {
 			row = data.visitedvenuestable[i];
@@ -1156,8 +1156,6 @@ function visitedVenuesHTML(data, foursquare) {
 			
 			tablehtml += '<td>' + (new Date(row['date'])) + '</td>';
 			
-			tablehtml += '<td><a href="javascript:getPointsOfInterest(\'' + row['venue'].replace("'", "") + '\', \'' + 
-				row['lat'] + '\', \'' + row['long'] + '\')">See points of interest close by</a></td>';
 			tablehtml += '</tr>';
 		}
 		
