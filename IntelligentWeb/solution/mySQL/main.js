@@ -28,13 +28,14 @@ searchParams = { screen_name : "KillerMillerGB", count:2};
 //twitterRestAPI.get('users/lookup', searchParams, function(err, data, response) {
 twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 	if(!err){
+		var accesstoken = "Q45LXRJRPRK410WSWXP25AVR5HIIFQ3VND4PY55BAQ43AIYQ";
 		insertTwitterData(data);
 		//userTweets("KillerMillerGB");
 		//addVenue(data[0]);
 		//addTweet(data[2]);
 		//addUser(data[0]);
 		//console.log(data[0]);
-		insertFourSqaureFromTwitterData(data);
+		insertFourSqaureFromTwitterData(data, accesstoken);
 	}
 	else{
 		console.log(err);
@@ -106,7 +107,7 @@ var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID)
 
 	createConnection(function(connection){
 
-		var addVenue = "INSERT IGNORE INTO `foursqaure_venue` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`, `tweet_id_fk`) VALUES ";
+		var addVenue = "INSERT IGNORE INTO `foursqaure_venue` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`, `tweet_id_fk`, `description`, `rating`, `likes`, `address`, `photo`, `url` ) VALUES ";
 		var addUser = "INSERT IGNORE INTO `foursqaure_users` (`foursqaure_id`, `twitter_user_fk_id`, `firstName`, `lastName`, `female`, `photoURL`) VALUES ";
 
 		if(checkInsAndID != null && checkInsAndID != [] && checkInsAndID.length > 0){
@@ -127,10 +128,64 @@ var insertFourSqaureData =exports.insertFourSqaureData = function(checkInsAndID)
 				addUser += "("+userParms.id+"," +checkinAndID.twitterID+"," + mysql.escape(userParms.firstName)+" , "+mysql.escape(userParms.lastName)+", '"+gender+"', '"+photoURL+"'),";
 
 				var venue = checkin.venue;
-				addVenue += "("+ mysql.escape(checkin.id) +","+mysql.escape(venue.id)+","+mysql.escape(venue.name)+","+venue.location.lat+","+venue.location.lng+","+mysql.escape(checkin.user.id)+","+ checkin.createdAt +","+checkinAndID.tweetID+"),";
+				var marker = {};
+				if(checkin.venue.location.lat!= null || checkin.venue.location.lng!= null ){
+					marker.lat = Math.floor(checkin.venue.location.lat * Math.pow(10,8)) / Math.pow(10,8);
+				    marker.long = Math.floor(checkin.venue.location.lng * Math.pow(10,8)) / Math.pow(10,8);
+				}
+				else{
+					marker.lat = 0;
+				    marker.long = 0;
+				}
+			        // detaled veune
+			    if(checkin.venue.rating != null){
+			        marker.rating = checkin.venue.rating;
+			    }
+			    else{
+			        marker.rating = "Not yet rated";
+			    }
+			    if(checkin.venue.location.formattedAddress != null)
+			        marker.formattedAddress = checkin.venue.location.formattedAddress
+			    else
+			        marker.formattedAddress = "No address found"
+
+			    if(checkin.venue.description != null){
+			        marker.description = checkin.venue.description;
+
+			    }
+			    else{
+			        marker.description = "No description for venue";
+
+			    }
+			    marker.bestPhoto= {};
+			    if(checkin.venue.bestPhoto ==null){
+
+			        if(checkin.venue.categories.length == 0 || checkin.venue.categories == null){
+			            marker.bestPhoto.prefix = " ";
+			            marker.bestPhoto.suffix = " ";
+			            marker.bestPhoto = " ";  
+			        }
+			        else{
+			            marker.bestPhoto.prefix = checkin.venue.categories[0].icon.prefix;
+			            marker.bestPhoto.suffix = checkin.venue.categories[0].icon.suffix;
+			            marker.bestPhoto.url = checkin.venue.bestPhoto.prefix + "64" + checkin.venue.bestPhoto.suffix;  
+			        }
+			    }
+			    else{
+			        //console.log(checkin.venue.bestPhoto);
+			        marker.bestPhoto.prefix = checkin.venue.bestPhoto.prefix;
+			        marker.bestPhoto.suffix = checkin.venue.bestPhoto.suffix;
+			        marker.bestPhoto.height = checkin.venue.bestPhoto.height;
+			        marker.bestPhoto.width = checkin.venue.bestPhoto.width;
+			        marker.bestPhoto = checkin.venue.bestPhoto.prefix + marker.bestPhoto.width+"x"+ marker.bestPhoto.height + checkin.venue.bestPhoto.suffix;
+			    } 
+			    console.log(mysql.escape(marker.formattedAddress));
+				addVenue += "("+ mysql.escape(checkin.id) +","+mysql.escape(venue.id)+","+mysql.escape(venue.name)+","+marker.lat+","+marker.long+","+mysql.escape(checkin.user.id)+","+ checkin.createdAt +","+checkinAndID.tweetID+","+mysql.escape(marker.description)+","+mysql.escape(marker.rating)+","+mysql.escape(venue.likes.count)+",'"+marker.formattedAddress+"',"+  mysql.escape(marker.bestPhoto)+ ","+  mysql.escape(venue.shortUrl) +"),";
 
 			});
 			//console.log(addUser);
+			console.log(addVenue);
+
 				connection.query(addUser.substring(0, addUser.length - 1),function(err, result){
 					if(err)console.log(err);
 					//console.log(addVenue);

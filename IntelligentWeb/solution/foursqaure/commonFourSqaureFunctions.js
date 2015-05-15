@@ -155,8 +155,6 @@ var getFourSquareFromTweetsLive = exports.getFourSquareFromTweetsLive = function
 				
 				var result2 = longUrl.match(fourRegex);
 				result2 = result2[0].replace('c/','');
-
-			    console.log(screen_name);
 			    getCheckin(result2,userID,tweetID,screen_name,accessToken,function(err, checkin){
 		    	if(err)
 		    		callback(checkins);
