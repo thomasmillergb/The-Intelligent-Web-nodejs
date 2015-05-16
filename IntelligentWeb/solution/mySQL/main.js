@@ -188,9 +188,13 @@ var insertFourSqaureData = exports.insertFourSqaureData = function(checkInsAndID
                     marker.bestPhoto.width = checkin.venue.bestPhoto.width;
                     marker.bestPhoto = checkin.venue.bestPhoto.prefix + marker.bestPhoto.width + "x" + marker.bestPhoto.height + checkin.venue.bestPhoto.suffix;
                 }
+                if(checkin.venue.likes !=null)
+                     marker.likes = checkin.venue.likes.count;
+                 else marker.likes = 0;
+
                 addVenue += "(" + mysql.escape(checkin.id) + "," + mysql.escape(venue.id) + "," + mysql.escape(venue.name) + "," + marker.lat + "," + marker.long + "," + mysql.escape(
                         checkin.user.id) + "," + checkin.createdAt + "," + checkinAndID.tweetID + "," + mysql.escape(marker.description) + "," + mysql.escape(marker.rating) + "," +
-                    mysql.escape(venue.likes.count) + ',"' + marker.formattedAddress + '",' + mysql.escape(marker.bestPhoto) + "," + mysql.escape(venue.shortUrl) + "),";
+                    mysql.escape(marker.likes) + ',"' + marker.formattedAddress + '",' + mysql.escape(marker.bestPhoto) + "," + mysql.escape(venue.shortUrl) + "),";
             });
             //console.log(addUser);
             connection.query(addUser.substring(0, addUser.length - 1), function(err, result) {

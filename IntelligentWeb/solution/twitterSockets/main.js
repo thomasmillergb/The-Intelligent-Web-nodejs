@@ -537,7 +537,7 @@ io.on('connection', function(socket) {
 							mySQL.insertFourSqaureFromTwitterData(data, four_token);
 						});
 						*/
-<<<<<<< HEAD
+
                     if (params.twitterfoursquare == 'foursquare') {
                         foursqaure.getVenues(data, four_token, function(checkIns) {
                             if (checkIns != null && checkIns != [] && checkIns.length > 0) {

@@ -84,7 +84,9 @@ exports.venues = function(checkinAndID, venues) {
         }
         if (checkin.venue.location.formattedAddress != null) marker.formattedAddress = checkin.venue.location.formattedAddress
         else marker.formattedAddress = "No address found"
-        marker.likes = checkin.venue.likes.count;
+        if(checkin.venue.likes !=null)
+            marker.likes = checkin.venue.likes.count;
+        else marker.likes = 0;
         marker.shortUrl = checkin.venue.shortUrl;
         marker.foursquare = true;
         marker.bestPhoto = {};
