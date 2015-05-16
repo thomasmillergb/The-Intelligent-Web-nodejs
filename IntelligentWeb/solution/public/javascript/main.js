@@ -259,15 +259,23 @@ function appendTweetWithAccount(element, tweetJson, append) {
 // Returns the created element
 function appendTweetWithoutAccount(element, tweetJson) {
 	
-	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div><br>';
+	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['screenName'] + '">@' + tweetJson['screenName'] + '</a> ' + removeTimezone(tweetJson['tweetDate']) + '<br><div class="tweet">' + tweetJson['tweetText'] + '</div><br>';
+	/*
+	if (false) {
+		if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
+			tweethtml +='<br><div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div><br>';
+		else
+			tweethtml += 'This tweet was not geotagged';
+	}
+	*/
 			
-	//console.log(element);
+	console.log(element);
 		
 	returnelement = $(tweethtml).appendTo(element);
 	
 	
 	return returnelement;
-		
+
 }
 
 // A function that takes a list of location and labels in json and an DOM element, and appends
@@ -716,7 +724,7 @@ function setupVenueUsersDatabasePage(data) {
 	
 	for (i=0;i<data.databaseusertable.length;i++) {
 		row = data.databaseusertable[i];
-		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td>' + row['visits'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(\'' + row['user_id'] + '\')">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['user'] + '\')">Get live tweets</a></td></tr>';
+		tablehtml += '<tr><td>' + row['user_id'] + '</td><td>' + row['user'] + '</td><td>' + row['name'] + '</td><td>' + row['visits'] + '</td><td><a href="http://twitter.com/' + row['user'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets(\'' + row['user_id'] + '\')">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['user_id'] + '\')">Get live tweets</a></td></tr>';
 	}
 	
 	tablehtml += '</tbody></table></div>';

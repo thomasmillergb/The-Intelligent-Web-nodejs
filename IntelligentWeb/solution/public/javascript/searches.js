@@ -1,5 +1,7 @@
 
 
+
+
 //var socket = io.connect('http://localhost:3001');
 //    window.socket = socket;
 //    socket.on('newTwitt', function (item) {
@@ -559,8 +561,10 @@ function getDatabaseUserAndTweets(user_id) {
 
 			appendLocation($("#user_database_tweet_location_return"), data.markers);
 			
-			for (i = 0; i < data.tweets.length; i++)
+			for (i = 0; i < data.tweets.length; i++){
 				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
+
+			}
 			//databaseTweetTable($("#user_tweet_return"), data);
 			//databaseTweetTable(data);
 		}
@@ -593,7 +597,7 @@ function getUserAndTweets(user_id) {
 			setupUserPage(data.user);
 			appendLocation($("#user_tweet_location_return"), data.markers);
 			
-			//console.log(data);
+			console.log(data);
 			
 			for (i = 0; i < data.tweets.length; i++)
 				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);

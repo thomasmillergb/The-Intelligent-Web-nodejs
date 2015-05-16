@@ -723,36 +723,31 @@ io.on('connection', function(socket) {
 	socket.on('get_user_and_tweets', function(screenname, fn) {
 		console.log("get_user_and_tweets screen_name: " + screenname);
 		searchParams = {
-			screen_name: screenname
+			user_id: screenname
 		};
 		var returndata = {};
-		twitterRestAPI.get('users/show', searchParams, function(err, data, response) {
+
+		twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
 			if (!err) {
-				returndata.user = data;
-				twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, response) {
-					if (!err) {
-						returndata.markers = [];
-						for (var i = 0; i < data.length; i++) {
-							if (data[i].coordinates) {
-								var tempMarker = {};
-								tempMarker.lat = data[i].coordinates.coordinates[1];
-								tempMarker.long = data[i].coordinates.coordinates[0];
-								tempMarker.label = "<h3>@" + data[i].user.screen_name + "</h3>" + data[i].text + "";
-								returndata.markers.push(tempMarker);
-							}
-						}
-						returndata.tweets = data;
-						fn(null, returndata);
-					} else {
-						console.log(err);
-						fn(null, null);
+				returndata.markers = [];
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].coordinates) {
+						var tempMarker = {};
+						tempMarker.lat = data[i].coordinates.coordinates[1];
+						tempMarker.long = data[i].coordinates.coordinates[0];
+						tempMarker.label = "<h3>@" + data[i].user.screen_name + "</h3>" + data[i].text + "";
+						returndata.markers.push(tempMarker);
 					}
-				});
+				}
+				//console.log(data);
+				returndata.tweets = data;
+				fn(null, returndata);
 			} else {
 				console.log(err);
 				fn(null, null);
 			}
 		});
+
 	});
 	
 	socket.on('get_points_of_interest', function(name, lat, long, fn) {
@@ -850,8 +845,6 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('database_get_user_and_tweets', function(user_id, fn) {
-
-
 		console.log("database_get_user_and_tweets id: " + user_id);
 		var data = {};
 		//data.user = exampleUserJson;
@@ -877,6 +870,33 @@ io.on('connection', function(socket) {
 			//data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
 			fn(null, data);
 		});
+/*
+		console.log("database_get_user_and_tweets id: " + user_id);
+		var data = {};
+		//data.user = exampleUserJson;
+		//data.markers = exampleMarkerJson;
+
+		mySQL.userTweetsScreenID(user_id,function(tweets){
+
+
+		var markers = [];
+		for (var i = 0; i < tweets.length; i++) {
+		if (tweets[i].lat != 0.0 )  {
+				console.log(tweets[i]);
+				var tempMarker = {};
+				tempMarker.lat = tweets[i].lat;
+				tempMarker.long = tweets[i].long;
+				tempMarker.label = "<h3>@" + tweets[i].screenName + "</h3>" + tweets[i].tweetText + "";
+				markers.push(tempMarker);
+			}
+		}
+		data.markers = markers;
+			data.user = tweets[0];
+			data.tweets =  tweets
+			//data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
+			fn(null, data);
+		});
+		*/
 
 	});
 	socket.on('database_get_users_at_venue', function(venue_id, name,foursquare, fn) {
@@ -916,7 +936,6 @@ io.on('connection', function(socket) {
 
 			mySQL.userFourSqaure(params.username,function(users){
 				data.databaseusertable = users;
-				console.log(data);
 				fn(null, data);	
 			});
 		
