@@ -257,10 +257,14 @@ function appendTweetWithAccount(element, tweetJson, append) {
 
 // Appends a tweet to an element from the tweets json without their account
 // Returns the created element
-function appendTweetWithoutAccount(element, tweetJson) {
-	
-	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div><br>';
-
+function appendTweetWithoutAccount(element, tweetJson,db) {
+	console.log(db);
+	console.log(tweetJson);
+	var tweethtml;
+	if(db)
+		tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['screenName'] + '">@' + tweetJson['screenName'] + '</a> ' + removeTimezone(new Date(tweetJson['datetime'])) + '<br><div class="tweet">' + tweetJson['tweetText'] + '</div><br>';
+	else
+		tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div><br>';	
 		
 	returnelement = $(tweethtml).appendTo(element);
 	

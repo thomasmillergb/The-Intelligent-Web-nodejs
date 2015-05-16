@@ -562,7 +562,7 @@ function getDatabaseUserAndTweets(user_id) {
 			appendLocation($("#user_database_tweet_location_return"), data.markers);
 			
 			for (i = 0; i < data.tweets.length; i++){
-				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
+				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i],true);
 
 			}
 			//databaseTweetTable($("#user_tweet_return"), data);
@@ -606,7 +606,7 @@ function getUserAndTweets(user_id) {
 			//console.log(data);
 			
 			for (i = 0; i < data.tweets.length; i++) {
-				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
+				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i],false);
 			}
 				
 			

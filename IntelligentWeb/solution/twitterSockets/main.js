@@ -803,9 +803,10 @@ io.on('connection', function(socket) {
                     markers.push(tempMarker);
                 }
             }
+
             data.markers = markers;
             data.user = tweets[0];
-            data.tweets = tweets
+            data.tweets = tweets;
                 //data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
             fn(null, data);
         });
