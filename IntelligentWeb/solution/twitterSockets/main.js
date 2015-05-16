@@ -723,7 +723,7 @@ io.on('connection', function(socket) {
 	socket.on('get_user_and_tweets', function(screenname, fn) {
 		console.log("get_user_and_tweets screen_name: " + screenname);
 		searchParams = {
-			user_id: screenname
+			screen_name: screenname
 		};
 		var returndata = {};
 
@@ -739,7 +739,7 @@ io.on('connection', function(socket) {
 						returndata.markers.push(tempMarker);
 					}
 				}
-				//console.log(data);
+
 				returndata.tweets = data;
 				fn(null, returndata);
 			} else {

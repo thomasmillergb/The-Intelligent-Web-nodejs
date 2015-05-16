@@ -594,13 +594,21 @@ function getUserAndTweets(user_id) {
 		} else {
 			addNotification("User and tweets", "Data recieved", 5000);
 			
+			//console.log("asd");
+			//console.log(data);
+			
+			if (data.tweets.length > 0)
+				data.user = data.tweets[0].user;
+			
 			setupUserPage(data.user);
 			appendLocation($("#user_tweet_location_return"), data.markers);
 			
-			console.log(data);
+			//console.log(data);
 			
-			for (i = 0; i < data.tweets.length; i++)
+			for (i = 0; i < data.tweets.length; i++) {
 				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
+			}
+				
 			
 		}
 		
