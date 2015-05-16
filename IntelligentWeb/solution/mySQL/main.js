@@ -41,6 +41,17 @@ twitterRestAPI.get('statuses/user_timeline', searchParams, function(err, data, r
 	}
 
 });
+
+*/
+
+/**
+Insertion of twitter data
+
+An efficient MySQL insert statement where multiple of insert statements are compressed into 3, 
+by doing this removes a lot of connection overhead which speeds up the insertion.
+
+ @param data  contains an array of tweets which have user and tweet detials
+ @param callback used to return un async to allow foursqaure to insert with tweet ID
 */
 var insertTwitterData = exports.insertTwitterData = function(data, callback) {
     createConnection(function(connection) {
@@ -93,12 +104,30 @@ var insertTwitterData = exports.insertTwitterData = function(data, callback) {
         });
     });
 }
+/**
+Gets all check in data from tweets then inserts the data into the MySQL
+
+ @param data  contains an array of tweets which have user and tweet detials
+ @param access_token  foursqaure access token
+
+*/
+
 var insertFourSqaureFromTwitterData = exports.insertFourSqaureFromTwitterData = function(data, access_token) {
     foursqaure.getVenues(data, access_token, function(checkIns) {
         //console.log(checkIns);
         insertFourSqaureData(checkIns);
     });
 }
+
+/**
+Insertion of foursqaure data
+
+An efficient MySQL insert statement where multiple of insert statements are compressed into 2, 
+by doing this removes a lot of connection overhead which speeds up the insertion.
+
+ @param checkInsAndID  contains an array of checkins and tweet info attached
+
+*/
 var insertFourSqaureData = exports.insertFourSqaureData = function(checkInsAndID) {
     createConnection(function(connection) {
         var addVenue =
@@ -175,81 +204,19 @@ var insertFourSqaureData = exports.insertFourSqaureData = function(checkInsAndID
         }
     });
 }
-var addUser = exports.addUser = function(tweet, callback) {
-    var userParms = tweet.user
-        //connection.query('INSERT INTO `lastPosition` SET ? ON DUPLICATE KEY UPDATE Lat=VALUES(Lat), Lon=VALUES(Lon), Time=VALUES(Time)', result);
-    var sql = "INSERT IGNORE INTO `twitter_users` (`twitterID`, `screenName`, `name`, `location`, `website`, `joined`, `description`, `image_url`, `user_url`) VALUES (" + userParms.id + ",'" +
-        userParms.screen_name + "' , '" + userParms.name + "', '" + userParms.location + "', '" + userParms.url + "', '" + userParms.created_at + "', '" + userParms.description + "', '" +
-        userParms.profile_image_url + "', 'https://twitter.com/" + userParms.screen_name + "')" + " ON DUPLICATE KEY UPDATE `screenName`=('" + userParms.screen_name + "')"
-        //"ON DUPLICATE KEY UPDATE `screenName`=('"+ userParms.screen_name+"') `name`=('"+ userParms.name+"') `location`=('"+ userParms.location+"') `website`('"+ userParms.url+"')  `description`=('"+ userParms.description+"') image_url('"+ userParms.profile_image_url+"') user_url('https://twitter.com/"+userParms.screen_name+ "') ";
-    connection.query(sql, function(err, result) {
-        if (!err) {
-            addTweet(tweet);
-            console.log("add user: " + result);
-        } else {
-            addTweet(tweet);
-            console.log("add user err: " + err);
-        }
-        callback();
-    });
-};
-var addTweet = exports.addTweet = function(tweet, callback) {
-    //(97382675626729470,'#neverinamillionyears would I ever voluntarily put sots in my eyes.. It just sounds painful, and I cant see the allure of getting drunk :\' , 'Sat Jul 30 19:06:53 +0000 2011','308358479')
-    var sql = "INSERT INTO `tweets` (`tweetId`, `tweetText`, `tweetDate`, `screenID`) VALUES (" + tweet.id + ",'" + tweet.text + "' , '" + tweet.created_at + "','" + tweet.user.id + "')";
-    //console.log(sql);
-    connection.query(sql, function(err, result) {
-        if (!err) {
-            /*
-			if(tweet.place)
-				addVenue(tweet);
 
-			else
-				*/
-            console.log("add tweet:" + result);
-        } else {
-            console.log("add tweet err:" + err);
-        }
-        callback();
-    });
-};
-var addVenue = exports.addVenue = function(tweet) {
-    var lat;
-    var long;
-    var fullname;
-    var name = tweet.place.name.toLowerCase();
-    if (tweet.coordinates) {
-        lat = tweet.coordinates.coordinates[1];
-        long = tweet.coordinates.coordinates[0];
-    }
-    var sql = "INSERT INTO `venues` (`name`,`lat`, `long`, `tweet_fk_id`) VALUES ('" + name + "'," + lat + "," + long + ",'" + tweet.id + "')";
-    connection.query(sql, function(err, result) {
-        if (!err) console.log(result);
-        else console.log(err);
-    });
-};
-var addFourSqaureUser = exports.addFourSqaureUser = function(userParms) {
-    var gender = 0;
-    if (userParms == 'femail') gender = 1;
-    var photoURL = userParms.photo.prefix + userParms.photo.suffix.substring(1);
-    var sql = "INSERT IGNORE INTO `twitter_users` (`foursqaure_id`, `twitter_user_fk_id`, `firstName`, `lastName`, `female`, `photoURL`) VALUES (" + userParms.id + ",'" + userParms.firstName +
-        "' , '" + userParms.lastName + "', '" + gender + "', '" + photoURL + "')";
-    connection.query(sql, function(err, result) {
-        if (!err) console.log(result);
-        else console.log(err);
-    });
-};
-var addFourSquareVenue = exports.addFourSquareVenue = function(checkin) {
-    var venue = checkin.venue;
-    var sql = "INSERT INTO `venues` (`checkinID`,`venue_id`,`name`,`lat`, `long`, `user_id_fk`, `datetime`) VALUES ('" + venue.id + "'," + venue.name + "," + venue.lat + ",'" + venue.lng + "','" +
-        checkin.id + "')";
-    connection.query(sql, function(err, result) {
-        if (!err) console.log(result);
-        else console.log(err);
-    });
-};
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 /////////////////mysql search//////////////////////////////////////
-//EXPAND FOR FOURSQAURE AND TWITTER
+///////////////////////////////////////////////////////////////////
+
+
+/**
+Returns rows user details from the MySQL
+
+ @param user  screen name of twitter user
+ @param callback  retuns the user details
+
+*/
 var userSearch = exports.userSearch = function(user, callback) {
     //var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
     paramp = "%" + user + "%";
@@ -264,6 +231,13 @@ var userSearch = exports.userSearch = function(user, callback) {
         });
     });
 };
+/**
+Returns rows user details from the MySQL
+
+ @param user  screen name of twitter user
+ @param callback  retuns the tweet for the user
+
+*/
 var userTweetsScreenName = exports.userTweetsScreenName = function(user, callback) {
     var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets ON twitter_users.twitterID = tweets.screenID AND twitter_users.screenName =' + mysql.escape(user);
     //var sql = 'SELECT * FROM `tweets` WHERE screenID ="'+userID+'"';	
@@ -276,6 +250,11 @@ var userTweetsScreenName = exports.userTweetsScreenName = function(user, callbac
         });
     });
 };
+/**
+Returns rows user details from the MySQL
+
+*/
+
 var userTweetsScreenID = exports.userTweetsScreenID = function(id, callback) {
     //var sql = 'SELECT * FROM `twitter_users` INNER JOIN  tweets ON twitter_users.twitterID = tweets.screenID AND twitter_users.twitterID ='+mysql.escape(id);	
     var sql = 'SELECT * FROM venues, tweets, twitter_users, foursqaure_venue WHERE twitter_users.twitterID =' + mysql.escape(id) + ' AND venues.tweet_fk_id = tweets.tweetId' +
@@ -293,6 +272,12 @@ var userTweetsScreenID = exports.userTweetsScreenID = function(id, callback) {
 //userSearch("killermillergb");
 //userTweets(308358479);
 //userTweetsScreenID("308358479");
+/**
+Returns foursqaure accounts via a user name/id search
+
+ @param user  screen name/id of foursqaure user
+ @param callback  retuns the user who match the search
+*/
 var userFourSqaure = exports.userFourSqaure = function(user, callback) {
     var sql;
     paramp = "%" + user + "%";
@@ -310,10 +295,17 @@ var userFourSqaure = exports.userFourSqaure = function(user, callback) {
         });
     });
 };
-var venueSearch = exports.venueSearch = function(param, callback) {
+/**
+Returns all twitter venues which match the search params
+
+ @param venue  name/lat/long of venue
+ @param callback  retuns all venues which match the search
+
+*/
+var venueSearch = exports.venueSearch = function(venue, callback) {
     //var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
     var sql;
-    paramp = "%" + param + "%";
+    paramp = "%" + venue + "%";
     if (!isNaN(param)) sql = 'SELECT * FROM `venues` WHERE (name LIKE' + mysql.escape(paramp) + ' OR lat LIKE ' + mysql.escape(paramp) + ' OR "long" LIKE ' + mysql.escape(paramp) + ')';
     else sql = 'SELECT * FROM `venues` WHERE name LIKE' + mysql.escape(paramp);
     console.log(sql);
@@ -327,6 +319,14 @@ var venueSearch = exports.venueSearch = function(param, callback) {
         });
     });
 };
+
+/**
+Returns all foursqaure venues which match the search params
+
+ @param venue  name/lat/long of venue
+ @param callback  retuns all venues which match the search
+
+*/
 var venueFourSearch = exports.venueFourSearch = function(param, callback) {
     //var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
     var sql;
@@ -348,6 +348,13 @@ var venueFourSearch = exports.venueFourSearch = function(param, callback) {
         });
     });
 };
+/**
+returns a foursaure venue by id
+
+ @param id  id of foursaure venue
+ @param callback  retuns venues
+
+*/
 var venueFourSearchId = exports.venueFourSearchId = function(id, callback) {
     //var sql = 'SELECT * FROM `tweets` INNER JOIN twitter_users ON tweets.screenID and twitter_users.screenName ="'+user+'"';	
     var sql = 'SELECT * FROM `foursqaure_venue` WHERE (foursqaure_venue.venue_id =' + mysql.escape(id) + ')';
@@ -364,6 +371,14 @@ var venueFourSearchId = exports.venueFourSearchId = function(id, callback) {
 };
 //venueSearch("1.0")
 //venueFourSearch("53.24681026064928");
+
+/**
+returns a list of all the users which have visted a foursqaure venue
+
+ @param id  id of foursaure venue
+ @param callback  retuns venues with tweet and user info
+
+*/
 var usersAtFourVenue = exports.usersAtFourVenue = function(id, callback) {
     //var sql = 'SELECT * FROM `foursqaure_venue` INNER JOIN  tweets ON foursqaure_venue.tweet_id_fk  AND foursqaure_venue.venue_id ='+mysql.escape(id);	
     var sql = 'SELECT * FROM foursqaure_venue, tweets, twitter_users WHERE foursqaure_venue.venue_id =' + mysql.escape(id) + ' AND foursqaure_venue.tweet_id_fk = tweets.tweetId' +
@@ -377,6 +392,14 @@ var usersAtFourVenue = exports.usersAtFourVenue = function(id, callback) {
         });
     });
 };
+
+/**
+returns a list of all the users which have visted a twitter venue
+
+ @param name  name of twitter venue
+ @param callback  retuns venues with tweet and user info
+
+*/
 var usersAtVenue = exports.usersAtVenue = function(name, callback) {
     //var sql = 'SELECT * FROM `foursqaure_venue` INNER JOIN  tweets ON foursqaure_venue.tweet_id_fk  AND foursqaure_venue.venue_id ='+mysql.escape(id);	
     var sql = 'SELECT * FROM venues, tweets, twitter_users WHERE venues.name =' + mysql.escape(name) + ' AND venues.tweet_fk_id = tweets.tweetId' +
