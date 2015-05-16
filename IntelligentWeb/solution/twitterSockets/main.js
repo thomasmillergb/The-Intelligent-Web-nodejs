@@ -537,6 +537,7 @@ io.on('connection', function(socket) {
 							mySQL.insertFourSqaureFromTwitterData(data, four_token);
 						});
 						*/
+<<<<<<< HEAD
                     if (params.twitterfoursquare == 'foursquare') {
                         foursqaure.getVenues(data, four_token, function(checkIns) {
                             if (checkIns != null && checkIns != [] && checkIns.length > 0) {
@@ -808,33 +809,7 @@ io.on('connection', function(socket) {
                 //data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
             fn(null, data);
         });
-        /*
-		console.log("database_get_user_and_tweets id: " + user_id);
-		var data = {};
-		//data.user = exampleUserJson;
-		//data.markers = exampleMarkerJson;
-
-		mySQL.userTweetsScreenID(user_id,function(tweets){
-
-
-		var markers = [];
-		for (var i = 0; i < tweets.length; i++) {
-		if (tweets[i].lat != 0.0 )  {
-				console.log(tweets[i]);
-				var tempMarker = {};
-				tempMarker.lat = tweets[i].lat;
-				tempMarker.long = tweets[i].long;
-				tempMarker.label = "<h3>@" + tweets[i].screenName + "</h3>" + tweets[i].tweetText + "";
-				markers.push(tempMarker);
-			}
-		}
-		data.markers = markers;
-			data.user = tweets[0];
-			data.tweets =  tweets
-			//data.tweets = [exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1, exampleTweetJson_1];
-			fn(null, data);
-		});
-		*/
+       
     });
     /**
 	Gets alls users who have been to the venue

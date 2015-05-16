@@ -329,6 +329,7 @@ function getDatabaseUserAndTweets(user_id) {
     // Gets a user and their tweets
 
 function getUserAndTweets(user_id) {
+<<<<<<< HEAD
     // TODO: Get tweets from AJAX and and them into the form before it opens
     toggleAlternatePanel(true);
     loadingOverlay(true);
@@ -345,6 +346,46 @@ function getUserAndTweets(user_id) {
             for (i = 0; i < data.tweets.length; i++) appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
         }
     });
+=======
+	
+	// TODO: Get tweets from AJAX and and them into the form before it opens
+	
+	toggleAlternatePanel(true);
+	
+	loadingOverlay(true);
+	
+	socket.emit('get_user_and_tweets', user_id, function (err, data) {
+		
+		//console.log(data);
+		
+		loadingOverlay(false);
+		
+		if (err != null) {				
+			addNotification("Error", err, 5000);
+		} else {
+			addNotification("User and tweets", "Data recieved", 5000);
+			
+			//console.log("asd");
+			//console.log(data);
+			
+			if (data.tweets.length > 0)
+				data.user = data.tweets[0].user;
+			
+			setupUserPage(data.user);
+			appendLocation($("#user_tweet_location_return"), data.markers);
+			
+			//console.log(data);
+			
+			for (i = 0; i < data.tweets.length; i++) {
+				appendTweetWithoutAccount($("#user_tweet_return"), data.tweets[i]);
+			}
+				
+			
+		}
+		
+	});
+	
+>>>>>>> 2164bb44f4931dd5c23683022d2e32fa644defd3
 }
 
 function getPointsOfInterest(name, lat, long) {

@@ -259,17 +259,8 @@ function appendTweetWithAccount(element, tweetJson, append) {
 // Returns the created element
 function appendTweetWithoutAccount(element, tweetJson) {
 	
-	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['screenName'] + '">@' + tweetJson['screenName'] + '</a> ' + removeTimezone(tweetJson['tweetDate']) + '<br><div class="tweet">' + tweetJson['tweetText'] + '</div><br>';
-	/*
-	if (false) {
-		if (tweetJson['geo'] !== undefined && tweetJson['geo']['coordinates'] !== undefined)
-			tweethtml +='<br><div class="map_wrapper"><iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=' + tweetJson['coordinates'][0] + ',' + tweetJson['coordinates'][1] + '&key=AIzaSyARRU-El139sH4_4DjiZIpCO4Z6qhCSTqw"></iframe></div><br>';
-		else
-			tweethtml += 'This tweet was not geotagged';
-	}
-	*/
-			
-	console.log(element);
+	var tweethtml = '<div class="white_container"><a href="http://www.twitter.com/' + tweetJson['user']['screen_name'] + '">@' + tweetJson['user']['screen_name'] + '</a> ' + removeTimezone(tweetJson['created_at']) + '<br><div class="tweet">' + tweetJson['text'] + '</div><br>';
+
 		
 	returnelement = $(tweethtml).appendTo(element);
 	
@@ -414,6 +405,8 @@ function addMarkerToMap(map, latitude, longitude, label, newBounds) {
 function setupUserPage(userJson) {
 		
 	//userJson = userJson['user'];	
+	
+	//console.log(userJson);
 	
 	var userhtml = '<div class="center_wrapper"><h3><a href="javascript:void(0)" onclick="toggleAlternatePanel(false)">Back</a> - <a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a> \'s profile</h3><hr><table class="tweet_table"><tr><td width="300px"><div class="profile_top clearfix"><img class="profile_image" src="' + userJson['profile_image_url'].replace("_normal", "") + '" alt="' + userJson['name'] + '" height="100" width="100"><div class="name_wrapper"><a href="http://www.twitter.com/' + userJson['screen_name'] + '" class="screen_name">' + userJson['name'] + '</a><br><a href="http://www.twitter.com/' + userJson['screen_name'] + '">@' + userJson['screen_name'] + '</a><br><br></div></div></td><td>';
 	  				
@@ -653,10 +646,10 @@ function mostVisitedVenues(element, tableJson, foursqaure) {
 function databaseUserTable(element, tableJson) {
 	
 	var tablehtml = '<div class="white_container"><table class="db_table"><thead><tr><th>Twitter ID</th><th>Screen Name</th><th>Name</th><th>Twitter</th><th>View saved details</th><th>Get live tweets</th></tr></thead><tbody>';
-	console.log(tableJson[0]);
+	//console.log(tableJson[0]);
 	for (i=0;i<tableJson.length;i++) {
 		row = tableJson[i];
-		tablehtml += '<tr><td>' + row['twitterID'] + '</td><td>' + row['screenName'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['screenName'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets('+ row['twitterID'] +')">View saved details</a></td><td><a href="javascript:getUserAndTweets(\'' + row['twitterID'] + '\')">Get live tweets</a></td></tr>';
+		tablehtml += '<tr><td>' + row['twitterID'] + '</td><td>' + row['screenName'] + '</td><td>' + row['name'] + '</td><td><a href="http://twitter.com/' + row['screenName'] + '">Twitter</a></td><td><a href="javascript:getDatabaseUserAndTweets('+ row['twitterID'] +')">View saved details</a></td><td><a href="javascript:void(0)" onclick="getUserAndTweets(\'' + row['screenName'] + '\')">Get live tweets</a></td></tr>';
 	}
 	
 	tablehtml += '</tbody></table></div>';
@@ -703,8 +696,8 @@ function databaseVenueTable(element, tableJson) {
 		if (row.venueDetails.bestPhoto == 'undefined' || row.venueDetails.bestPhoto == 'none')
 			image = "No photo";
 		else
-			image = '<img property="assigment:imageURI" src="' + row.venueDetails.photo + '" class="tableimage" />';
-		tablehtml += '<tr><td>'+image+'</td><td><a property="assigment:URI" href="' + row.venueDetails.url + '"><span property="assigment:name">'+ row['venue'] + '</span></a></td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td>' + row.venueDetails['rating'] +'</td><td>' + row.venueDetails['address'] +'</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] +'\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">Users</a></td></tr>';
+			image = '<img src="' + row.venueDetails.photo + '" class="tableimage" />';
+		tablehtml += '<tr><td>'+image+'</td><td><a href="' + row.venueDetails.url + '"><span>'+ row['venue'] + '</span></a></td><td class="td_wrap">' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td>' + row.venueDetails['rating'] +'</td><td>' + row.venueDetails['address'] +'</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] +'\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">Users</a></td></tr>';
 	}
 
 	tablehtml += '</tbody></table></div>';
