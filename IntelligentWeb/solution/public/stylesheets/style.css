@@ -684,3 +684,7 @@ noscript {
 .table_td_break {
 	box-shadow: -1px 0 #bbb;
 }
+
+.td_wrap {
+	word-wrap: break-word;
+}

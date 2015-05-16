@@ -696,8 +696,8 @@ function databaseVenueTable(element, tableJson) {
 		if (row.venueDetails.bestPhoto == 'undefined' || row.venueDetails.bestPhoto == 'none')
 			image = "No photo";
 		else
-			image = '<img property="assigment:imageURI" src="' + row.venueDetails.photo + '" class="tableimage" />';
-		tablehtml += '<tr><td>'+image+'</td><td><a property="assigment:URI" href="' + row.venueDetails.url + '"><span property="assigment:name">'+ row['venue'] + '</span></a></td><td>' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td>' + row.venueDetails['rating'] +'</td><td>' + row.venueDetails['address'] +'</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] +'\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">Users</a></td></tr>';
+			image = '<img src="' + row.venueDetails.photo + '" class="tableimage" />';
+		tablehtml += '<tr><td>'+image+'</td><td><a href="' + row.venueDetails.url + '"><span>'+ row['venue'] + '</span></a></td><td class="td_wrap">' + row['coordinates'] + '</td><td>' + row['visitors'] + '</td><td>' + row.venueDetails['rating'] +'</td><td>' + row.venueDetails['address'] +'</td><td><a href="javascript:getDatabaseUserAtVenue(\'' + row['venue_id'] +'\',\'' + row['venue'] +'\',\'' + row['foursquare'] +'\')">Users</a></td></tr>';
 	}
 
 	tablehtml += '</tbody></table></div>';
